@@ -1,0 +1,62 @@
+# Build directories
+build/
+build_test/
+
+# Compiled binaries
+*.exe
+*.out
+*.app
+SilverClinic
+
+# Object files
+*.o
+*.obj
+*.so
+*.dll
+*.a
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.ilk
+*.pdb
+*.tlog/
+
+# Database files (optional - uncomment if you don't want to track the database)
+# *.db
+# *.sqlite
+# *.sqlite3
+
+# VS Code settings (optional - keep if you want to share editor settings)
+# .vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Windows batch files (if not needed in Linux)
+*.bat
+
+# Dependencies
+libs/downloaded/
+
+# Test files
+test_*
+!test_utils.cpp
+
+# Backup files
+*.backup
+*.bak

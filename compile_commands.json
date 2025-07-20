@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build",
+  "command": "/usr/bin/c++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/Address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/Address.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/Address.cpp",
+  "output": "CMakeFiles/SilverClinic.dir/src/Address.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build",
+  "command": "/usr/bin/c++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/Assessor.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/Assessor.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/Assessor.cpp",
+  "output": "CMakeFiles/SilverClinic.dir/src/Assessor.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build",
+  "command": "/usr/bin/c++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/DateTime.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/DateTime.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/DateTime.cpp",
+  "output": "CMakeFiles/SilverClinic.dir/src/DateTime.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build",
+  "command": "/usr/bin/c++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/Utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/Utils.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/Utils.cpp",
+  "output": "CMakeFiles/SilverClinic.dir/src/Utils.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build",
+  "command": "/usr/bin/c++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/main.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
+  "output": "CMakeFiles/SilverClinic.dir/src/main.cpp.o"
+}
+]
