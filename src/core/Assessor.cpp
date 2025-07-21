@@ -1,4 +1,4 @@
-#include "Assessor.h"
+#include "core/Assessor.h"
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -19,8 +19,9 @@ namespace SilverClinic {
     Assessor::Assessor(int assessor_id, const string& first_name, const string& last_name, 
                        const string& email, const string& phone, const Address& address, 
                        const DateTime& created_at, const DateTime& updated_at)
-        : m_assessor_id(assessor_id), m_first_name(first_name), m_last_name(last_name),
-          m_email(email), m_phone(phone), m_address(address), 
+        : m_assessor_id(assessor_id), m_first_name(utils::normalizeName(first_name)), 
+          m_last_name(utils::normalizeName(last_name)), m_email(utils::normalizeForDatabase(email)), 
+          m_phone(utils::normalizePhoneNumber(phone)), m_address(address), 
           m_created_at(created_at), m_updated_at(updated_at) {
     }
     

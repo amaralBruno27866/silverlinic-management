@@ -1,4 +1,4 @@
-#include "Utils.h"
+#include "core/Utils.h"
 #include <string>
 #include <algorithm>
 #include <cctype>
@@ -305,5 +305,98 @@ namespace utils {
 		if (hour < 8 || hour > 18) return false;
 		if (hour == 18 && minute > 0) return false;
 		return true;
+	}
+
+	// === IMPLEMENTAÇÕES DE NORMALIZAÇÃO PARA BANCO DE DADOS ===
+
+	string normalizePostalCode(const string& postalCode) {
+		string normalized = removeSpaces(postalCode);
+		normalized = toUpper(normalized);
+		return normalized;
+	}
+
+	string normalizeProvince(const string& province) {
+		string normalized = trim(province);
+		normalized = toUpper(normalized);
+		return normalized;
+	}
+
+	string normalizeSIN(const string& sin) {
+		string normalized = removeSpaces(sin);
+		// Remove hífens e espaços, mantém apenas números
+		string result;
+		for (char c : normalized) {
+			if (isdigit(c)) {
+				result += c;
+			}
+		}
+		return result;
+	}
+
+	string normalizeHealthCard(const string& healthCard) {
+		string normalized = removeSpaces(healthCard);
+		normalized = toUpper(normalized);
+		return normalized;
+	}
+
+	string normalizePhoneNumber(const string& phone) {
+		string normalized;
+		// Mantém apenas dígitos
+		for (char c : phone) {
+			if (isdigit(c)) {
+				normalized += c;
+			}
+		}
+		return normalized;
+	}
+
+	string normalizeName(const string& name) {
+		string normalized = trim(name);
+		normalized = toUpper(normalized);
+		return normalized;
+	}
+
+	string normalizeCity(const string& city) {
+		string normalized = trim(city);
+		normalized = toUpper(normalized);
+		return normalized;
+	}
+
+	string normalizeAddress(const string& address) {
+		string normalized = trim(address);
+		normalized = toUpper(normalized);
+		return normalized;
+	}
+
+	// === IMPLEMENTAÇÕES DE ESPECIALIZAÇÕES DE TEMPLATES ===
+
+	template<>
+	string toString<string>(const string& value) {
+		return value;
+	}
+
+	template<>
+	string toString<const char*>(const char* const& value) {
+		return string(value);
+	}
+
+	template<>
+	string normalizeForDatabase<string>(const string& value) {
+		string str = trim(value);
+		str = toUpper(str);
+		return str;
+	}
+
+	template<>
+	string normalizeForDatabase<const char*>(const char* const& value) {
+		string str = trim(string(value));
+		str = toUpper(str);
+		return str;
+	}
+
+	string normalizeForDatabase(const char* value) {
+		string str = trim(string(value));
+		str = toUpper(str);
+		return str;
 	}
 }

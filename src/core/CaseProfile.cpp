@@ -1,5 +1,5 @@
-#include "CaseProfile.h"
-#include "Utils.h"
+#include "core/CaseProfile.h"
+#include "core/Utils.h"
 #include <iostream>
 #include <iomanip>
 
@@ -15,7 +15,7 @@ namespace SilverClinic {
         m_case_profile_id = getNextCaseProfileId();
         m_client_id = 0;
         m_assessor_id = 0;
-        m_status = "Pending";
+        m_status = utils::normalizeForDatabase("Pending");
         m_notes = "";
         m_closed_at = DateTime(); // Empty DateTime
         setTimestamps();
@@ -25,8 +25,8 @@ namespace SilverClinic {
         m_case_profile_id = getNextCaseProfileId();
         m_client_id = client_id;
         m_assessor_id = assessor_id;
-        m_status = "Pending"; // Always starts as Pending
-        m_notes = notes;
+        m_status = utils::normalizeForDatabase("Pending"); // Always starts as Pending
+        m_notes = utils::normalizeForDatabase(notes);
         m_closed_at = DateTime(); // Empty DateTime
         setTimestamps();
         utils::logMessage("INFO", "New Case Profile created with ID " + to_string(m_case_profile_id) + " (Status: Pending)");
@@ -38,8 +38,8 @@ namespace SilverClinic {
         m_case_profile_id = case_profile_id;
         m_client_id = client_id;
         m_assessor_id = assessor_id;
-        m_status = status;
-        m_notes = notes;
+        m_status = utils::normalizeForDatabase(status);
+        m_notes = utils::normalizeForDatabase(notes);
         m_created_at = created_at;
         m_closed_at = closed_at;
         m_updated_at = updated_at;

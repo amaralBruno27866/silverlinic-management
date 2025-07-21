@@ -4,6 +4,7 @@
 #include <string>
 #include "Address.h"
 #include "DateTime.h"
+#include "Utils.h"
 
 using namespace std;
 namespace SilverClinic {
@@ -46,10 +47,10 @@ namespace SilverClinic {
 
     // Setters
     void setClientId(int client_id) { m_client_id = client_id; }
-    void setFirstName(const string& first_name) { m_first_name = first_name; }
-    void setLastName(const string& last_name) { m_last_name = last_name; }
-    void setEmail(const string& email) { m_email = email; }
-    void setPhone(const string& phone) { m_phone = phone; }
+    void setFirstName(const string& first_name) { m_first_name = utils::normalizeName(first_name); }
+    void setLastName(const string& last_name) { m_last_name = utils::normalizeName(last_name); }
+    void setEmail(const string& email) { m_email = utils::normalizeForDatabase(email); }
+    void setPhone(const string& phone) { m_phone = utils::normalizePhoneNumber(phone); }
     void setDateOfBirth(const string& date_of_birth) { m_date_of_birth = date_of_birth; }
     void setAddress(const Address& address) { m_address = address; }
     void setCreatedAt(const DateTime& createdAt) { m_created_at = createdAt; }

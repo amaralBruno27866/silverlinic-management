@@ -1,5 +1,5 @@
-#include "Client.h"
-#include "Utils.h"
+#include "core/Client.h"
+#include "core/Utils.h"
 #include <iostream>
 #include <iomanip>
 
@@ -26,10 +26,10 @@ namespace SilverClinic {
                    const string& phone, const string& date_of_birth, const Address& address, 
                    const DateTime& created_at, const DateTime& updated_at) {
         m_client_id = client_id;
-        m_first_name = first_name;
-        m_last_name = last_name;
-        m_email = email;
-        m_phone = phone;
+        m_first_name = utils::normalizeName(first_name);
+        m_last_name = utils::normalizeName(last_name);
+        m_email = utils::normalizeForDatabase(email);
+        m_phone = utils::normalizePhoneNumber(phone);
         m_date_of_birth = date_of_birth;
         m_address = address;
         m_created_at = created_at;

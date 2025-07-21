@@ -47,8 +47,8 @@ FamilyPhysician::FamilyPhysician(int client_id, const string& fp_full_name, cons
     m_fp_id = getNextFamilyPhysicianId();
     m_client_id = client_id;
     m_type = FORM_TYPE;
-    m_fp_full_name = fp_full_name;
-    m_fp_phone = fp_phone;
+    m_fp_full_name = utils::normalizeName(fp_full_name);
+    m_fp_phone = utils::normalizePhoneNumber(fp_phone);
     m_fp_email = "";
     m_fp_address = Address();
     setTimestamps();
@@ -61,9 +61,9 @@ FamilyPhysician::FamilyPhysician(int fp_id, int client_id, const string& fp_full
     m_fp_id = fp_id;
     m_client_id = client_id;
     m_type = FORM_TYPE;
-    m_fp_full_name = fp_full_name;
-    m_fp_phone = fp_phone;
-    m_fp_email = fp_email;
+    m_fp_full_name = utils::normalizeName(fp_full_name);
+    m_fp_phone = utils::normalizePhoneNumber(fp_phone);
+    m_fp_email = utils::normalizeForDatabase(fp_email);
     m_fp_address = fp_address;
     m_fp_createdAt = fp_createdAt;
     m_fp_updatedAt = fp_updatedAt;
@@ -71,30 +71,33 @@ FamilyPhysician::FamilyPhysician(int fp_id, int client_id, const string& fp_full
 
 // Setter methods
 void FamilyPhysician::setFpFullName(const string& fp_full_name) {
-    if (isValidFpFullName(fp_full_name)) {
-        m_fp_full_name = fp_full_name;
+    string normalizedName = utils::normalizeName(fp_full_name);
+    if (isValidFpFullName(normalizedName)) {
+        m_fp_full_name = normalizedName;
         updateTimestamp();
-    } else if (fp_full_name.length() > MAX_FULL_NAME_LENGTH) {
+    } else if (normalizedName.length() > MAX_FULL_NAME_LENGTH) {
         utils::logMessage("WARNING", "Full name truncated to " + to_string(MAX_FULL_NAME_LENGTH) + " characters");
-        m_fp_full_name = fp_full_name.substr(0, MAX_FULL_NAME_LENGTH);
+        m_fp_full_name = normalizedName.substr(0, MAX_FULL_NAME_LENGTH);
         updateTimestamp();
     }
 }
 
 void FamilyPhysician::setFpPhone(const string& fp_phone) {
-    if (utils::isValidPhoneNumber(fp_phone) || fp_phone.empty()) {
-        m_fp_phone = fp_phone;
+    string normalizedPhone = utils::normalizePhoneNumber(fp_phone);
+    if (utils::isValidPhoneNumber(normalizedPhone) || fp_phone.empty()) {
+        m_fp_phone = normalizedPhone;
         updateTimestamp();
     } else {
         utils::logMessage("WARNING", "Invalid phone number format: " + fp_phone);
-        m_fp_phone = fp_phone; // Store anyway but log warning
+        m_fp_phone = normalizedPhone; // Store anyway but log warning
         updateTimestamp();
     }
 }
 
 void FamilyPhysician::setFpEmail(const string& fp_email) {
-    if (utils::isValidEmail(fp_email) || fp_email.empty()) {
-        m_fp_email = fp_email;
+    string normalizedEmail = utils::normalizeForDatabase(fp_email);
+    if (utils::isValidEmail(normalizedEmail) || fp_email.empty()) {
+        m_fp_email = normalizedEmail;
         updateTimestamp();
     } else {
         utils::logMessage("WARNING", "Invalid email format: " + fp_email);

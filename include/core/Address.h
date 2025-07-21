@@ -1,7 +1,9 @@
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
+#include <string>
 #include "DateTime.h"
+#include "Utils.h"
 
 using namespace std;
 namespace SilverClinic {
@@ -45,10 +47,10 @@ namespace SilverClinic {
     // Setters
     void setAddressId(int address_id) { m_address_id = address_id; }
     void setUserKey(int user_key) { m_user_key = user_key; }
-    void setStreet(const string& street) { m_street = street; }
-    void setCity(const string& city) { m_city = city; }
-    void setProvince(const string& province) { m_province = province; }
-    void setPostalCode(const string& postal_code) { m_postal_code = postal_code; }
+    void setStreet(const string& street) { m_street = utils::normalizeAddress(street); }
+    void setCity(const string& city) { m_city = utils::normalizeCity(city); }
+    void setProvince(const string& province) { m_province = utils::normalizeProvince(province); }
+    void setPostalCode(const string& postal_code) { m_postal_code = utils::normalizePostalCode(postal_code); }
     void setCreatedAt(const DateTime& created_at) { m_created_at = created_at; }
     void setUpdatedAt(const DateTime& updated_at) { m_updated_at = updated_at; }
     

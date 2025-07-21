@@ -1,4 +1,4 @@
-#include "Address.h"
+#include "core/Address.h"
 #include <iostream>
 #include <algorithm>
 #include <regex>
@@ -17,15 +17,19 @@ namespace SilverClinic {
     // Parameterized constructor
     Address::Address(int address_id, int user_key, const string& street, const string& city,
                      const string& province, const string& postal_code)
-        : m_address_id(address_id), m_user_key(user_key), m_street(street), m_city(city),
-          m_province(province), m_postal_code(postal_code), m_created_at(DateTime::now()), m_updated_at(DateTime::now()) {}
+        : m_address_id(address_id), m_user_key(user_key), 
+          m_street(utils::normalizeAddress(street)), m_city(utils::normalizeCity(city)),
+          m_province(utils::normalizeProvince(province)), m_postal_code(utils::normalizePostalCode(postal_code)), 
+          m_created_at(DateTime::now()), m_updated_at(DateTime::now()) {}
 
     // Parameterized constructor with timestamps
     Address::Address(int address_id, int user_key, const string& street, const string& city,
                      const string& province, const string& postal_code, 
                      const DateTime& created_at, const DateTime& updated_at)
-        : m_address_id(address_id), m_user_key(user_key), m_street(street), m_city(city),
-          m_province(province), m_postal_code(postal_code), m_created_at(created_at), m_updated_at(updated_at) {}
+        : m_address_id(address_id), m_user_key(user_key), 
+          m_street(utils::normalizeAddress(street)), m_city(utils::normalizeCity(city)),
+          m_province(utils::normalizeProvince(province)), m_postal_code(utils::normalizePostalCode(postal_code)), 
+          m_created_at(created_at), m_updated_at(updated_at) {}
 
     // Destructor
     Address::~Address() {}

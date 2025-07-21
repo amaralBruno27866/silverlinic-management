@@ -86,6 +86,13 @@ namespace utils {
         return std::to_string(value);
     }
     
+    // Declarações de especializações (implementadas em Utils.cpp)
+    template<>
+    string toString<string>(const string& value);
+    
+    template<>
+    string toString<const char*>(const char* const& value);
+    
     // Template para limpeza de ponteiros
     template<typename T>
     void safeDelete(T*& ptr) {
@@ -112,6 +119,37 @@ namespace utils {
     void logMessage(const string& level, const T& message) {
         cout << "[" << getCurrentTimestamp() << "] [" << level << "] " << message << endl;
     }
+    
+    // === NORMALIZAÇÃO PARA BANCO DE DADOS ===
+    
+    // Template principal para normalização de dados do banco
+    template<typename T>
+    string normalizeForDatabase(const T& value) {
+        string str = toString(value);
+        str = trim(str);
+        str = toUpper(str);
+        return str;
+    }
+    
+    // Declarações de especializações (implementadas em Utils.cpp)
+    template<>
+    string normalizeForDatabase<string>(const string& value);
+    
+    template<>
+    string normalizeForDatabase<const char*>(const char* const& value);
+    
+    // Função auxiliar para literais de string
+    string normalizeForDatabase(const char* value);
+    
+    // Funções específicas para campos do banco
+    string normalizePostalCode(const string& postalCode);
+    string normalizeProvince(const string& province);
+    string normalizeSIN(const string& sin);
+    string normalizeHealthCard(const string& healthCard);
+    string normalizePhoneNumber(const string& phone);
+    string normalizeName(const string& name);
+    string normalizeCity(const string& city);
+    string normalizeAddress(const string& address);
 }
 
 #endif // UTILS_H

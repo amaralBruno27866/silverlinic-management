@@ -47,14 +47,15 @@ namespace SilverClinic {
     void setCaseProfileId(int case_profile_id) { m_case_profile_id = case_profile_id; }
     void setClientId(int client_id) { m_client_id = client_id; }
     void setAssessorId(int assessor_id) { m_assessor_id = assessor_id; }
-    void setStatus(const string& status) { m_status = status; updateTimestamp(); }
+    void setStatus(const string& status) { m_status = utils::normalizeForDatabase(status); updateTimestamp(); }
     void setNotes(const string& notes) { 
-        if (isValidNotes(notes)) {
-            m_notes = notes; 
+        string normalizedNotes = utils::normalizeForDatabase(notes);
+        if (isValidNotes(normalizedNotes)) {
+            m_notes = normalizedNotes; 
             updateTimestamp(); 
         } else {
             utils::logMessage("WARNING", "Notes truncated to " + to_string(MAX_NOTES_LENGTH) + " characters");
-            m_notes = notes.substr(0, MAX_NOTES_LENGTH);
+            m_notes = normalizedNotes.substr(0, MAX_NOTES_LENGTH);
             updateTimestamp();
         }
     }
