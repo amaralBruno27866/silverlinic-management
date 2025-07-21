@@ -14,10 +14,12 @@ namespace SilverClinic {
         class FamilyPhysician {
         private:
             static const int MAX_FULL_NAME_LENGTH = 100;
+            static const string FORM_TYPE;     // Form type identifier: "FPH"
             
             // Primary attributes
             int m_fp_id;                  // Family Physician ID (500000+)
             int m_client_id;             // Foreign key to client
+            string m_type;               // Form type (default: "FPH")
             string m_fp_full_name;       // Nome completo do médico
             string m_fp_phone;           // Telefone
             string m_fp_email;           // Email
@@ -46,6 +48,7 @@ namespace SilverClinic {
             // Getters
             int getFamilyPhysicianId() const { return m_fp_id; }
             int getClientId() const { return m_client_id; }
+            string getType() const { return m_type; }
             string getFpFullName() const { return m_fp_full_name; }
             string getFpPhone() const { return m_fp_phone; }
             string getFpEmail() const { return m_fp_email; }
@@ -79,9 +82,7 @@ namespace SilverClinic {
         // Stream operators for serialization and debugging
         friend std::ostream& operator<<(std::ostream& os, const FamilyPhysician& fp);
         friend std::istream& operator>>(std::istream& is, FamilyPhysician& fp);
-    };        // Stream operators for serialization and debugging
-        ostream& operator<<(ostream& os, const FamilyPhysician& fp);
-        istream& operator>>(istream& is, FamilyPhysician& fp);
+    };
 
     } // namespace Forms
 } // namespace SilverClinic
