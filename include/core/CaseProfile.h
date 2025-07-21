@@ -8,11 +8,18 @@
 using namespace std;
 namespace SilverClinic {
   class CaseProfile {
+    public:
+    // Status constants
+    static const int STATUS_PENDING = 1;
+    static const int STATUS_ACTIVE = 2;
+    static const int STATUS_CLOSED = 3;
+    static const int STATUS_CANCELLED = 4;
+    
     private:
     int m_case_profile_id;
     int m_client_id;
     int m_assessor_id;
-    string m_status;
+    int m_status;  // Changed from string to int
     string m_notes;
     DateTime m_created_at;
     DateTime m_closed_at;
@@ -37,7 +44,8 @@ namespace SilverClinic {
     int getCaseProfileId() const { return m_case_profile_id; }
     int getClientId() const { return m_client_id; }
     int getAssessorId() const { return m_assessor_id; }
-    string getStatus() const { return m_status; }
+    int getStatusId() const { return m_status; }
+    string getStatus() const { return getStatusString(m_status); }
     string getNotes() const { return m_notes; }
     DateTime getCreatedAt() const { return m_created_at; }
     DateTime getClosedAt() const { return m_closed_at; }
@@ -47,7 +55,8 @@ namespace SilverClinic {
     void setCaseProfileId(int case_profile_id) { m_case_profile_id = case_profile_id; }
     void setClientId(int client_id) { m_client_id = client_id; }
     void setAssessorId(int assessor_id) { m_assessor_id = assessor_id; }
-    void setStatus(const string& status) { m_status = utils::normalizeForDatabase(status); updateTimestamp(); }
+    void setStatusId(int status) { m_status = status; updateTimestamp(); }
+    void setStatus(const string& status) { m_status = getStatusFromString(status); updateTimestamp(); }
     void setNotes(const string& notes) { 
         string normalizedNotes = utils::normalizeForDatabase(notes);
         if (isValidNotes(normalizedNotes)) {
@@ -91,6 +100,12 @@ namespace SilverClinic {
     static const int ID_PREFIX = 400000; // CaseProfile IDs start at 400001
     static const int MAX_NOTES_LENGTH = 1500; // Maximum characters for notes
     
+    private:
+    // Status conversion helper methods
+    static string getStatusString(int statusId);
+    static int getStatusFromString(const string& status);
+    
+    public:
     // Stream operators
     friend ostream& operator<<(ostream& os, const CaseProfile& caseProfile);
     friend istream& operator>>(istream& is, CaseProfile& caseProfile);

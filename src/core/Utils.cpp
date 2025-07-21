@@ -88,7 +88,8 @@ namespace utils {
 	bool isValidCanadianPostalCode(const std::string& postalCode)
 	{
 		// Formato canadense: A1A 1A1 ou A1A1A1
-		static const std::regex pattern(R"(^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$)");
+		// Letras excluídas: D, F, I, O, Q, U
+		static const std::regex pattern(R"(^[ABCEGHJKLMNPRSTVWXYZ]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d$)");
 		return std::regex_match(postalCode, pattern);
 	}
 

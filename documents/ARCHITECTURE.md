@@ -133,6 +133,9 @@ slt_cpp_programn/
 │   ├── ARCHITECTURE.md    ✅ Arquitetura do sistema
 │   └── DATABASE_INTEGRATION.md ✅ Integração banco
 ├── settings/              ✅ Configurações projeto
+├── web/                   ✅ Interfaces web
+│   └── interface/         ✅ Interface do usuário
+│       └── case-info.html ✅ Formulário de casos
 ├── include/
 │   ├── core/              ✅ Headers principais
 │   │   ├── Address.h      ✅ Endereços

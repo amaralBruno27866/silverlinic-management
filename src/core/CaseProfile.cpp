@@ -15,7 +15,7 @@ namespace SilverClinic {
         m_case_profile_id = getNextCaseProfileId();
         m_client_id = 0;
         m_assessor_id = 0;
-        m_status = utils::normalizeForDatabase("Pending");
+        m_status = STATUS_PENDING;
         m_notes = "";
         m_closed_at = DateTime(); // Empty DateTime
         setTimestamps();
@@ -25,7 +25,7 @@ namespace SilverClinic {
         m_case_profile_id = getNextCaseProfileId();
         m_client_id = client_id;
         m_assessor_id = assessor_id;
-        m_status = utils::normalizeForDatabase("Pending"); // Always starts as Pending
+        m_status = STATUS_PENDING; // Always starts as Pending
         m_notes = utils::normalizeForDatabase(notes);
         m_closed_at = DateTime(); // Empty DateTime
         setTimestamps();
@@ -38,7 +38,7 @@ namespace SilverClinic {
         m_case_profile_id = case_profile_id;
         m_client_id = client_id;
         m_assessor_id = assessor_id;
-        m_status = utils::normalizeForDatabase(status);
+        m_status = getStatusFromString(status);
         m_notes = utils::normalizeForDatabase(notes);
         m_created_at = created_at;
         m_closed_at = closed_at;
@@ -78,25 +78,24 @@ namespace SilverClinic {
 
     // Status management methods
     bool CaseProfile::isActive() const {
-        return m_status == "Active";
+        return m_status == STATUS_ACTIVE;
     }
 
     bool CaseProfile::isClosed() const {
-        return m_status == "Closed";
+        return m_status == STATUS_CLOSED;
     }
 
     bool CaseProfile::isPending() const {
-        return m_status == "Pending";
+        return m_status == STATUS_PENDING;
     }
 
     void CaseProfile::activate() {
-        m_status = "Active";
-        updateTimestamp();
+        setStatusId(STATUS_ACTIVE);
         utils::logMessage("INFO", "Case Profile " + to_string(m_case_profile_id) + " activated");
     }
 
     void CaseProfile::close(const string& reason) {
-        m_status = "Closed";
+        setStatusId(STATUS_CLOSED);
         m_closed_at = DateTime::now();
         if (!reason.empty()) {
             string closeNote = (m_notes.empty() ? "" : "\n") + string("Closed: ") + reason;
@@ -121,8 +120,7 @@ namespace SilverClinic {
     }
 
     void CaseProfile::setPending() {
-        m_status = "Pending";
-        updateTimestamp();
+        setStatusId(STATUS_PENDING);
         utils::logMessage("INFO", "Case Profile " + to_string(m_case_profile_id) + " set to pending");
     }
 
@@ -146,7 +144,7 @@ namespace SilverClinic {
         cout << "Case Profile ID: " << m_case_profile_id << endl;
         cout << "Client ID: " << m_client_id << endl;
         cout << "Assessor ID: " << m_assessor_id << endl;
-        cout << "Status: " << m_status << endl;
+        cout << "Status: " << getStatus() << endl;
         cout << "Notes (" << m_notes.length() << "/" << MAX_NOTES_LENGTH << " chars): " << (m_notes.empty() ? "No notes" : m_notes) << endl;
         cout << "Created: " << m_created_at.toString() << endl;
         if (!m_closed_at.toString().empty()) {
@@ -168,12 +166,32 @@ namespace SilverClinic {
         utils::logMessage("INFO", "CaseProfile ID counter reset");
     }
 
+    // Status conversion helper methods
+    string CaseProfile::getStatusString(int statusId) {
+        switch (statusId) {
+            case STATUS_PENDING: return "PENDING";
+            case STATUS_ACTIVE: return "ACTIVE";
+            case STATUS_CLOSED: return "CLOSED";
+            case STATUS_CANCELLED: return "CANCELLED";
+            default: return "UNKNOWN";
+        }
+    }
+
+    int CaseProfile::getStatusFromString(const string& status) {
+        string normalizedStatus = utils::normalizeForDatabase(status);
+        if (normalizedStatus == "PENDING") return STATUS_PENDING;
+        if (normalizedStatus == "ACTIVE") return STATUS_ACTIVE;
+        if (normalizedStatus == "CLOSED") return STATUS_CLOSED;
+        if (normalizedStatus == "CANCELLED") return STATUS_CANCELLED;
+        return STATUS_PENDING; // Default to pending if unknown
+    }
+
     // Stream operators
     ostream& operator<<(ostream& os, const CaseProfile& caseProfile) {
         os << "Case Profile ID: " << caseProfile.m_case_profile_id << endl;
         os << "Client ID: " << caseProfile.m_client_id << endl;
         os << "Assessor ID: " << caseProfile.m_assessor_id << endl;
-        os << "Status: " << caseProfile.m_status << endl;
+        os << "Status: " << caseProfile.getStatus() << endl;
         os << "Notes: " << caseProfile.m_notes << endl;
         os << "Created: " << caseProfile.m_created_at.toString() << endl;
         os << "Updated: " << caseProfile.m_updated_at.toString() << endl;
@@ -186,7 +204,9 @@ namespace SilverClinic {
         cout << "Enter assessor ID: ";
         is >> caseProfile.m_assessor_id;
         cout << "Enter status (Active/Pending/Closed): ";
-        is >> caseProfile.m_status;
+        string statusInput;
+        is >> statusInput;
+        caseProfile.m_status = CaseProfile::getStatusFromString(statusInput);
         cout << "Enter notes: ";
         is.ignore(); // Clear the newline
         getline(is, caseProfile.m_notes);
