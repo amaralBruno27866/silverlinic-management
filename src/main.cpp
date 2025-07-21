@@ -281,24 +281,24 @@ void runClassTests() {
     // Teste da classe FamilyPhysician
     cout << "\n9. FamilyPhysician Form Tests:" << endl;
     
-    SilverClinic::Forms::FamilyPhysician familyDoc(300001, "Dr. João Oliveira", "Toronto Medical Center");
-    familyDoc.setPhone("(416) 555-9876");
-    familyDoc.setEmail("joao.oliveira@torontomedical.ca");
-    familyDoc.setAddress("456 University Ave");
-    familyDoc.setPostalCode("M5G1X5");
-    familyDoc.setCity("Toronto");
-    familyDoc.setProvince("ON");
-    familyDoc.setSpecialization("Family Medicine");
-    familyDoc.setNotes("Médico da família responsável pelo acompanhamento médico geral do paciente.");
+    // Criar um endereço para o médico (precisa do user_key como segundo parâmetro)
+    Address doctorAddress(200005, 300001, "456 University Ave", "Toronto", "ON", "M5G1X5");
     
-    cout << "   Family Physician created: " << familyDoc.getDoctorName() << endl;
+    SilverClinic::Forms::FamilyPhysician familyDoc(300001, "Dr. João Oliveira", "(416) 555-9876");
+    familyDoc.setFpEmail("joao.oliveira@torontomedical.ca");
+    familyDoc.setFpAddress(doctorAddress);
+    
+    cout << "   Family Physician created: " << familyDoc.getFpFullName() << endl;
     cout << "   Family Physician ID: " << familyDoc.getFamilyPhysicianId() << " (should start with 500000)" << endl;
     cout << "   Client ID: " << familyDoc.getClientId() << " (valid: " << (familyDoc.isValidClientId(familyDoc.getClientId()) ? "Yes" : "No") << ")" << endl;
-    cout << "   Clinic: " << familyDoc.getClinicName() << endl;
-    cout << "   Phone: " << familyDoc.getPhone() << endl;
-    cout << "   Postal Code: " << familyDoc.getPostalCode() << endl;
-    cout << "   Notes length: " << familyDoc.getNotes().length() << " characters" << endl;
+    cout << "   Phone: " << familyDoc.getFpPhone() << endl;
+    cout << "   Email: " << familyDoc.getFpEmail() << endl;
+    cout << "   Address Postal Code: " << familyDoc.getFpAddress().getPostalCode() << endl;
     cout << "   All data valid: " << (familyDoc.isValidData() ? "Yes" : "No") << endl;
+    
+    // Test stream operators
+    cout << "\n   Testing stream operators:" << endl;
+    cout << familyDoc << endl;
 
     logMessage("SUCCESS", "All class tests completed successfully");
 }
