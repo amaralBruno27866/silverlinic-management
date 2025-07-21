@@ -1,9 +1,9 @@
-#include "Address.h"
-#include "DateTime.h"
-#include "Assessor.h"
-#include "Client.h"
-#include "CaseProfile.h"
-#include "Utils.h"
+#include "core/Address.h"
+#include "core/DateTime.h"
+#include "core/Assessor.h"
+#include "core/Client.h"
+#include "core/CaseProfile.h"
+#include "core/Utils.h"
 #include "forms/FamilyPhysician.h"
 #include <iostream>
 #include <sqlite3.h>
