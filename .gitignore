@@ -55,7 +55,10 @@ libs/downloaded/
 
 # Test files
 test_*
-!test_utils.cpp
+!tests/
+
+# Settings directory (optional - uncomment if you don't want to track settings)
+# settings/
 
 # Backup files
 *.backup

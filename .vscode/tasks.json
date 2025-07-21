@@ -1,24 +1,215 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Build C++ Project",
-			"type": "shell",
-			"command": "g++",
-			"args": [
-				"-std=c++17",
-				"-I${workspaceFolder}/include",
-				"-I/usr/include/c++/13",
-				"-I/usr/include/x86_64-linux-gnu/c++/13",
-				"${workspaceFolder}/src/*.cpp",
-				"-o",
-				"${workspaceFolder}/build/SilverClinic",
-				"-lsqlite3"
-			],
-			"group": "build",
-			"problemMatcher": [
-				"$gcc"
-			]
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-S",
+                ".",
+                "-B",
+                "build_test"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Configure CMake project for testing"
+        },
+        {
+            "label": "CMake: Build All",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build_test",
+                "--config",
+                "Debug"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": "CMake: Configure",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build all targets including tests"
+        },
+        {
+            "label": "Run All Tests",
+            "type": "shell",
+            "command": "${workspaceFolder}/run_tests.sh",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run complete test suite"
+        },
+        {
+            "label": "Test: DateTime",
+            "type": "shell",
+            "command": "./build_test/test_datetime",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run DateTime unit tests"
+        },
+        {
+            "label": "Test: Address",
+            "type": "shell",
+            "command": "./build_test/test_address",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run Address unit tests"
+        },
+        {
+            "label": "Test: Assessor",
+            "type": "shell",
+            "command": "./build_test/test_assessor",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run Assessor unit tests"
+        },
+        {
+            "label": "Test: Utils",
+            "type": "shell",
+            "command": "./build_test/test_utils",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run Utils unit tests"
+        },
+        {
+            "label": "Test: Core Classes",
+            "type": "shell",
+            "command": "./build_test/test_core_classes",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run Core Classes unit tests"
+        },
+        {
+            "label": "Test: FamilyPhysician",
+            "type": "shell",
+            "command": "./build_test/test_family_physician",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run FamilyPhysician unit tests"
+        },
+        {
+            "label": "Test: Database Integration",
+            "type": "shell",
+            "command": "./build_test/test_database",
+            "group": "test",
+            "dependsOn": "CMake: Build All",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Run Database integration tests"
+        },
+        {
+            "label": "Build C++ Project (Legacy)",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-I${workspaceFolder}/include",
+                "-I/usr/include/c++/13",
+                "-I/usr/include/x86_64-linux-gnu/c++/13",
+                "${workspaceFolder}/src/*.cpp",
+                "-o",
+                "${workspaceFolder}/build/SilverClinic",
+                "-lsqlite3"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Legacy build task for main application"
+        }
+    ]
 }

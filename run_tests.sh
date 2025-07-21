@@ -91,6 +91,26 @@ if run_test "Database Integration Tests" "$BUILD_DIR/test_database"; then
 fi
 ((total_tests++))
 
+# Individual Unit Tests
+echo -e "\n${BLUE}🔬 INDIVIDUAL UNIT TESTS${NC}"
+echo "========================="
+
+# List of individual test executables (now built by CMake)
+INDIVIDUAL_TESTS=(
+    "test_datetime"
+    "test_address" 
+    "test_assessor"
+    "test_utils"
+)
+
+# Run each individual unit test
+for test in "${INDIVIDUAL_TESTS[@]}"; do
+    if run_test "$test Individual Tests" "$BUILD_DIR/$test"; then
+        ((passed_tests++))
+    fi
+    ((total_tests++))
+done
+
 # Summary
 echo -e "\n${BLUE}📊 TEST SUMMARY${NC}"
 echo "================"
