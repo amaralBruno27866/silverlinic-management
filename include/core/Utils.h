@@ -14,6 +14,7 @@ namespace utils {
     constexpr int DEFAULT_FORM_HEIGHT = 620;
 
     string toUpper(const string& str);
+    string removeAccents(const string& str);
     string trim(const string& str);
     string removeSpaces(const string& str);
     bool isValidEmail(const string& email);

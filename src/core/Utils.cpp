@@ -19,6 +19,37 @@ namespace utils {
 		return result;
 	}
 
+	std::string removeAccents(const std::string& str)
+	{
+		std::string result = str;
+		
+		// Map of accented characters to their non-accented equivalents
+		const std::vector<std::pair<std::string, char>> accentMap = {
+			{"À", 'A'}, {"Á", 'A'}, {"Â", 'A'}, {"Ã", 'A'}, {"Ä", 'A'}, {"Å", 'A'},
+			{"à", 'A'}, {"á", 'A'}, {"â", 'A'}, {"ã", 'A'}, {"ä", 'A'}, {"å", 'A'},
+			{"È", 'E'}, {"É", 'E'}, {"Ê", 'E'}, {"Ë", 'E'},
+			{"è", 'E'}, {"é", 'E'}, {"ê", 'E'}, {"ë", 'E'},
+			{"Ì", 'I'}, {"Í", 'I'}, {"Î", 'I'}, {"Ï", 'I'},
+			{"ì", 'I'}, {"í", 'I'}, {"î", 'I'}, {"ï", 'I'},
+			{"Ò", 'O'}, {"Ó", 'O'}, {"Ô", 'O'}, {"Õ", 'O'}, {"Ö", 'O'},
+			{"ò", 'O'}, {"ó", 'O'}, {"ô", 'O'}, {"õ", 'O'}, {"ö", 'O'},
+			{"Ù", 'U'}, {"Ú", 'U'}, {"Û", 'U'}, {"Ü", 'U'},
+			{"ù", 'U'}, {"ú", 'U'}, {"û", 'U'}, {"ü", 'U'},
+			{"Ç", 'C'}, {"ç", 'C'},
+			{"Ñ", 'N'}, {"ñ", 'N'}
+		};
+		
+		for (const auto& pair : accentMap) {
+			size_t pos = 0;
+			while ((pos = result.find(pair.first, pos)) != std::string::npos) {
+				result.replace(pos, pair.first.length(), 1, pair.second);
+				pos += 1;
+			}
+		}
+		
+		return result;
+	}
+
 	std::string trim(const std::string& str)
 	{
 		auto start = str.begin();
@@ -354,18 +385,21 @@ namespace utils {
 
 	string normalizeName(const string& name) {
 		string normalized = trim(name);
+		normalized = removeAccents(normalized);
 		normalized = toUpper(normalized);
 		return normalized;
 	}
 
 	string normalizeCity(const string& city) {
 		string normalized = trim(city);
+		normalized = removeAccents(normalized);
 		normalized = toUpper(normalized);
 		return normalized;
 	}
 
 	string normalizeAddress(const string& address) {
 		string normalized = trim(address);
+		normalized = removeAccents(normalized);
 		normalized = toUpper(normalized);
 		return normalized;
 	}

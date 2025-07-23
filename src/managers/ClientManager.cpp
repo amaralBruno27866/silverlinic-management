@@ -1,4 +1,4 @@
-#include "managers/AssessorManager.h"
+#include "managers/ClientManager.h"
 #include "core/Utils.h"
 #include <iostream>
 #include <sstream>
@@ -6,7 +6,7 @@
 using namespace std;
 using namespace SilverClinic;
 
-AssessorManager::AssessorManager(sqlite3* database) : m_db(database) {
+ClientManager::ClientManager(sqlite3* database) : m_db(database) {
     if (!m_db) {
         throw invalid_argument("Database connection cannot be null");
     }
@@ -14,15 +14,15 @@ AssessorManager::AssessorManager(sqlite3* database) : m_db(database) {
 
 // CRUD Operations Implementation
 
-bool AssessorManager::create(const Assessor& assessor) {
-    if (!validateAssessor(assessor)) {
-        utils::logMessage("ERROR", "AssessorManager::create - Invalid assessor data");
+bool ClientManager::create(const Client& client) {
+    if (!validateClient(client)) {
+        utils::logMessage("ERROR", "ClientManager::create - Invalid client data");
         return false;
     }
     
     const string sql = R"(
-        INSERT INTO assessor (id, firstname, lastname, phone, email, created_at, modified_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO client (id, firstname, lastname, phone, email, date_of_birth, created_at, modified_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     )";
     
     sqlite3_stmt* stmt;
@@ -32,13 +32,14 @@ bool AssessorManager::create(const Assessor& assessor) {
     }
     
     // Bind parameters
-    sqlite3_bind_int(stmt, 1, assessor.getAssessorId());
-    sqlite3_bind_text(stmt, 2, assessor.getFirstName().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 3, assessor.getLastName().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 4, assessor.getPhone().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 5, assessor.getEmail().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 6, assessor.getCreatedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 7, assessor.getUpdatedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 1, client.getClientId());
+    sqlite3_bind_text(stmt, 2, client.getFirstName().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, client.getLastName().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, client.getPhone().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 5, client.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, client.getDateOfBirth().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 7, client.getCreatedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 8, client.getUpdatedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
     
     int result = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
@@ -48,44 +49,44 @@ bool AssessorManager::create(const Assessor& assessor) {
         return false;
     }
     
-    utils::logMessage("INFO", "Assessor created successfully with ID: " + to_string(assessor.getAssessorId()));
+    utils::logMessage("INFO", "Client created successfully with ID: " + utils::toString(client.getClientId()));
     return true;
 }
 
-vector<Assessor> AssessorManager::readAll() const {
-    vector<Assessor> assessors;
+vector<Client> ClientManager::readAll() const {
+    vector<Client> clients;
     
     const string sql = R"(
-        SELECT a.id, a.firstname, a.lastname, a.phone, a.email, a.created_at, a.modified_at,
+        SELECT c.id, c.firstname, c.lastname, c.phone, c.email, c.date_of_birth, c.created_at, c.modified_at,
                addr.id as addr_id, addr.street, addr.city, addr.province, addr.postal_code,
                addr.created_at as addr_created, addr.modified_at as addr_modified
-        FROM assessor a
-        LEFT JOIN address addr ON a.id = addr.user_key
-        ORDER BY a.lastname, a.firstname
+        FROM client c
+        LEFT JOIN address addr ON c.id = addr.user_key
+        ORDER BY c.lastname, c.firstname
     )";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         logDatabaseError("prepare readAll statement");
-        return assessors;
+        return clients;
     }
     
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        assessors.push_back(createAssessorFromRow(stmt));
+        clients.push_back(createClientFromRow(stmt));
     }
     
     sqlite3_finalize(stmt);
-    return assessors;
+    return clients;
 }
 
-optional<Assessor> AssessorManager::readById(int assessorId) const {
+optional<Client> ClientManager::readById(int clientId) const {
     const string sql = R"(
-        SELECT a.id, a.firstname, a.lastname, a.phone, a.email, a.created_at, a.modified_at,
+        SELECT c.id, c.firstname, c.lastname, c.phone, c.email, c.date_of_birth, c.created_at, c.modified_at,
                addr.id as addr_id, addr.street, addr.city, addr.province, addr.postal_code,
                addr.created_at as addr_created, addr.modified_at as addr_modified
-        FROM assessor a
-        LEFT JOIN address addr ON a.id = addr.user_key
-        WHERE a.id = ?
+        FROM client c
+        LEFT JOIN address addr ON c.id = addr.user_key
+        WHERE c.id = ?
     )";
     
     sqlite3_stmt* stmt;
@@ -94,31 +95,31 @@ optional<Assessor> AssessorManager::readById(int assessorId) const {
         return nullopt;
     }
     
-    sqlite3_bind_int(stmt, 1, assessorId);
+    sqlite3_bind_int(stmt, 1, clientId);
     
-    optional<Assessor> result = nullopt;
+    optional<Client> result = nullopt;
     if (sqlite3_step(stmt) == SQLITE_ROW) {
-        result = createAssessorFromRow(stmt);
+        result = createClientFromRow(stmt);
     }
     
     sqlite3_finalize(stmt);
     return result;
 }
 
-bool AssessorManager::update(const Assessor& assessor) {
-    if (!validateAssessor(assessor)) {
-        utils::logMessage("ERROR", "AssessorManager::update - Invalid assessor data");
+bool ClientManager::update(const Client& client) {
+    if (!validateClient(client)) {
+        utils::logMessage("ERROR", "ClientManager::update - Invalid client data");
         return false;
     }
     
-    if (!exists(assessor.getAssessorId())) {
-        utils::logMessage("ERROR", "AssessorManager::update - Assessor not found with ID: " + to_string(assessor.getAssessorId()));
+    if (!exists(client.getClientId())) {
+        utils::logMessage("ERROR", "ClientManager::update - Client not found with ID: " + utils::toString(client.getClientId()));
         return false;
     }
     
     const string sql = R"(
-        UPDATE assessor 
-        SET firstname = ?, lastname = ?, phone = ?, email = ?, modified_at = ?
+        UPDATE client 
+        SET firstname = ?, lastname = ?, phone = ?, email = ?, date_of_birth = ?, modified_at = ?
         WHERE id = ?
     )";
     
@@ -129,12 +130,13 @@ bool AssessorManager::update(const Assessor& assessor) {
     }
     
     // Bind parameters
-    sqlite3_bind_text(stmt, 1, assessor.getFirstName().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, assessor.getLastName().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 3, assessor.getPhone().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 4, assessor.getEmail().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 5, DateTime::now().toString().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(stmt, 6, assessor.getAssessorId());
+    sqlite3_bind_text(stmt, 1, client.getFirstName().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, client.getLastName().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, client.getPhone().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, client.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 5, client.getDateOfBirth().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, DateTime::now().toString().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 7, client.getClientId());
     
     int result = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
@@ -144,22 +146,22 @@ bool AssessorManager::update(const Assessor& assessor) {
         return false;
     }
     
-    utils::logMessage("INFO", "Assessor updated successfully with ID: " + to_string(assessor.getAssessorId()));
+    utils::logMessage("INFO", "Client updated successfully with ID: " + utils::toString(client.getClientId()));
     return true;
 }
 
-bool AssessorManager::deleteById(int assessorId) {
-    if (!exists(assessorId)) {
-        utils::logMessage("ERROR", "AssessorManager::deleteById - Assessor not found with ID: " + to_string(assessorId));
+bool ClientManager::deleteById(int clientId) {
+    if (!exists(clientId)) {
+        utils::logMessage("ERROR", "ClientManager::deleteById - Client not found with ID: " + utils::toString(clientId));
         return false;
     }
     
-    if (!canDelete(assessorId)) {
-        utils::logMessage("ERROR", "AssessorManager::deleteById - Cannot delete assessor with associated cases. ID: " + to_string(assessorId));
+    if (!canDelete(clientId)) {
+        utils::logMessage("ERROR", "ClientManager::deleteById - Cannot delete client with associated cases. ID: " + utils::toString(clientId));
         return false;
     }
     
-    const string sql = "DELETE FROM assessor WHERE id = ?";
+    const string sql = "DELETE FROM client WHERE id = ?";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -167,7 +169,7 @@ bool AssessorManager::deleteById(int assessorId) {
         return false;
     }
     
-    sqlite3_bind_int(stmt, 1, assessorId);
+    sqlite3_bind_int(stmt, 1, clientId);
     
     int result = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
@@ -177,14 +179,14 @@ bool AssessorManager::deleteById(int assessorId) {
         return false;
     }
     
-    utils::logMessage("INFO", "Assessor deleted successfully with ID: " + to_string(assessorId));
+    utils::logMessage("INFO", "Client deleted successfully with ID: " + utils::toString(clientId));
     return true;
 }
 
 // Utility Methods Implementation
 
-bool AssessorManager::exists(int assessorId) const {
-    const string sql = "SELECT COUNT(*) FROM assessor WHERE id = ?";
+bool ClientManager::exists(int clientId) const {
+    const string sql = "SELECT COUNT(*) FROM client WHERE id = ?";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -192,7 +194,7 @@ bool AssessorManager::exists(int assessorId) const {
         return false;
     }
     
-    sqlite3_bind_int(stmt, 1, assessorId);
+    sqlite3_bind_int(stmt, 1, clientId);
     
     bool exists = false;
     if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -203,8 +205,8 @@ bool AssessorManager::exists(int assessorId) const {
     return exists;
 }
 
-int AssessorManager::getCount() const {
-    const string sql = "SELECT COUNT(*) FROM assessor";
+int ClientManager::getCount() const {
+    const string sql = "SELECT COUNT(*) FROM client";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -221,13 +223,13 @@ int AssessorManager::getCount() const {
     return count;
 }
 
-vector<CaseProfile> AssessorManager::getCasesByAssessorId(int assessorId) const {
+vector<CaseProfile> ClientManager::getCasesByClientId(int clientId) const {
     vector<CaseProfile> cases;
     
     const string sql = R"(
         SELECT id, client_id, assessor_id, status, notes, created_at, closed_at, modified_at
         FROM case_profile
-        WHERE assessor_id = ?
+        WHERE client_id = ?
         ORDER BY created_at DESC
     )";
     
@@ -237,7 +239,7 @@ vector<CaseProfile> AssessorManager::getCasesByAssessorId(int assessorId) const 
         return cases;
     }
     
-    sqlite3_bind_int(stmt, 1, assessorId);
+    sqlite3_bind_int(stmt, 1, clientId);
     
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         CaseProfile caseProfile;
@@ -267,45 +269,45 @@ vector<CaseProfile> AssessorManager::getCasesByAssessorId(int assessorId) const 
     return cases;
 }
 
-vector<Assessor> AssessorManager::searchByName(const string& searchTerm) const {
-    vector<Assessor> assessors;
+vector<Client> ClientManager::searchByName(const string& searchTerm) const {
+    vector<Client> clients;
     
     const string sql = R"(
-        SELECT a.id, a.firstname, a.lastname, a.phone, a.email, a.created_at, a.modified_at,
+        SELECT c.id, c.firstname, c.lastname, c.phone, c.email, c.date_of_birth, c.created_at, c.modified_at,
                addr.id as addr_id, addr.street, addr.city, addr.province, addr.postal_code,
                addr.created_at as addr_created, addr.modified_at as addr_modified
-        FROM assessor a
-        LEFT JOIN address addr ON a.id = addr.user_key
-        WHERE a.firstname LIKE ? OR a.lastname LIKE ?
-        ORDER BY a.lastname, a.firstname
+        FROM client c
+        LEFT JOIN address addr ON c.id = addr.user_key
+        WHERE c.firstname LIKE ? OR c.lastname LIKE ?
+        ORDER BY c.lastname, c.firstname
     )";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         logDatabaseError("prepare searchByName statement");
-        return assessors;
+        return clients;
     }
     
     string searchPattern = "%" + searchTerm + "%";
-    sqlite3_bind_text(stmt, 1, searchPattern.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, searchPattern.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 1, searchPattern.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, searchPattern.c_str(), -1, SQLITE_STATIC);
     
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        assessors.push_back(createAssessorFromRow(stmt));
+        clients.push_back(createClientFromRow(stmt));
     }
     
     sqlite3_finalize(stmt);
-    return assessors;
+    return clients;
 }
 
-optional<Assessor> AssessorManager::findByEmail(const string& email) const {
+optional<Client> ClientManager::findByEmail(const string& email) const {
     const string sql = R"(
-        SELECT a.id, a.firstname, a.lastname, a.phone, a.email, a.created_at, a.modified_at,
+        SELECT c.id, c.firstname, c.lastname, c.phone, c.email, c.date_of_birth, c.created_at, c.modified_at,
                addr.id as addr_id, addr.street, addr.city, addr.province, addr.postal_code,
                addr.created_at as addr_created, addr.modified_at as addr_modified
-        FROM assessor a
-        LEFT JOIN address addr ON a.id = addr.user_key
-        WHERE a.email = ?
+        FROM client c
+        LEFT JOIN address addr ON c.id = addr.user_key
+        WHERE c.email = ?
     )";
     
     sqlite3_stmt* stmt;
@@ -314,89 +316,141 @@ optional<Assessor> AssessorManager::findByEmail(const string& email) const {
         return nullopt;
     }
     
-    sqlite3_bind_text(stmt, 1, email.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 1, email.c_str(), -1, SQLITE_STATIC);
     
-    optional<Assessor> result = nullopt;
+    optional<Client> result = nullopt;
     if (sqlite3_step(stmt) == SQLITE_ROW) {
-        result = createAssessorFromRow(stmt);
+        result = createClientFromRow(stmt);
     }
     
     sqlite3_finalize(stmt);
     return result;
 }
 
-vector<Assessor> AssessorManager::readWithPagination(int limit, int offset) const {
-    vector<Assessor> assessors;
+vector<Client> ClientManager::findByDateOfBirth(const string& dateOfBirth) const {
+    vector<Client> clients;
     
     const string sql = R"(
-        SELECT a.id, a.firstname, a.lastname, a.phone, a.email, a.created_at, a.modified_at,
+        SELECT c.id, c.firstname, c.lastname, c.phone, c.email, c.date_of_birth, c.created_at, c.modified_at,
                addr.id as addr_id, addr.street, addr.city, addr.province, addr.postal_code,
                addr.created_at as addr_created, addr.modified_at as addr_modified
-        FROM assessor a
-        LEFT JOIN address addr ON a.id = addr.user_key
-        ORDER BY a.lastname, a.firstname
+        FROM client c
+        LEFT JOIN address addr ON c.id = addr.user_key
+        WHERE c.date_of_birth = ?
+        ORDER BY c.lastname, c.firstname
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare findByDateOfBirth statement");
+        return clients;
+    }
+    
+    sqlite3_bind_text(stmt, 1, dateOfBirth.c_str(), -1, SQLITE_STATIC);
+    
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        clients.push_back(createClientFromRow(stmt));
+    }
+    
+    sqlite3_finalize(stmt);
+    return clients;
+}
+
+vector<Client> ClientManager::getClientsByAgeRange(int minAge, int maxAge) const {
+    vector<Client> clients;
+    vector<Client> allClients = readAll();
+    
+    for (const auto& client : allClients) {
+        int age = client.getAge();
+        if (age >= minAge && age <= maxAge) {
+            clients.push_back(client);
+        }
+    }
+    
+    return clients;
+}
+
+vector<Client> ClientManager::readWithPagination(int limit, int offset) const {
+    vector<Client> clients;
+    
+    const string sql = R"(
+        SELECT c.id, c.firstname, c.lastname, c.phone, c.email, c.date_of_birth, c.created_at, c.modified_at,
+               addr.id as addr_id, addr.street, addr.city, addr.province, addr.postal_code,
+               addr.created_at as addr_created, addr.modified_at as addr_modified
+        FROM client c
+        LEFT JOIN address addr ON c.id = addr.user_key
+        ORDER BY c.lastname, c.firstname
         LIMIT ? OFFSET ?
     )";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         logDatabaseError("prepare readWithPagination statement");
-        return assessors;
+        return clients;
     }
     
     sqlite3_bind_int(stmt, 1, limit);
     sqlite3_bind_int(stmt, 2, offset);
     
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        assessors.push_back(createAssessorFromRow(stmt));
+        clients.push_back(createClientFromRow(stmt));
     }
     
     sqlite3_finalize(stmt);
-    return assessors;
+    return clients;
 }
 
 // Validation Methods
 
-bool AssessorManager::validateAssessor(const Assessor& assessor) const {
+bool ClientManager::validateClient(const Client& client) const {
     // Check required fields
-    if (assessor.getFirstName().empty()) {
+    if (client.getFirstName().empty()) {
         utils::logMessage("ERROR", "Validation failed: First name is required");
         return false;
     }
     
-    if (assessor.getLastName().empty()) {
+    if (client.getLastName().empty()) {
         utils::logMessage("ERROR", "Validation failed: Last name is required");
         return false;
     }
     
     // Use Utils functions for validation
-    if (!utils::isValidEmail(assessor.getEmail())) {
-        utils::logMessage("ERROR", "Validation failed: Invalid email format: " + assessor.getEmail());
+    if (!utils::isValidEmail(client.getEmail())) {
+        utils::logMessage("ERROR", "Validation failed: Invalid email format: " + client.getEmail());
         return false;
     }
     
-    if (!utils::isValidCanadianPhoneNumber(assessor.getPhone())) {
-        utils::logMessage("ERROR", "Validation failed: Invalid Canadian phone format: " + assessor.getPhone());
+    if (!utils::isValidCanadianPhoneNumber(client.getPhone())) {
+        utils::logMessage("ERROR", "Validation failed: Invalid Canadian phone format: " + client.getPhone());
         return false;
     }
     
     // Check ID range
-    if (assessor.getAssessorId() < Assessor::ID_PREFIX) {
-        utils::logMessage("ERROR", "Validation failed: Invalid assessor ID range: " + utils::toString(assessor.getAssessorId()));
+    if (client.getClientId() < Client::ID_PREFIX) {
+        utils::logMessage("ERROR", "Validation failed: Invalid client ID range: " + utils::toString(client.getClientId()));
         return false;
     }
     
     // Check names are not just numeric or contain invalid characters
-    if (utils::isNumeric(assessor.getFirstName()) || utils::isNumeric(assessor.getLastName())) {
+    if (utils::isNumeric(client.getFirstName()) || utils::isNumeric(client.getLastName())) {
         utils::logMessage("ERROR", "Validation failed: Names cannot be purely numeric");
         return false;
+    }
+    
+    // Validate date of birth if provided
+    if (!client.getDateOfBirth().empty()) {
+        // Basic date format validation (you might want to enhance this)
+        if (client.getDateOfBirth().length() < 8) {
+            utils::logMessage("ERROR", "Validation failed: Invalid date of birth format");
+            return false;
+        }
     }
     
     return true;
 }
 
-bool AssessorManager::canDelete(int assessorId) const {
-    const string sql = "SELECT COUNT(*) FROM case_profile WHERE assessor_id = ?";
+bool ClientManager::canDelete(int clientId) const {
+    const string sql = "SELECT COUNT(*) FROM case_profile WHERE client_id = ?";
     
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -404,7 +458,7 @@ bool AssessorManager::canDelete(int assessorId) const {
         return false;
     }
     
-    sqlite3_bind_int(stmt, 1, assessorId);
+    sqlite3_bind_int(stmt, 1, clientId);
     
     bool canDelete = true;
     if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -418,38 +472,41 @@ bool AssessorManager::canDelete(int assessorId) const {
 
 // Helper Methods
 
-Assessor AssessorManager::createAssessorFromRow(sqlite3_stmt* stmt) const {
-    // Extract assessor data with NULL safety
+Client ClientManager::createClientFromRow(sqlite3_stmt* stmt) const {
+    // Extract client data with NULL safety
     int id = sqlite3_column_int(stmt, 0);
     
     const char* firstNamePtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-    string firstName = firstNamePtr ? firstNamePtr : "";
+    string firstName = firstNamePtr ? utils::normalizeName(firstNamePtr) : "";
     
     const char* lastNamePtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-    string lastName = lastNamePtr ? lastNamePtr : "";
+    string lastName = lastNamePtr ? utils::normalizeName(lastNamePtr) : "";
     
     const char* phonePtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-    string phone = phonePtr ? phonePtr : "";
+    string phone = phonePtr ? utils::normalizePhoneNumber(phonePtr) : "";
     
     const char* emailPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
-    string email = emailPtr ? emailPtr : "";
+    string email = emailPtr ? utils::normalizeForDatabase(emailPtr) : "";
     
-    const char* createdAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+    const char* dateOfBirthPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+    string dateOfBirth = dateOfBirthPtr ? dateOfBirthPtr : "";
+    
+    const char* createdAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6));
     DateTime createdAt = createdAtPtr ? DateTime::fromString(createdAtPtr) : DateTime();
     
-    const char* modifiedAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6));
+    const char* modifiedAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
     DateTime modifiedAt = modifiedAtPtr ? DateTime::fromString(modifiedAtPtr) : DateTime();
     
     // Extract address data (if exists)
     Address address;
-    if (sqlite3_column_type(stmt, 7) != SQLITE_NULL) {
-        address = createAddressFromRow(stmt, 7);
+    if (sqlite3_column_type(stmt, 8) != SQLITE_NULL) {
+        address = createAddressFromRow(stmt, 8);
     }
     
-    return Assessor(id, firstName, lastName, email, phone, address, createdAt, modifiedAt);
+    return Client(id, firstName, lastName, email, phone, dateOfBirth, address, createdAt, modifiedAt);
 }
 
-Address AssessorManager::createAddressFromRow(sqlite3_stmt* stmt, int startColumn) const {
+Address ClientManager::createAddressFromRow(sqlite3_stmt* stmt, int startColumn) const {
     Address address;
     
     if (sqlite3_column_type(stmt, startColumn) != SQLITE_NULL) {
@@ -479,7 +536,7 @@ Address AssessorManager::createAddressFromRow(sqlite3_stmt* stmt, int startColum
     return address;
 }
 
-void AssessorManager::logDatabaseError(const string& operation) const {
+void ClientManager::logDatabaseError(const string& operation) const {
     string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
     utils::logMessage("ERROR", errorMsg);
 }

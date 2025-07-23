@@ -4,6 +4,7 @@
 #include "core/Client.h"
 #include "core/CaseProfile.h"
 #include "core/Utils.h"
+#include "core/DatabaseConfig.h"
 #include "forms/FamilyPhysician.h"
 #include <iostream>
 #include <sqlite3.h>
@@ -270,9 +271,12 @@ int main() {
     cout << "This system helps manage clinical assessments and client data." << endl;
     
     try {
+        // Ensure data directories exist
+        DatabaseConfig::ensureDirectoriesExist();
+        
         // Setup and open SQLite database
         sqlite3* db;
-        int result = sqlite3_open("clinic.db", &db);
+        int result = sqlite3_open(DatabaseConfig::MAIN_DATABASE_PATH.c_str(), &db);
         
         if (result != SQLITE_OK) {
             cerr << "Error opening database: " << sqlite3_errmsg(db) << endl;

@@ -67,6 +67,12 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/managers/ClientManager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/managers/ClientManager.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/managers/ClientManager.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/managers/ClientManager.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/main.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
   "output": "CMakeFiles/SilverClinic.dir/src/main.cpp.o"
@@ -136,6 +142,12 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_assessor_manager.dir/tests/unit/test_assessor_manager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor_manager.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor_manager.cpp",
   "output": "CMakeFiles/test_assessor_manager.dir/tests/unit/test_assessor_manager.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_client_manager.dir/tests/unit/test_client_manager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_client_manager.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_client_manager.cpp",
+  "output": "CMakeFiles/test_client_manager.dir/tests/unit/test_client_manager.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",

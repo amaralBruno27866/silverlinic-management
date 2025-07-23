@@ -28,9 +28,17 @@ Makefile
 *.tlog/
 
 # Database files (optional - uncomment if you don't want to track the database)
-# *.db
-# *.sqlite
-# *.sqlite3
+*.db
+*.sqlite
+*.sqlite3
+
+# Test databases
+data/test/
+data/demo.db
+
+# Keep the data directory structure but ignore databases
+data/*.db
+!data/.gitkeep
 
 # VS Code settings (optional - keep if you want to share editor settings)
 # .vscode/

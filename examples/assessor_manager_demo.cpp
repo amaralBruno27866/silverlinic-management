@@ -6,6 +6,7 @@
 #include "core/Address.h"
 #include "core/DateTime.h"
 #include "core/Utils.h"
+#include "core/DatabaseConfig.h"
 
 using namespace std;
 using namespace SilverClinic;
@@ -15,7 +16,10 @@ sqlite3* db = nullptr;
 void initializeDatabase() {
     cout << "🔧 Initializing database..." << endl;
     
-    if (sqlite3_open("assessor_demo.db", &db) != SQLITE_OK) {
+    // Ensure directories exist
+    DatabaseConfig::ensureDirectoriesExist();
+    
+    if (sqlite3_open(DatabaseConfig::DEMO_DATABASE_PATH.c_str(), &db) != SQLITE_OK) {
         cerr << "Failed to open database: " << sqlite3_errmsg(db) << endl;
         exit(1);
     }
