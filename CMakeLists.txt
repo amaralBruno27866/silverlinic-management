@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 include_directories(include/core)
 include_directories(include/forms)
+include_directories(include/managers)
 
 # Source files - recursively find all .cpp files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -54,6 +55,13 @@ target_link_libraries(test_legal_representative ${PROJECT_NAME}_lib)
 
 add_executable(test_insurance_company tests/unit/test_insurance_company.cpp)
 target_link_libraries(test_insurance_company ${PROJECT_NAME}_lib)
+
+add_executable(test_assessor_manager tests/unit/test_assessor_manager.cpp)
+target_link_libraries(test_assessor_manager ${PROJECT_NAME}_lib)
+
+# Example executables
+add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
+target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
 
 # For Windows, we'll download SQLite3 or use vcpkg
 if(WIN32)

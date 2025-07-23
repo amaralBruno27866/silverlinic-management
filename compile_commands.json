@@ -1,128 +1,146 @@
 [
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Assessor.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Assessor.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Assessor.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Assessor.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Assessor.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Assessor.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/CaseProfile.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/CaseProfile.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/CaseProfile.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/CaseProfile.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/CaseProfile.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/CaseProfile.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Client.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Client.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Client.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Client.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Client.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Client.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/DateTime.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/DateTime.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/DateTime.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/DateTime.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/DateTime.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/DateTime.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Utils.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Utils.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Utils.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Utils.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/FamilyPhysician.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/FamilyPhysician.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/FamilyPhysician.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/FamilyPhysician.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/FamilyPhysician.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/FamilyPhysician.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/InsuranceCompany.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/InsuranceCompany.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/InsuranceCompany.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/InsuranceCompany.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/InsuranceCompany.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/InsuranceCompany.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/LegalRepresentative.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/LegalRepresentative.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/LegalRepresentative.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/LegalRepresentative.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/LegalRepresentative.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/LegalRepresentative.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/main.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/managers/AssessorManager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/managers/AssessorManager.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/managers/AssessorManager.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/managers/AssessorManager.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/main.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
   "output": "CMakeFiles/SilverClinic.dir/src/main.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_core_classes.dir/tests/unit/test_core_classes.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_core_classes.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_core_classes.dir/tests/unit/test_core_classes.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_core_classes.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_core_classes.cpp",
   "output": "CMakeFiles/test_core_classes.dir/tests/unit/test_core_classes.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_family_physician.dir/tests/unit/test_family_physician.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_family_physician.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_family_physician.dir/tests/unit/test_family_physician.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_family_physician.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_family_physician.cpp",
   "output": "CMakeFiles/test_family_physician.dir/tests/unit/test_family_physician.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_database.dir/tests/integration/test_database.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_database.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_database.dir/tests/integration/test_database.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_database.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_database.cpp",
   "output": "CMakeFiles/test_database.dir/tests/integration/test_database.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_datetime.dir/tests/unit/test_datetime.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_datetime.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_datetime.dir/tests/unit/test_datetime.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_datetime.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_datetime.cpp",
   "output": "CMakeFiles/test_datetime.dir/tests/unit/test_datetime.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_address.dir/tests/unit/test_address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_address.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_address.dir/tests/unit/test_address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_address.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_address.cpp",
   "output": "CMakeFiles/test_address.dir/tests/unit/test_address.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_assessor.dir/tests/unit/test_assessor.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_assessor.dir/tests/unit/test_assessor.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor.cpp",
   "output": "CMakeFiles/test_assessor.dir/tests/unit/test_assessor.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_utils.dir/tests/unit/test_utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_utils.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_utils.dir/tests/unit/test_utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_utils.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_utils.cpp",
   "output": "CMakeFiles/test_utils.dir/tests/unit/test_utils.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
   "output": "CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_legal_representative.dir/tests/unit/test_legal_representative.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_legal_representative.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_legal_representative.dir/tests/unit/test_legal_representative.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_legal_representative.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_legal_representative.cpp",
   "output": "CMakeFiles/test_legal_representative.dir/tests/unit/test_legal_representative.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_insurance_company.dir/tests/unit/test_insurance_company.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_insurance_company.cpp",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_insurance_company.dir/tests/unit/test_insurance_company.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_insurance_company.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_insurance_company.cpp",
   "output": "CMakeFiles/test_insurance_company.dir/tests/unit/test_insurance_company.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/test_assessor_manager.dir/tests/unit/test_assessor_manager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor_manager.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_assessor_manager.cpp",
+  "output": "CMakeFiles/test_assessor_manager.dir/tests/unit/test_assessor_manager.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/assessor_manager_demo.dir/examples/assessor_manager_demo.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/examples/assessor_manager_demo.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/examples/assessor_manager_demo.cpp",
+  "output": "CMakeFiles/assessor_manager_demo.dir/examples/assessor_manager_demo.cpp.o"
 }
 ]
