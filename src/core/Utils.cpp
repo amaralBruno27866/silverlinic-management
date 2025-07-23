@@ -9,6 +9,7 @@
 #include <chrono>
 #include <ctime>
 
+using namespace std;
 namespace utils {
 
 	std::string toUpper(const std::string& str)

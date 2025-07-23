@@ -43,6 +43,8 @@ namespace SilverClinic {
     bool operator!=(const DateTime& other) const;
     bool operator<(const DateTime& other) const;
     bool operator<=(const DateTime& other) const;
+    bool operator>(const DateTime& other) const;
+    bool operator>=(const DateTime& other) const;
 
     // Age calculation
     int getAgeInYears() const;

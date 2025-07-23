@@ -6,7 +6,8 @@ using namespace std;
 namespace SilverClinic {
     
     // Default constructor - current time
-    DateTime::DateTime() : m_time_point(system_clock::now()) {}
+    // Default constructor - creates an invalid DateTime
+    DateTime::DateTime() : m_time_point(system_clock::time_point{}) {}
 
     // Constructor with date/time components
     DateTime::DateTime(int year, int month, int day, int hour, int minute, int second) {
@@ -29,7 +30,9 @@ namespace SilverClinic {
 
     // Static method to get current time
     DateTime DateTime::now() {
-        return DateTime();
+        DateTime result;
+        result.m_time_point = system_clock::now();
+        return result;
     }
 
     // Static method to parse string
@@ -62,36 +65,42 @@ namespace SilverClinic {
 
     // Getters
     int DateTime::getYear() const {
+        if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         return timeStruct->tm_year + 1900;
     }
 
     int DateTime::getMonth() const {
+        if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         return timeStruct->tm_mon + 1;
     }
 
     int DateTime::getDay() const {
+        if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         return timeStruct->tm_mday;
     }
 
     int DateTime::getHour() const {
+        if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         return timeStruct->tm_hour;
     }
 
     int DateTime::getMinute() const {
+        if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         return timeStruct->tm_min;
     }
 
     int DateTime::getSecond() const {
+        if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         return timeStruct->tm_sec;
@@ -99,6 +108,7 @@ namespace SilverClinic {
 
     // Formatters
     string DateTime::toString() const {
+        if (!isValid()) return "Invalid DateTime";
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         
@@ -108,6 +118,7 @@ namespace SilverClinic {
     }
 
     string DateTime::toDateString() const {
+        if (!isValid()) return "Invalid Date";
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         
@@ -117,6 +128,7 @@ namespace SilverClinic {
     }
 
     string DateTime::toTimeString() const {
+        if (!isValid()) return "Invalid Time";
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         
@@ -126,6 +138,7 @@ namespace SilverClinic {
     }
 
     string DateTime::toCanadianFormat() const {
+        if (!isValid()) return "Invalid Date";
         time_t time = system_clock::to_time_t(m_time_point);
         tm* timeStruct = localtime(&time);
         
@@ -151,8 +164,17 @@ namespace SilverClinic {
         return m_time_point <= other.m_time_point;
     }
 
+    bool DateTime::operator>(const DateTime& other) const {
+        return m_time_point > other.m_time_point;
+    }
+
+    bool DateTime::operator>=(const DateTime& other) const {
+        return m_time_point >= other.m_time_point;
+    }
+
     // Age calculation
     int DateTime::getAgeInYears() const {
+        if (!isValid()) return 0;
         auto now = system_clock::now();
         auto duration = now - m_time_point;
         auto hours = duration_cast<chrono::hours>(duration).count();
@@ -161,6 +183,7 @@ namespace SilverClinic {
     }
 
     int DateTime::getDaysFromNow() const {
+        if (!isValid()) return 0;
         auto now = system_clock::now();
         auto duration = now - m_time_point;
         auto hours = duration_cast<chrono::hours>(duration).count();
@@ -169,7 +192,8 @@ namespace SilverClinic {
 
     // Validation
     bool DateTime::isValid() const {
-        return m_time_point.time_since_epoch().count() > 0;
+        // Check if time_point is not default (epoch time)
+        return m_time_point != system_clock::time_point{};
     }
 
     bool DateTime::isValidDate(int year, int month, int day) {

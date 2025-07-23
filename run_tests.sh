@@ -2,7 +2,29 @@
 
 # Test runner script for Silver Clinic Management System
 echo "🚀 Silver Clinic Test Suite"
-echo "============================"
+echo "======echo -e "${BLUE}📊 TEST SUMMARY${NC}"
+echo "================"
+echo "Total test suites: $total_tests"
+echo -e "Passed: ${GREEN}$passed_tests ✅${NC}"
+echo -e "Failed: ${RED}$((total_tests - passed_tests)) ❌${NC}"
+
+success_rate=$(( passed_tests * 100 / total_tests ))
+echo "Success rate: $success_rate%"
+
+# Run integration tests
+echo ""
+echo -e "${BLUE}🧪 Running Integration Tests${NC}"
+echo "============================="
+./run_integration_tests.sh
+integration_result=$?
+
+if [ $passed_tests -eq $total_tests ] && [ $integration_result -eq 0 ]; then
+    echo -e "\n${GREEN}🎉 All test suites and integration tests passed!${NC}"
+    exit 0
+else
+    echo -e "\n${RED}⚠️  Some tests failed!${NC}"
+    exit 1
+fi======"
 
 # Colors for output
 RED='\033[0;31m'
@@ -103,6 +125,7 @@ INDIVIDUAL_TESTS=(
     "test_utils"
     "test_emergency_contact"
     "test_legal_representative"
+    "test_insurance_company"
 )
 
 # Run each individual unit test
