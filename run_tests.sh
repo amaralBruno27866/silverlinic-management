@@ -101,6 +101,7 @@ INDIVIDUAL_TESTS=(
     "test_address" 
     "test_assessor"
     "test_utils"
+    "test_emergency_contact"
 )
 
 # Run each individual unit test

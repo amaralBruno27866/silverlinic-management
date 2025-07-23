@@ -37,6 +37,12 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/FamilyPhysician.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/FamilyPhysician.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/FamilyPhysician.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/FamilyPhysician.cpp.o"
@@ -88,5 +94,11 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_utils.dir/tests/unit/test_utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_utils.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_utils.cpp",
   "output": "CMakeFiles/test_utils.dir/tests/unit/test_utils.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
+  "output": "CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o"
 }
 ]
