@@ -49,6 +49,12 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/LegalRepresentative.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/LegalRepresentative.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/LegalRepresentative.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/LegalRepresentative.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/SilverClinic.dir/src/main.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/main.cpp",
   "output": "CMakeFiles/SilverClinic.dir/src/main.cpp.o"
@@ -100,5 +106,11 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_emergency_contact.cpp",
   "output": "CMakeFiles/test_emergency_contact.dir/tests/unit/test_emergency_contact.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -g -std=gnu++17 -o CMakeFiles/test_legal_representative.dir/tests/unit/test_legal_representative.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_legal_representative.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_legal_representative.cpp",
+  "output": "CMakeFiles/test_legal_representative.dir/tests/unit/test_legal_representative.cpp.o"
 }
 ]

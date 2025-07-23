@@ -102,6 +102,7 @@ INDIVIDUAL_TESTS=(
     "test_assessor"
     "test_utils"
     "test_emergency_contact"
+    "test_legal_representative"
 )
 
 # Run each individual unit test
