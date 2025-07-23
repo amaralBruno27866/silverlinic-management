@@ -129,6 +129,69 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
+    // Emergency Contact form table
+    string createEmergencyContactTable = R"(
+        CREATE TABLE IF NOT EXISTS emergency_contact(
+            id INTEGER PRIMARY KEY,
+            type TEXT NOT NULL DEFAULT 'ECT',
+            client_id INTEGER NOT NULL,
+            full_name TEXT NOT NULL,
+            relationship TEXT,
+            phone TEXT,
+            alt_phone TEXT,
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (client_id) REFERENCES client(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createEmergencyContactTable, "EmergencyContact table creation")) {
+        return false;
+    }
+    
+    // Legal Representative form table
+    string createLegalRepresentativeTable = R"(
+        CREATE TABLE IF NOT EXISTS legal_representative(
+            id INTEGER PRIMARY KEY,
+            type TEXT NOT NULL DEFAULT 'LRT',
+            client_id INTEGER NOT NULL,
+            company_name TEXT NOT NULL,
+            full_name TEXT NOT NULL,
+            phone TEXT,
+            email TEXT,
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (client_id) REFERENCES client(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createLegalRepresentativeTable, "LegalRepresentative table creation")) {
+        return false;
+    }
+    
+    // Insurance Company form table
+    string createInsuranceCompanyTable = R"(
+        CREATE TABLE IF NOT EXISTS insurance_company(
+            id INTEGER PRIMARY KEY,
+            type TEXT NOT NULL DEFAULT 'ICO',
+            client_id INTEGER NOT NULL,
+            company_name TEXT NOT NULL,
+            adjuster_name TEXT NOT NULL,
+            phone TEXT,
+            email TEXT,
+            claim_number TEXT,
+            policy_number TEXT,
+            date_accident TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (client_id) REFERENCES client(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createInsuranceCompanyTable, "InsuranceCompany table creation")) {
+        return false;
+    }
+    
     logMessage("INFO", "All database tables created successfully");
     return true;
 }
