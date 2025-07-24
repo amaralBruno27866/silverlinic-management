@@ -27,21 +27,15 @@ Makefile
 *.pdb
 *.tlog/
 
-# Database files (optional - uncomment if you don't want to track the database)
-*.db
-*.sqlite
-*.sqlite3
-
-# Test databases
-data/test/
-data/demo.db
-
-# Keep the data directory structure but ignore databases
+# Database files (only runtime databases, keep test schemas)
+data/clinic.db
 data/*.db
-!data/.gitkeep
+!data/test/
+data/test/*.db
 
-# VS Code settings (optional - keep if you want to share editor settings)
-# .vscode/
+# Keep the data directory structure but ignore runtime databases
+!data/.gitkeep
+!data/pdfs/.gitkeep
 
 # System files
 .DS_Store
@@ -61,13 +55,12 @@ Thumbs.db
 # Dependencies
 libs/downloaded/
 
-# Test files
-test_*
-!tests/
-
-# Settings directory (optional - uncomment if you don't want to track settings)
-# settings/
-
 # Backup files
 *.backup
 *.bak
+
+# Keep all test files and documentation for future reference
+# tests/ - KEEP ALL TEST FILES
+# documents/ - KEEP ALL DOCUMENTATION  
+# examples/ - KEEP ALL EXAMPLES
+# web/ - KEEP ALL WEB INTERFACES
