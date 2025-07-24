@@ -4,17 +4,75 @@ project(SilverClinic)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find SQLite3
-find_library(SQLITE3_LIBRARY sqlite3)
-if(NOT SQLITE3_LIBRARY)
-    message(FATAL_ERROR "SQLite3 library not found")
-endif()
+# Windows-specific configuration
+if(WIN32)
+    # Enable static runtime for Windows
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    
+    # Add Windows-specific compile definitions
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
+    add_compile_definitions(NOMINMAX)
+    
+    # Find SQLite3 (Windows priority: vcpkg, then manual)
+    find_package(SQLite3 QUIET)
+    if(SQLite3_FOUND)
+        set(SQLITE3_LIBRARY SQLite::SQLite3)
+        message(STATUS "Found SQLite3 via vcpkg: ${SQLite3_VERSION}")
+    else()
+        # Try manual installation in libs/
+        find_library(SQLITE3_LIBRARY 
+            NAMES sqlite3 sqlite3_static
+            PATHS ${CMAKE_SOURCE_DIR}/libs
+            NO_DEFAULT_PATH)
+        find_path(SQLITE3_INCLUDE_DIR sqlite3.h
+            PATHS ${CMAKE_SOURCE_DIR}/libs
+            NO_DEFAULT_PATH)
+        
+        if(SQLITE3_LIBRARY AND SQLITE3_INCLUDE_DIR)
+            include_directories(${SQLITE3_INCLUDE_DIR})
+            message(STATUS "Found SQLite3 manually: ${SQLITE3_LIBRARY}")
+        else()
+            message(FATAL_ERROR "SQLite3 not found. Please install via vcpkg or place sqlite3.lib/sqlite3.dll in libs/")
+        endif()
+    endif()
+    
+    # Find libharu (Windows priority: vcpkg, then manual)
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(HPDF QUIET libhpdf)
+    endif()
+    
+    if(NOT HPDF_FOUND)
+        find_library(HPDF_LIBRARY 
+            NAMES hpdf libhpdf hpdfs
+            PATHS ${CMAKE_SOURCE_DIR}/libs
+            NO_DEFAULT_PATH)
+        find_path(HPDF_INCLUDE_DIR hpdf.h
+            PATHS ${CMAKE_SOURCE_DIR}/libs
+            NO_DEFAULT_PATH)
+        
+        if(HPDF_LIBRARY AND HPDF_INCLUDE_DIR)
+            include_directories(${HPDF_INCLUDE_DIR})
+            message(STATUS "Found libharu manually: ${HPDF_LIBRARY}")
+        else()
+            message(FATAL_ERROR "libharu not found. Please install via vcpkg or place libhpdf.lib in libs/")
+        endif()
+    endif()
+    
+else()
+    # Linux/Unix configuration
+    find_library(SQLITE3_LIBRARY sqlite3)
+    if(NOT SQLITE3_LIBRARY)
+        message(FATAL_ERROR "SQLite3 library not found. Install with: sudo apt-get install libsqlite3-dev")
+    endif()
 
-# Find libharu for PDF generation
-find_library(HPDF_LIBRARY hpdf)
-find_path(HPDF_INCLUDE_DIR hpdf.h)
-if(NOT HPDF_LIBRARY OR NOT HPDF_INCLUDE_DIR)
-    message(FATAL_ERROR "libharu (hpdf) library not found. Please install: sudo apt-get install libhpdf-dev")
+    find_library(HPDF_LIBRARY hpdf)
+    find_path(HPDF_INCLUDE_DIR hpdf.h)
+    if(NOT HPDF_LIBRARY OR NOT HPDF_INCLUDE_DIR)
+        message(FATAL_ERROR "libharu (hpdf) library not found. Install with: sudo apt-get install libhpdf-dev")
+    endif()
+    
+    include_directories(${HPDF_INCLUDE_DIR})
 endif()
 
 # Include directories
@@ -94,121 +152,23 @@ target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
 add_executable(beck_anxiety_inventory_demo examples/beck_anxiety_inventory_demo.cpp)
 target_link_libraries(beck_anxiety_inventory_demo ${PROJECT_NAME}_lib)
 
-# For Windows, we'll download SQLite3 or use vcpkg
-if(WIN32)
-    # Try to find SQLite3 using find_package first
-    find_package(SQLite3 QUIET)
-    
-    if(SQLite3_FOUND)
-        target_link_libraries(${PROJECT_NAME}_lib SQLite::SQLite3)
-        target_link_libraries(${PROJECT_NAME} SQLite::SQLite3)
-        target_link_libraries(test_core_classes SQLite::SQLite3)
-        target_link_libraries(test_family_physician SQLite::SQLite3)
-        target_link_libraries(test_database SQLite::SQLite3)
-        target_link_libraries(test_datetime SQLite::SQLite3)
-        target_link_libraries(test_address SQLite::SQLite3)
-        target_link_libraries(test_assessor SQLite::SQLite3)
-        target_link_libraries(test_utils SQLite::SQLite3)
-        target_link_libraries(test_emergency_contact SQLite::SQLite3)
-        target_link_libraries(test_legal_representative SQLite::SQLite3)
-        target_link_libraries(test_insurance_company SQLite::SQLite3)
-        target_link_libraries(test_assessor_manager SQLite::SQLite3)
-        target_link_libraries(test_client_manager SQLite::SQLite3)
-        message(STATUS "Found SQLite3: ${SQLite3_LIBRARIES}")
-    else()
-        # If not found, we'll handle it manually
-        message(STATUS "SQLite3 not found via find_package. You can:")
-        message(STATUS "1. Install vcpkg and run: vcpkg install sqlite3")
-        message(STATUS "2. Or download SQLite3 manually to libs/ folder")
-        
-        # Check if manually downloaded SQLite3 exists
-        if(EXISTS "${CMAKE_SOURCE_DIR}/libs/sqlite3.h")
-            target_include_directories(${PROJECT_NAME}_lib PRIVATE libs)
-            target_include_directories(${PROJECT_NAME} PRIVATE libs)
-            target_include_directories(test_core_classes PRIVATE libs)
-            target_include_directories(test_family_physician PRIVATE libs)
-            target_include_directories(test_database PRIVATE libs)
-            target_include_directories(test_datetime PRIVATE libs)
-            target_include_directories(test_address PRIVATE libs)
-            target_include_directories(test_assessor PRIVATE libs)
-            target_include_directories(test_utils PRIVATE libs)
-            target_include_directories(test_emergency_contact PRIVATE libs)
-            target_include_directories(test_legal_representative PRIVATE libs)
-            target_include_directories(test_insurance_company PRIVATE libs)
-            target_include_directories(test_assessor_manager PRIVATE libs)
-            target_include_directories(test_client_manager PRIVATE libs)
-            target_link_libraries(${PROJECT_NAME}_lib "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(${PROJECT_NAME} "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_core_classes "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_family_physician "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_database "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_datetime "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_address "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_assessor "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_utils "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_emergency_contact "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_legal_representative "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_insurance_company "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_assessor_manager "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            target_link_libraries(test_client_manager "${CMAKE_SOURCE_DIR}/libs/sqlite3.lib")
-            message(STATUS "Using manually downloaded SQLite3 from libs/")
-        else()
-            message(STATUS "SQLite3 will be needed later for database functionality.")
-            message(STATUS "For now, building without database support.")
-        endif()
-    endif()
-else()
-    # For Unix-like systems, use pkg-config
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SQLITE3 REQUIRED sqlite3)
-    target_include_directories(${PROJECT_NAME}_lib PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(${PROJECT_NAME} PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_core_classes PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_family_physician PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_database PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_datetime PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_address PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_assessor PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_utils PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_emergency_contact PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_legal_representative PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_insurance_company PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_assessor_manager PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_include_directories(test_client_manager PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARIES})
-    target_link_libraries(${PROJECT_NAME} ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_core_classes ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_family_physician ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_database ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_datetime ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_address ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_assessor ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_utils ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_emergency_contact ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_legal_representative ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_insurance_company ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_assessor_manager ${SQLITE3_LIBRARIES})
-    target_link_libraries(test_client_manager ${SQLITE3_LIBRARIES})
-    target_compile_options(${PROJECT_NAME}_lib PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(${PROJECT_NAME} PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_core_classes PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_family_physician PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_database PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_datetime PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_address PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_assessor PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_utils PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_emergency_contact PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_legal_representative PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_insurance_company PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_assessor_manager PRIVATE ${SQLITE3_CFLAGS_OTHER})
-    target_compile_options(test_client_manager PRIVATE ${SQLITE3_CFLAGS_OTHER})
-endif()
+# Link libraries to all targets
+target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
-# PDF Test executable - moved to tests/integration
+# Link to all test executables
+foreach(test_target 
+    test_core_classes test_family_physician test_database test_datetime test_address 
+    test_assessor test_utils test_emergency_contact test_legal_representative 
+    test_insurance_company test_assessor_manager test_client_manager 
+    test_automobile_anxiety_inventory test_beck_depression_inventory test_beck_anxiety_inventory)
+    target_link_libraries(${test_target} ${PROJECT_NAME}_lib)
+endforeach()
+
+# Link to example executables
+target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
+target_link_libraries(beck_anxiety_inventory_demo ${PROJECT_NAME}_lib)
+
+# PDF Test executable
 add_executable(test_pdf tests/integration/test_pdf.cpp)
-target_link_libraries(test_pdf ${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
-if(UNIX AND NOT APPLE)
-    target_include_directories(test_pdf PRIVATE ${SQLITE3_INCLUDE_DIRS})
-    target_compile_options(test_pdf PRIVATE ${SQLITE3_CFLAGS_OTHER})
-endif()
+target_link_libraries(test_pdf ${PROJECT_NAME}_lib)

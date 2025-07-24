@@ -2,16 +2,31 @@
 #include <filesystem>
 #include <iostream>
 
+#ifdef _WIN32
+    #include <windows.h>
+    #include <shlobj.h>  // For SHGetFolderPath
+#endif
+
 namespace SilverClinic {
     
     // Helper function to get the project root directory
     std::string getProjectRootPath() {
         std::string currentPath = std::filesystem::current_path();
         
+        // Convert backslashes to forward slashes on Windows
+        #ifdef _WIN32
+        std::replace(currentPath.begin(), currentPath.end(), '\\', '/');
+        #endif
+        
         // If we're in a build directory, go up one level
         if (currentPath.find("/build") != std::string::npos || 
-            currentPath.find("/build_test") != std::string::npos) {
+            currentPath.find("/build_test") != std::string::npos ||
+            currentPath.find("/Debug") != std::string::npos ||
+            currentPath.find("/Release") != std::string::npos) {
             currentPath = std::filesystem::current_path().parent_path();
+            #ifdef _WIN32
+            std::replace(currentPath.begin(), currentPath.end(), '\\', '/');
+            #endif
         }
         
         // Ensure we're in the project root by looking for CMakeLists.txt
@@ -20,6 +35,9 @@ namespace SilverClinic {
             std::filesystem::path parent = std::filesystem::path(currentPath).parent_path();
             if (parent == currentPath) break; // Reached filesystem root
             currentPath = parent;
+            #ifdef _WIN32
+            std::replace(currentPath.begin(), currentPath.end(), '\\', '/');
+            #endif
         }
         
         return currentPath;
