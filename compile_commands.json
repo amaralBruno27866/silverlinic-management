@@ -25,6 +25,12 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/DatabaseConfig.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/DatabaseConfig.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/DatabaseConfig.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/core/DatabaseConfig.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/DateTime.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/DateTime.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/DateTime.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/DateTime.cpp.o"
