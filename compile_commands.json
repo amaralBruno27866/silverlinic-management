@@ -211,6 +211,12 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/beck_anxiety_inventory_demo.dir/examples/beck_anxiety_inventory_demo.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/examples/beck_anxiety_inventory_demo.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/examples/beck_anxiety_inventory_demo.cpp",
+  "output": "CMakeFiles/beck_anxiety_inventory_demo.dir/examples/beck_anxiety_inventory_demo.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_pdf.dir/tests/integration/test_pdf.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_pdf.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_pdf.cpp",
   "output": "CMakeFiles/test_pdf.dir/tests/integration/test_pdf.cpp.o"

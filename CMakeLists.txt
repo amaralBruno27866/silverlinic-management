@@ -91,6 +91,9 @@ target_link_libraries(test_beck_anxiety_inventory ${PROJECT_NAME}_lib)
 add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
 target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
 
+add_executable(beck_anxiety_inventory_demo examples/beck_anxiety_inventory_demo.cpp)
+target_link_libraries(beck_anxiety_inventory_demo ${PROJECT_NAME}_lib)
+
 # For Windows, we'll download SQLite3 or use vcpkg
 if(WIN32)
     # Try to find SQLite3 using find_package first
