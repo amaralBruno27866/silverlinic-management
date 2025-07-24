@@ -193,8 +193,8 @@ else()
     target_compile_options(test_client_manager PRIVATE ${SQLITE3_CFLAGS_OTHER})
 endif()
 
-# PDF Test executable
-add_executable(test_pdf test_pdf.cpp)
+# PDF Test executable - moved to tests/integration
+add_executable(test_pdf tests/integration/test_pdf.cpp)
 target_link_libraries(test_pdf ${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
 if(UNIX AND NOT APPLE)
     target_include_directories(test_pdf PRIVATE ${SQLITE3_INCLUDE_DIRS})

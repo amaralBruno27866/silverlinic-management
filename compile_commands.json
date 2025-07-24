@@ -1,12 +1,6 @@
 [
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/PDFConfig.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/PDFConfig.cpp",
-  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/PDFConfig.cpp",
-  "output": "CMakeFiles/SilverClinic_lib.dir/src/PDFConfig.cpp.o"
-},
-{
-  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o"
@@ -88,6 +82,12 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/managers/ClientManager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/managers/ClientManager.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/managers/ClientManager.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/managers/ClientManager.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/utils/PDFConfig.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/utils/PDFConfig.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/utils/PDFConfig.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/utils/PDFConfig.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
@@ -175,8 +175,8 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_pdf.dir/test_pdf.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/test_pdf.cpp",
-  "file": "/home/bruno/CodeSpace/slt_cpp_programn/test_pdf.cpp",
-  "output": "CMakeFiles/test_pdf.dir/test_pdf.cpp.o"
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_pdf.dir/tests/integration/test_pdf.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_pdf.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/integration/test_pdf.cpp",
+  "output": "CMakeFiles/test_pdf.dir/tests/integration/test_pdf.cpp.o"
 }
 ]

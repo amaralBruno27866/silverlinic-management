@@ -121,7 +121,9 @@ int getNextId() {
 }
 ```
 
-## 📁 Estrutura de Arquivos
+## 📁 Estrutura de Arquivos e Convenções
+
+### **🎯 DIRETRIZES OBRIGATÓRIAS - SEMPRE CONSULTE PROJECT_CONVENTIONS.md:**
 
 ```
 slt_cpp_programn/
@@ -129,50 +131,145 @@ slt_cpp_programn/
 │   ├── launch.json        ✅ Debug configuration
 │   ├── settings.json      ✅ Editor settings
 │   └── tasks.json         ✅ Build tasks
-├── documents/             ✅ Documentação
-│   ├── ARCHITECTURE.md    ✅ Arquitetura do sistema
-│   └── DATABASE_INTEGRATION.md ✅ Integração banco
-├── settings/              ✅ Configurações projeto
-├── web/                   ✅ Interfaces web
-│   └── interface/         ✅ Interface do usuário
-│       └── case-info.html ✅ Formulário de casos
-├── include/
+├── data/                  🗄️ **TODA PERSISTÊNCIA VAI AQUI**
+│   ├── clinic.db          ✅ Banco principal - ÚNICO LOCAL
+│   ├── pdfs/              ✅ **TODOS os PDFs gerados**
+│   │   ├── test_case_detailed.pdf
+│   │   └── test_case_report.pdf
+│   └── test/              ✅ **TODOS os bancos de teste**
+│       └── *.db           ✅ Bancos para testes
+├── documents/             ✅ **TODA documentação**
+│   ├── ARCHITECTURE.md    ✅ Este arquivo - CONSULTE SEMPRE
+│   ├── DATABASE_INTEGRATION.md ✅ Integração banco
+│   └── PROJECT_CONVENTIONS.md ✅ **CONSULTE ANTES DE CRIAR ARQUIVOS**
+├── examples/              ✅ **TODOS os exemplos/demos**
+│   └── assessor_manager_demo.cpp ✅ Demos e exemplos
+├── include/               ✅ **TODOS os headers (.h)**
 │   ├── core/              ✅ Headers principais
 │   │   ├── Address.h      ✅ Endereços
 │   │   ├── Assessor.h     ✅ Profissionais
 │   │   ├── Client.h       ✅ Pacientes
 │   │   ├── CaseProfile.h  ✅ Casos clínicos
 │   │   ├── DateTime.h     ✅ Data/hora
+│   │   ├── DatabaseConfig.h ✅ Configuração BD
 │   │   └── Utils.h        ✅ Utilidades + Normalização
-│   └── forms/             ✅ Formulários
-│       └── FamilyPhysician.h ✅ Médico família
-├── src/
+│   ├── forms/             ✅ Headers de formulários
+│   │   ├── EmergencyContact.h
+│   │   ├── FamilyPhysician.h
+│   │   ├── InsuranceCompany.h
+│   │   └── LegalRepresentative.h
+│   ├── managers/          ✅ Headers de gerenciadores
+│   │   ├── AssessorManager.h
+│   │   ├── CaseProfileManager.h
+│   │   └── ClientManager.h
+│   └── utils/             ✅ Headers de utilitários
+│       └── PDFConfig.h    ✅ Configuração PDF
+├── settings/              ✅ Configurações projeto
+├── src/                   ✅ **TODAS as implementações (.cpp)**
 │   ├── core/              ✅ Implementações principais
 │   │   ├── Address.cpp    ✅
 │   │   ├── Assessor.cpp   ✅
 │   │   ├── Client.cpp     ✅
 │   │   ├── CaseProfile.cpp ✅
 │   │   ├── DateTime.cpp   ✅
+│   │   ├── DatabaseConfig.cpp ✅
 │   │   └── Utils.cpp      ✅ + Normalização
 │   ├── forms/             ✅ Implementações forms
-│   │   └── FamilyPhysician.cpp ✅
+│   │   ├── EmergencyContact.cpp
+│   │   ├── FamilyPhysician.cpp
+│   │   ├── InsuranceCompany.cpp
+│   │   └── LegalRepresentative.cpp
+│   ├── managers/          ✅ Implementações gerenciadores
+│   │   ├── AssessorManager.cpp
+│   │   ├── CaseProfileManager.cpp
+│   │   └── ClientManager.cpp
+│   ├── utils/             ✅ Implementações utilitários
+│   │   └── PDFConfig.cpp  ✅ Implementação PDF
 │   └── main.cpp           ✅ Aplicação principal
-├── tests/                 ✅ Sistema de testes
-│   ├── unit/              ✅ Testes unitários
+├── tests/                 🧪 **TODOS OS TESTES VÃO AQUI**
+│   ├── unit/              ✅ **TODOS os testes unitários**
 │   │   ├── test_address.cpp      ✅
 │   │   ├── test_assessor.cpp     ✅
 │   │   ├── test_core_classes.cpp ✅
 │   │   ├── test_datetime.cpp     ✅
 │   │   ├── test_family_physician.cpp ✅
-│   │   └── test_utils.cpp        ✅
-│   └── integration/       ✅ Testes integração
-│       └── test_database.cpp     ✅
-├── build/                 ✅ Arquivos de build
-├── build_test/            ✅ Build de testes
+│   │   ├── test_utils.cpp        ✅
+│   │   ├── test_emergency_contact.cpp ✅
+│   │   ├── test_legal_representative.cpp ✅
+│   │   ├── test_insurance_company.cpp ✅
+│   │   ├── test_assessor_manager.cpp ✅
+│   │   ├── test_client_manager.cpp ✅
+│   │   └── test_case_profile_manager.cpp ✅
+│   └── integration/       ✅ **TODOS os testes integração**
+│       ├── test_database.cpp     ✅
+│       ├── test_datetime_integration.cpp ✅
+│       └── test_pdf.cpp          ✅ Teste PDF
+├── web/                   ✅ Interfaces web
+│   └── interface/         ✅ Interface do usuário
+│       └── case-info.html ✅ Formulário de casos
+├── build/                 ⚙️ Arquivos de build (ignorar)
+├── build_test/            ⚙️ Build de testes (ignorar)
 ├── CMakeLists.txt         ✅ Configuração CMake
-├── run_tests.sh           ✅ Script execução testes
-└── clinic.db              ✅ Banco SQLite (PRINCIPAL)
+├── PROJECT_CONVENTIONS.md ✅ **CONSULTE ANTES DE CRIAR ARQUIVOS**
+└── run_tests.sh           ✅ Script execução testes
 ```
+
+### **🚨 REGRAS RÍGIDAS - CONSULTE PROJECT_CONVENTIONS.md:**
+
+#### **1. 🗄️ Persistência de Dados:**
+- **✅ USE:** `data/clinic.db` - ÚNICO banco principal
+- **✅ USE:** `data/test/` - TODOS os bancos de teste
+- **✅ USE:** `data/pdfs/` - TODOS os PDFs gerados
+- **❌ NUNCA:** Crie bancos `.db` na raiz ou outras pastas
+- **❌ NUNCA:** Crie PDFs fora de `data/pdfs/`
+
+#### **2. 🧪 Testes:**
+- **✅ USE:** `tests/unit/` - TODOS os testes unitários
+- **✅ USE:** `tests/integration/` - TODOS os testes de integração
+- **❌ NUNCA:** Crie arquivos `test_*.cpp` na raiz
+- **❌ NUNCA:** Crie arquivos de teste fora de `tests/`
+
+#### **3. 📄 Código Fonte:**
+- **✅ USE:** `include/` para TODOS os headers (.h)
+- **✅ USE:** `src/` para TODAS as implementações (.cpp)
+- **✅ USE:** Subpastas: `core/`, `forms/`, `managers/`, `utils/`
+- **❌ NUNCA:** Crie `.cpp` na raiz (exceto `src/main.cpp`)
+
+#### **4. 📝 Documentação:**
+- **✅ USE:** `documents/` - TODA documentação
+- **✅ USE:** `examples/` - TODOS os exemplos e demos
+- **❌ NUNCA:** Crie documentação em outras pastas
+
+#### **5. ⚙️ Build e Configuração:**
+- **✅ USE:** `CMakeLists.txt` - configuração única
+- **✅ USE:** `build/` e `build_test/` - gerados automaticamente
+- **❌ NUNCA:** Modifique arquivos em `build/`
+
+### **📋 CHECKLIST ANTES DE CRIAR ARQUIVOS - CONSULTE PROJECT_CONVENTIONS.md:**
+
+**Antes de criar qualquer arquivo, pergunte:**
+
+1. **📍 É um teste?** → `tests/unit/` ou `tests/integration/`
+2. **🗄️ É persistência?** → `data/` (banco) ou `data/pdfs/` (PDF)
+3. **🔗 É header?** → `include/core/`, `include/forms/`, `include/managers/`, `include/utils/`
+4. **⚡ É implementação?** → `src/core/`, `src/forms/`, `src/managers/`, `src/utils/`
+5. **📚 É documentação?** → `documents/`
+6. **💡 É exemplo?** → `examples/`
+
+### **🔄 Comandos de Verificação:**
+
+```bash
+# Verificar estrutura antes de modificar
+find . -name "*.cpp" -o -name "*.h" -o -name "*.db" -o -name "*.pdf" | grep -v build | sort
+
+# Verificar se testes estão no local correto
+find tests/ -name "*.cpp" | wc -l
+
+# Verificar se bancos estão organizados
+find data/ -name "*.db"
+```
+
+**⚠️ IMPORTANTE: Sempre consulte `PROJECT_CONVENTIONS.md` antes de criar novos arquivos!**
 
 ## 🛠️ Funcionalidades por Módulo
 
