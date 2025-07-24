@@ -49,6 +49,12 @@
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/BeckDepressionInventory.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/BeckDepressionInventory.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/BeckDepressionInventory.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/BeckDepressionInventory.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/EmergencyContact.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/EmergencyContact.cpp.o"
@@ -178,6 +184,12 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_automobile_anxiety_inventory.dir/tests/unit/test_automobile_anxiety_inventory.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_automobile_anxiety_inventory.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_automobile_anxiety_inventory.cpp",
   "output": "CMakeFiles/test_automobile_anxiety_inventory.dir/tests/unit/test_automobile_anxiety_inventory.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_beck_depression_inventory.dir/tests/unit/test_beck_depression_inventory.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_beck_depression_inventory.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_beck_depression_inventory.cpp",
+  "output": "CMakeFiles/test_beck_depression_inventory.dir/tests/unit/test_beck_depression_inventory.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",

@@ -81,6 +81,9 @@ target_link_libraries(test_client_manager ${PROJECT_NAME}_lib)
 add_executable(test_automobile_anxiety_inventory tests/unit/test_automobile_anxiety_inventory.cpp)
 target_link_libraries(test_automobile_anxiety_inventory ${PROJECT_NAME}_lib)
 
+add_executable(test_beck_depression_inventory tests/unit/test_beck_depression_inventory.cpp)
+target_link_libraries(test_beck_depression_inventory ${PROJECT_NAME}_lib)
+
 # Example executables
 add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
 target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
