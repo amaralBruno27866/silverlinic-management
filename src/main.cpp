@@ -8,6 +8,7 @@
 #include "forms/FamilyPhysician.h"
 #include "forms/AutomobileAnxietyInventory.h"
 #include "forms/BeckDepressionInventory.h"
+#include "forms/BeckAnxietyInventory.h"
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
@@ -276,6 +277,45 @@ bool createDatabaseTables(sqlite3* db) {
     )";
     
     if (!executeSQLCommand(db, createBeckDepressionInventoryTable, "BeckDepressionInventory table creation")) {
+        return false;
+    }
+    
+    // Beck Anxiety Inventory form table
+    string createBeckAnxietyInventoryTable = R"(
+        CREATE TABLE IF NOT EXISTS beck_anxiety_inventory(
+            id INTEGER PRIMARY KEY,
+            case_profile_id INTEGER NOT NULL,
+            type TEXT NOT NULL DEFAULT 'BAI',
+            question_1 INTEGER DEFAULT 0 CHECK(question_1 >= 0 AND question_1 <= 3),
+            question_2 INTEGER DEFAULT 0 CHECK(question_2 >= 0 AND question_2 <= 3),
+            question_3 INTEGER DEFAULT 0 CHECK(question_3 >= 0 AND question_3 <= 3),
+            question_4 INTEGER DEFAULT 0 CHECK(question_4 >= 0 AND question_4 <= 3),
+            question_5 INTEGER DEFAULT 0 CHECK(question_5 >= 0 AND question_5 <= 3),
+            question_6 INTEGER DEFAULT 0 CHECK(question_6 >= 0 AND question_6 <= 3),
+            question_7 INTEGER DEFAULT 0 CHECK(question_7 >= 0 AND question_7 <= 3),
+            question_8 INTEGER DEFAULT 0 CHECK(question_8 >= 0 AND question_8 <= 3),
+            question_9 INTEGER DEFAULT 0 CHECK(question_9 >= 0 AND question_9 <= 3),
+            question_10 INTEGER DEFAULT 0 CHECK(question_10 >= 0 AND question_10 <= 3),
+            question_11 INTEGER DEFAULT 0 CHECK(question_11 >= 0 AND question_11 <= 3),
+            question_12 INTEGER DEFAULT 0 CHECK(question_12 >= 0 AND question_12 <= 3),
+            question_13 INTEGER DEFAULT 0 CHECK(question_13 >= 0 AND question_13 <= 3),
+            question_14 INTEGER DEFAULT 0 CHECK(question_14 >= 0 AND question_14 <= 3),
+            question_15 INTEGER DEFAULT 0 CHECK(question_15 >= 0 AND question_15 <= 3),
+            question_16 INTEGER DEFAULT 0 CHECK(question_16 >= 0 AND question_16 <= 3),
+            question_17 INTEGER DEFAULT 0 CHECK(question_17 >= 0 AND question_17 <= 3),
+            question_18 INTEGER DEFAULT 0 CHECK(question_18 >= 0 AND question_18 <= 3),
+            question_19 INTEGER DEFAULT 0 CHECK(question_19 >= 0 AND question_19 <= 3),
+            question_20 INTEGER DEFAULT 0 CHECK(question_20 >= 0 AND question_20 <= 3),
+            question_21 INTEGER DEFAULT 0 CHECK(question_21 >= 0 AND question_21 <= 3),
+            total_score INTEGER DEFAULT 0,
+            severity_level TEXT DEFAULT 'Minimal',
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createBeckAnxietyInventoryTable, "BeckAnxietyInventory table creation")) {
         return false;
     }
     

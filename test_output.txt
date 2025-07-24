@@ -1,0 +1,1 @@
+zsh: no such file or directory: /home/bruno/CodeSpace/slt_cpp_programn/build_test/test_beck_depression_inventory
