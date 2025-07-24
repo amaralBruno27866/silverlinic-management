@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Automobile Anxiety Inventory Form">
+  <meta name="author" content="Silver Linings Therapy And Assessment Services">
+  <link rel="icon" type="image/svg+xml" href="../assets/silver_linings_therapy_icon.svg">
+  <title>Automobile Anxiety Inventory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    /* ========================= */
+    /* Global Styles for Automobile Anxiety Inventory */
+    /* ========================= */
+    :root {
+      --font-family: Arial, sans-serif;
+      --background-color: #c4c4c4;
+      --primary-color: #00325c;
+      --success-color: #18c427;
+      --success-hover-color: #16a125;
+      --secondary-color: #18a2c4;
+      --text-color: white;
+      --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+      --transition: 0.3s ease;
+    }
+
+    /* General body styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #c4c4c4;
+    }
+
+    /* Header */
+    header {
+      background-color: #00325c;
+      color: white;
+      padding: 1rem;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo img {
+      width: 107px;
+      height: 107px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    /* ========================= */
+    /* Title Section */
+    /* ========================= */
+
+    #form-title {
+      font-size: 2rem;
+      color: #ffffff; /* Ensure the text color contrasts with the background */
+      text-align: center;
+      margin-bottom: 1.5rem;
+      z-index: 1; /* Ensure it appears above other elements */
+      position: relative; /* Prevent it from being overlapped */
+    }
+
+    /* ========================= */
+    /* User Information Section */
+    /* ========================= */
+
+    #user-prn,
+    #user-name,
+    #user-email,
+    #user-phone {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    #user-prn.highlighted {
+      border: 2px solid #007bff;
+      background-color: #f0f8ff;
+    }
+
+    /* ========================= */
+    /* Patient Information Section */
+    /* ========================= */
+
+    #patient-ohip,
+    #patient-name,
+    #patient-email,
+    #patient-phone {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    #patient-ohip.highlighted {
+      border: 2px solid #007bff;
+      background-color: #f0f8ff;
+    }
+
+    /* ========================= */
+    /* Form Questions Section */
+    /* ========================= */
+
+    .form-question {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-question label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-question textarea {
+      width: 100%;
+      height: 10rem;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .form-options-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .form-options-inline input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      margin-right: 0.5rem;
+    }
+
+    .form-options-inline label {
+      font-size: 1rem;
+      margin-right: 1rem;
+    }
+
+    /* ========================= */
+    /* Buttons Section */
+    /* ========================= */
+
+    #download-pdf-btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: #18c427;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #download-pdf-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    #download-pdf-btn:hover:not(:disabled) {
+      background-color: #16a125;
+    }
+
+    /* ========================= */
+    /* Side-by-Side Layout */
+    /* ========================= */
+
+    .side-by-side {
+      display: flex;
+      gap: 2rem;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .side-by-side fieldset {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    /* ========================= */
+    /* Fieldset Styling */
+    /* ========================= */
+
+    .user-form fieldset {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .user-form legend {
+      font-weight: bold;
+      color: #00325c;
+    }
+
+    /* ========================= */
+    /* Form Layout Adjustments */
+    /* ========================= */
+
+    .user-form {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .form-row > div {
+      flex: 1;
+    }
+
+    /* ========================= */
+    /* Button Container */
+    /* ========================= */
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+/* Estilo para os botões com ícones */
+.button-container button {
+  display: flex;
+  align-items: center; /* Alinha o ícone e o texto verticalmente */
+  justify-content: center; /* Centraliza o conteúdo horizontalmente */
+  gap: 0.5rem; /* Espaçamento entre o ícone e o texto */
+  width: 150px; /* Largura fixa para os botões */
+  padding: 0.75rem;
+  background-color: #18c427;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem; /* Espaçamento entre os botões */
+  justify-content: flex-end; /* Alinha os botões à direita */
+}
+
+.header-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  background-color: var(--success-color);
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  width: 100px; /* Aumenta o tamanho dos botões */
+  height: 100px;
+  transition: var(--transition);
+}
+
+.header-button img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0.5rem;
+}
+
+.header-button:hover {
+  background-color: var(--secondary-color);
+}
+
+footer {
+  background-color: var(--primary-color); /* Cor principal da aplicação */
+  color: var(--text-color); /* Cor do texto definida no padrão */
+  text-align: center; /* Centraliza o texto */
+  padding: 1.5rem 1rem; /* Espaçamento interno */
+  font-size: 1rem; /* Tamanho da fonte */
+  margin-top: 2rem;
+}
+
+footer .additional-footer-info {
+  margin-bottom: 1rem; /* Espaçamento entre as seções do footer */
+}
+
+footer .footer-container {
+  font-size: 0.9rem; /* Tamanho menor para informações adicionais */
+  color: var(--text-color); /* Garante contraste com o fundo */
+}
+
+.button-container button:hover {
+  background-color: #16a125;
+}
+
+#send-btn {
+  background-color: #007bff; /* Cor azul para o botão "Send" */
+}
+
+#send-btn:hover {
+  background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+}
+
+#print-btn {
+  background-color: #ffc107; /* Cor amarela para o botão "Print" */
+}
+
+#print-btn:hover {
+  background-color: #e0a800; /* Amarelo mais escuro ao passar o mouse */
+}
+
+    /* Layout de duas colunas para as perguntas */
+    .two-columns {
+      display: flex;
+      gap: 2rem; /* Espaçamento entre as colunas */
+    }
+
+    .two-columns .column {
+      flex: 1; /* Cada coluna ocupa o mesmo espaço */
+    }
+
+    .form-question {
+      margin-bottom: 1.5rem; /* Espaçamento entre as perguntas */
+    }
+
+    /* Ajusta o alinhamento dos labels e inputs na seção Form Information */
+    .form-row div {
+      display: flex;
+      flex-direction: column; /* Alinha o label e o input verticalmente */
+      justify-content: flex-start; /* Garante que os itens fiquem alinhados ao topo */
+    }
+
+    .form-row label {
+      font-weight: bold; /* Deixa o texto do label em negrito */
+      margin-bottom: 0.5rem; /* Espaçamento entre o label e o input */
+      line-height: 1.2; /* Garante uma altura de linha consistente */
+    }
+
+    .form-row input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      height: 2.5rem; /* Define uma altura fixa para os inputs */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <!-- Logo linking to the homepage -->
+      <a href="../../index.html" class="logo">
+        <img src="../assets/logo.png" alt="Logo">
+      </a>
+
+      <!-- Page title -->
+      <h1 id="form-title">Automobile Anxiety Inventory</h1>
+
+      <div class=".header-buttons">
+        <a href="../views/manage_forms.html" class="header-button">
+          <img src="../assets/back.png" alt="Home Icon">
+          <span>Back</span>
+        </a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <form class="user-form" id="automobile-anxiety-form">
+      <fieldset style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; margin: 0; padding: 0; border: none;">
+        <h1 style="margin: 0;">Silver Linings Therapy And Assessment Services</h1>
+        <p style="margin: 0;">2 Andres St, Niagara on the Lake, Ontario, L0S 1J0</p>
+        <p style="margin: 0;"><i class="bi bi-telephone"></i> +1 (416) 937 - 6902 | Fax: +1 (647) 793 - 4140</p>
+        <p style="margin: 0;"><i class="bi bi-envelope"></i> silverliningsassociates@gmail.com</p>
+      </fieldset>
+      <!-- Section for form information -->
+      <fieldset id="form-information">
+        <legend>Form Information</legend>
+        <div class="form-row">
+          <div>
+            <label for="form-code">Form Code</label>
+            <input type="text" id="form-code" name="form-code" value="AAI" readonly>
+          </div>
+          <div>
+            <label for="form-id">Form ID:</label>
+            <input type="text" id="form-id" name="form-id" readonly>
+          </div>
+          <div>
+            <label for="form-created-at">Created At:</label>
+            <input type="text" id="form-created-at" name="form-created-at" readonly>
+          </div>
+      </fieldset>
+      <!-- Section for User Information -->
+      <fieldset id="user-information">
+        <legend>User Information</legend>
+        <div class="form-row">
+          <div>
+            <label for="user-id">User ID:</label>
+            <input type="text" id="user-id" name="user-id" readonly>
+          </div>
+          <div>
+            <label for="user-name">Name:</label>
+            <input type="text" id="user-name" name="user-name" readonly>
+          </div>
+          <div>
+            <label for="user-email">Email:</label>
+            <input type="text" id="user-email" name="user-email" readonly>
+          </div>
+          <div>
+            <label for="user-phone">Phone:</label>
+            <input type="text" id="user-phone" name="user-phone" readonly>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Section for Case Profile Information -->
+      <fieldset id="case-profile-information">
+        <legend>Case Profile Information</legend>
+        <div class="form-row">
+          <div>
+            <label for="case-id">Case ID:</label>
+            <input type="text" id="case-id" name="case-id" readonly>
+          </div>
+          <div>
+            <label for="client-name">Client Name:</label>
+            <input type="text" id="client-name" name="client-name" readonly>
+          </div>
+          <div>
+            <label for="client-email">Client Email:</label>
+            <input type="text" id="client-email" name="client-email" readonly>
+          </div>
+          <div>
+            <label for="client-phone">Client Phone:</label>
+            <input type="text" id="client-phone" name="client-phone" readonly>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Section for form questions -->
+      <fieldset id="form-1010">
+        <legend>Form Questions</legend>
+        <div class="two-columns">
+          <!-- Primeira coluna: Perguntas de 1 a 12 -->
+          <div class="column">
+            <div class="form-question">
+              <label for="number_1">1. Are you more nervous in an automobile since your accident?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y1" name="number_1" value="yes">
+                <label for="y1">Yes</label>
+                <input type="radio" id="n1" name="number_1" value="no">
+                <label for="n1">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_2">2. Do you have a motor vehicle license?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y2" name="number_2" value="yes">
+                <label for="y2">Yes</label>
+                <input type="radio" id="n2" name="number_2" value="no">
+                <label for="n2">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_3">3. Have you driven a car since your accident?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y3" name="number_3" value="yes">
+                <label for="y3">Yes</label>
+                <input type="radio" id="n3" name="number_3" value="no">
+                <label for="n3">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_4">4. Do you avoid driving whenever possible?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y4" name="number_4" value="yes">
+                <label for="y4">Yes</label>
+                <input type="radio" id="n4" name="number_4" value="no">
+                <label for="n4">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_5">5. Do you drive much slower or more carefully since your accident?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y5" name="number_5" value="yes">
+                <label for="y5">Yes</label>
+                <input type="radio" id="n5" name="number_5" value="no">
+                <label for="n5">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_6">6. Have you been a passenger in a car since your accident?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y6" name="number_6" value="yes">
+                <label for="y6">Yes</label>
+                <input type="radio" id="n6" name="number_6" value="no">
+                <label for="n6">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_7">7. Do you avoid being a passenger in a car whenever possible?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y7" name="number_7" value="yes">
+                <label for="y7">Yes</label>
+                <input type="radio" id="n7" name="number_7" value="no">
+                <label for="n7">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_8">8. Are you more nervous in a car after nightfall?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y8" name="number_8" value="yes">
+                <label for="y8">Yes</label>
+                <input type="radio" id="n8" name="number_8" value="no">
+                <label for="n8">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_9">9. Are you more nervous in traffic?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y9" name="number_9" value="yes">
+                <label for="y9">Yes</label>
+                <input type="radio" id="n9" name="number_9" value="no">
+                <label for="n9">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_10">10. Are you more nervous traveling on a highway?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y10" name="number_10" value="yes">
+                <label for="y10">Yes</label>
+                <input type="radio" id="n10" name="number_10" value="no">
+                <label for="n10">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_11">11. Are you more nervous in an intersection?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y11" name="number_11" value="yes">
+                <label for="y11">Yes</label>
+                <input type="radio" id="n11" name="number_11" value="no">
+                <label for="n11">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_12">12. Are you more nervous when outside the immediate area of your home?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y12" name="number_12" value="yes">
+                <label for="y12">Yes</label>
+                <input type="radio" id="n12" name="number_12" value="no">
+                <label for="n12">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_13">13. Are you more nervous in the rain or in bad weather conditions?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y13" name="number_13" value="yes">
+                <label for="y13">Yes</label>
+                <input type="radio" id="n13" name="number_13" value="no">
+                <label for="n13">No</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="form-question">
+              <label for="number_14">14. Are you more nervous as a...</label>
+              <div class="form-options-inline">
+                <input type="radio" id="number_14_op1" name="number_14" value="as_a_driver">
+                <label for="number_14_op1">as a driver</label>
+                <input type="radio" id="number_14_op2" name="number_14" value="as_a_passenger">
+                <label for="number_14_op2">as a passenger</label>
+                <input type="radio" id="number_14_op3" name="number_14" value="no_difference">
+                <label for="number_14_op3">no difference</label>
+
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_15">15. Are you more nervous when certain people are in the car with you?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y15" name="number_15" value="yes">
+                <label for="y15">Yes</label>
+                <input type="radio" id="n15" name="number_15" value="no">
+                <label for="n15">No</label>
+              </div>
+              <textarea id="number_15_text" name="number_15_text" placeholder="If yes, who?" maxlength="500"></textarea>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_16">16.	Are you more nervous when other vehicles are in your immediate proximity?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y16" name="number_16" value="yes">
+                <label for="y16">Yes</label>
+                <input type="radio" id="n16" name="number_16" value="no">
+                <label for="n16">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_17">17.	Are you more nervous when you hear the sound of a car horn or brakes?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y17" name="number_17" value="yes">
+                <label for="y17">Yes</label>
+                <input type="radio" id="n17" name="number_17" value="no">
+                <label for="n17">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_18">18.	Are you more nervous when you pass the scene of the accident?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y18" name="number_18" value="yes">
+                <label for="y18">Yes</label>
+                <input type="radio" id="n18" name="number_18" value="no">
+                <label for="n18">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_19">19. Are you more nervous as a pedestrian?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y19" name="number_19" value="yes" onclick="toggleCheckboxes(true)">
+                <label for="y19">Yes</label>
+                <input type="radio" id="n19" name="number_19" value="no" onclick="toggleCheckboxes(false)">
+                <label for="n19">No</label>
+              </div>
+              <div>
+                <label>If yes, are you more nervous on...</label>
+                <div class="form-options-inline">
+                  <div>
+                    <input type="checkbox" id="cb_19_op1" name="number_19_options" value="sidewalks" disabled>
+                    <label for="cb_19_op1">Sidewalks</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="cb_19_op2" name="number_19_options" value="crossing_streets" disabled>
+                    <label for="cb_19_op2">Crossing streets</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="cb_19_op3" name="number_19_options" value="both" disabled>
+                    <label for="cb_19_op3">Both</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <script>
+              function toggleCheckboxes(enable) {
+                const checkboxes = document.querySelectorAll('#cb_19_op1, #cb_19_op2, #cb_19_op3');
+                checkboxes.forEach((checkbox) => {
+                  checkbox.disabled = !enable;
+                });
+              }
+            </script>
+
+            <hr>
+            <div class="form-question">
+              <label for="number_20">20.	Do you keep thinking about the accident when you are in a car?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y20" name="number_20" value="yes">
+                <label for="y20">Yes</label>
+                <input type="radio" id="n20" name="number_20" value="no">
+                <label for="n20">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_21">21.	Do you often feel that you are about to have another accident?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y21" name="number_21" value="yes">
+                <label for="y21">Yes</label>
+                <input type="radio" id="n21" name="number_21" value="no">
+                <label for="n21">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_22">22.	Do you feel sometimes that you will never regain your former confidence?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y22" name="number_22" value="yes">
+                <label for="y22">Yes</label>
+                <input type="radio" id="n22" name="number_22" value="no">
+                <label for="n22">No</label>
+              </div>
+            </div>
+            <hr>
+            <div class="form-question">
+              <label for="number_23">23.	Do you have panic attacks?</label>
+              <div class="form-options-inline">
+                <input type="radio" id="y23" name="number_23" value="yes">
+                <label for="y23">Yes</label>
+                <input type="radio" id="y24" name="number_23" value="no">
+                <label for="y24">No</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+      <!-- Buttons for saving, sending, and printing the form -->
+    <div class="button-container">
+      <button type="button" id="save-btn" onclick="handleSaveButtonClick()">
+        <i class="bi bi-save"></i> Save
+      </button>
+      <button type="button" id="send-btn" onclick="handleSendButtonClick()">
+        <i class="bi bi-send"></i> Send
+      </button>
+      <button type="button" id="print-btn" onclick="handlePrintButtonClick()">
+        <i class="bi bi-printer"></i> Print
+      </button>
+    </div>
+  </main>
+
+  <footer>
+    <div class="additional-footer-info">
+      <p style="margin: 0;"><i class="bi bi-envelope"></i> silverliningsassociates@gmail.com</p>
+    </div>
+    <div class="footer-container">
+      <p>&copy; 2025 Silver Linings Therapy And Assessment Services. All rights reserved.</p>
+      <p>Website by Beagle Tech</p>
+    </div>
+  </footer>
+
+</body>
+</html>

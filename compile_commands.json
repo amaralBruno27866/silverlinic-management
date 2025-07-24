@@ -1,12 +1,6 @@
 [
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
-  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/PDFConfig.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/PDFConfig.cpp",
-  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/PDFConfig.cpp",
-  "output": "CMakeFiles/SilverClinic_lib.dir/src/PDFConfig.cpp.o"
-},
-{
-  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Address.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Address.cpp.o"
@@ -46,6 +40,12 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/core/Utils.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/core/Utils.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/core/Utils.cpp",
   "output": "CMakeFiles/SilverClinic_lib.dir/src/core/Utils.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/SilverClinic_lib.dir/src/forms/AutomobileAnxietyInventory.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/src/forms/AutomobileAnxietyInventory.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/src/forms/AutomobileAnxietyInventory.cpp",
+  "output": "CMakeFiles/SilverClinic_lib.dir/src/forms/AutomobileAnxietyInventory.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
@@ -172,6 +172,12 @@
   "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_client_manager.dir/tests/unit/test_client_manager.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_client_manager.cpp",
   "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_client_manager.cpp",
   "output": "CMakeFiles/test_client_manager.dir/tests/unit/test_client_manager.cpp.o"
+},
+{
+  "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",
+  "command": "/usr/bin/g++  -I/home/bruno/CodeSpace/slt_cpp_programn/include -I/home/bruno/CodeSpace/slt_cpp_programn/include/core -I/home/bruno/CodeSpace/slt_cpp_programn/include/forms -I/home/bruno/CodeSpace/slt_cpp_programn/include/managers -I/home/bruno/CodeSpace/slt_cpp_programn/include/utils -g -std=gnu++17 -o CMakeFiles/test_automobile_anxiety_inventory.dir/tests/unit/test_automobile_anxiety_inventory.cpp.o -c /home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_automobile_anxiety_inventory.cpp",
+  "file": "/home/bruno/CodeSpace/slt_cpp_programn/tests/unit/test_automobile_anxiety_inventory.cpp",
+  "output": "CMakeFiles/test_automobile_anxiety_inventory.dir/tests/unit/test_automobile_anxiety_inventory.cpp.o"
 },
 {
   "directory": "/home/bruno/CodeSpace/slt_cpp_programn/build_test",

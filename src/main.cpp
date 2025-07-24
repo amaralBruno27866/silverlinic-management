@@ -6,6 +6,7 @@
 #include "core/Utils.h"
 #include "core/DatabaseConfig.h"
 #include "forms/FamilyPhysician.h"
+#include "forms/AutomobileAnxietyInventory.h"
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
@@ -193,6 +194,51 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
+    // Automobile Anxiety Inventory form table
+    string createAutomobileAnxietyInventoryTable = R"(
+        CREATE TABLE IF NOT EXISTS automobile_anxiety_inventory(
+            id INTEGER PRIMARY KEY,
+            case_profile_id INTEGER NOT NULL,
+            type TEXT NOT NULL DEFAULT 'AAI',
+            question_1 BOOLEAN DEFAULT 0,
+            question_2 BOOLEAN DEFAULT 0,
+            question_3 BOOLEAN DEFAULT 0,
+            question_4 BOOLEAN DEFAULT 0,
+            question_5 BOOLEAN DEFAULT 0,
+            question_6 BOOLEAN DEFAULT 0,
+            question_7 BOOLEAN DEFAULT 0,
+            question_8 BOOLEAN DEFAULT 0,
+            question_9 BOOLEAN DEFAULT 0,
+            question_10 BOOLEAN DEFAULT 0,
+            question_11 BOOLEAN DEFAULT 0,
+            question_12 BOOLEAN DEFAULT 0,
+            question_13 BOOLEAN DEFAULT 0,
+            question_14_driver BOOLEAN DEFAULT 0,
+            question_14_passenger BOOLEAN DEFAULT 0,
+            question_14_no_difference BOOLEAN DEFAULT 0,
+            question_15_a BOOLEAN DEFAULT 0,
+            question_15_b TEXT,
+            question_16 BOOLEAN DEFAULT 0,
+            question_17 BOOLEAN DEFAULT 0,
+            question_18 BOOLEAN DEFAULT 0,
+            question_19 BOOLEAN DEFAULT 0,
+            question_19_sidewalks BOOLEAN DEFAULT 0,
+            question_19_crossing BOOLEAN DEFAULT 0,
+            question_19_both BOOLEAN DEFAULT 0,
+            question_20 BOOLEAN DEFAULT 0,
+            question_21 BOOLEAN DEFAULT 0,
+            question_22 BOOLEAN DEFAULT 0,
+            question_23 BOOLEAN DEFAULT 0,
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createAutomobileAnxietyInventoryTable, "AutomobileAnxietyInventory table creation")) {
+        return false;
+    }
+    
     logMessage("INFO", "All database tables created successfully");
     return true;
 }
@@ -338,6 +384,15 @@ int main() {
             if (sqlite3_step(stmt) == SQLITE_ROW) {
                 int count = sqlite3_column_int(stmt, 0);
                 cout << "Case Profiles in database: " << count << endl;
+            }
+            sqlite3_finalize(stmt);
+        }
+        
+        // Count automobile anxiety inventories
+        if (sqlite3_prepare_v2(db, "SELECT COUNT(*) FROM automobile_anxiety_inventory", -1, &stmt, nullptr) == SQLITE_OK) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                int count = sqlite3_column_int(stmt, 0);
+                cout << "AAI Forms in database: " << count << endl;
             }
             sqlite3_finalize(stmt);
         }

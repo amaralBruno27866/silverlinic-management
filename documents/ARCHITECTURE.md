@@ -97,6 +97,21 @@
 │ fp_created_at: DATETIME         │
 │ fp_updated_at: DATETIME         │
 └─────────────────────────────────┘
+
+┌─────────────────────────────────┐
+│   AUTOMOBILE_ANXIETY_INVENTORY  │
+├─────────────────────────────────┤
+│ id: 700001+ (PK)                │
+│ case_profile_id: INT (FK)       │ ◄─── Referencia case_profile.id
+│ type: VARCHAR ('AAI')           │
+│ question_1: BOOLEAN             │ ◄─── Nervous in automobile?
+│ question_2: BOOLEAN             │ ◄─── Have motor license?
+│ ... (questions 3-23)            │ ◄─── 23 clinical questions
+│ question_15_text: TEXT          │ ◄─── Additional text response
+│ question_19_options: VARCHAR    │ ◄─── Checkbox selections
+│ created_at: DATETIME            │
+│ updated_at: DATETIME            │
+└─────────────────────────────────┘
 ```
 
 ## 🔑 Sistema de IDs
@@ -109,6 +124,8 @@
 | Client          | 300000  | 300001+   | 300002     | ✅ Ativo | Pacientes        |
 | Case Profile    | 400000  | 400001+   | 400002     | ✅ Ativo | Casos Clínicos   |
 | Family Physician| 500000  | 500001+   | 500002     | ✅ Ativo | Médicos Família  |
+| Emergency Contact| 600000 | 600001+   | 600002     | ✅ Ativo | Contatos Emergência |
+| Auto Anxiety Inv.| 700000 | 700001+   | 700002     | ✅ Ativo | Inventário Ansiedade Auto |
 
 ### Algoritmo de Geração:
 ```cpp
