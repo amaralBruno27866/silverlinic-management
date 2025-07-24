@@ -4,11 +4,26 @@ project(SilverClinic)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Find SQLite3
+find_library(SQLITE3_LIBRARY sqlite3)
+if(NOT SQLITE3_LIBRARY)
+    message(FATAL_ERROR "SQLite3 library not found")
+endif()
+
+# Find libharu for PDF generation
+find_library(HPDF_LIBRARY hpdf)
+find_path(HPDF_INCLUDE_DIR hpdf.h)
+if(NOT HPDF_LIBRARY OR NOT HPDF_INCLUDE_DIR)
+    message(FATAL_ERROR "libharu (hpdf) library not found. Please install: sudo apt-get install libhpdf-dev")
+endif()
+
 # Include directories
 include_directories(include)
 include_directories(include/core)
 include_directories(include/forms)
 include_directories(include/managers)
+include_directories(include/utils)
+include_directories(${HPDF_INCLUDE_DIR})
 
 # Source files - recursively find all .cpp files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -19,6 +34,7 @@ list(REMOVE_ITEM LIB_SOURCES "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
 # Create a library with all sources except main.cpp
 add_library(${PROJECT_NAME}_lib ${LIB_SOURCES})
+target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
 
 # Create main executable
 add_executable(${PROJECT_NAME} src/main.cpp)
@@ -175,4 +191,12 @@ else()
     target_compile_options(test_insurance_company PRIVATE ${SQLITE3_CFLAGS_OTHER})
     target_compile_options(test_assessor_manager PRIVATE ${SQLITE3_CFLAGS_OTHER})
     target_compile_options(test_client_manager PRIVATE ${SQLITE3_CFLAGS_OTHER})
+endif()
+
+# PDF Test executable
+add_executable(test_pdf test_pdf.cpp)
+target_link_libraries(test_pdf ${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
+if(UNIX AND NOT APPLE)
+    target_include_directories(test_pdf PRIVATE ${SQLITE3_INCLUDE_DIRS})
+    target_compile_options(test_pdf PRIVATE ${SQLITE3_CFLAGS_OTHER})
 endif()

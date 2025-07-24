@@ -1,0 +1,793 @@
+#include "managers/CaseProfileManager.h"
+#include "core/Utils.h"
+#include "core/DateTime.h"
+#include "utils/PDFConfig.h"
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <hpdf.h>
+
+using namespace std;
+using namespace SilverClinic;
+using namespace utils;
+
+namespace SilverClinic {
+
+// Constructor
+CaseProfileManager::CaseProfileManager(sqlite3* database) : m_db(database) {
+    if (!m_db) {
+        logMessage("ERROR", "CaseProfileManager: Invalid database connection");
+    }
+}
+
+// ========================================
+// CRUD Operations Implementation
+// ========================================
+
+bool CaseProfileManager::create(const CaseProfile& caseProfile) {
+    if (!validateCaseProfile(caseProfile)) {
+        logMessage("ERROR", "CaseProfileManager::create - Invalid case profile data");
+        return false;
+    }
+    
+    // Additional validation: check if client and assessor exist
+    if (!validateRelationship(caseProfile.getClientId(), caseProfile.getAssessorId())) {
+        logMessage("ERROR", "CaseProfileManager::create - Invalid client or assessor relationship");
+        return false;
+    }
+    
+    const string sql = R"(
+        INSERT INTO case_profile (id, client_id, assessor_id, status, notes, created_at, modified_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare create statement");
+        return false;
+    }
+    
+    // Bind parameters
+    sqlite3_bind_int(stmt, 1, caseProfile.getCaseProfileId());
+    sqlite3_bind_int(stmt, 2, caseProfile.getClientId());
+    sqlite3_bind_int(stmt, 3, caseProfile.getAssessorId());
+    sqlite3_bind_text(stmt, 4, caseProfile.getStatus().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 5, caseProfile.getNotes().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, caseProfile.getCreatedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 7, caseProfile.getUpdatedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
+    
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    if (result != SQLITE_DONE) {
+        logDatabaseError("execute create statement");
+        return false;
+    }
+    
+    logMessage("INFO", "Case profile created successfully with ID: " + toString(caseProfile.getCaseProfileId()));
+    return true;
+}
+
+vector<CaseProfile> CaseProfileManager::readAll() const {
+    vector<CaseProfile> caseProfiles;
+    
+    const string sql = R"(
+        SELECT cp.id, cp.client_id, cp.assessor_id, cp.status, cp.notes, 
+               cp.created_at, cp.closed_at, cp.modified_at
+        FROM case_profile cp
+        ORDER BY cp.created_at DESC
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare readAll statement");
+        return caseProfiles;
+    }
+    
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        caseProfiles.push_back(createCaseProfileFromRow(stmt));
+    }
+    
+    sqlite3_finalize(stmt);
+    return caseProfiles;
+}
+
+optional<CaseProfile> CaseProfileManager::readById(int caseProfileId) const {
+    const string sql = R"(
+        SELECT cp.id, cp.client_id, cp.assessor_id, cp.status, cp.notes, 
+               cp.created_at, cp.closed_at, cp.modified_at
+        FROM case_profile cp
+        WHERE cp.id = ?
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare readById statement");
+        return nullopt;
+    }
+    
+    sqlite3_bind_int(stmt, 1, caseProfileId);
+    
+    optional<CaseProfile> result = nullopt;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        result = createCaseProfileFromRow(stmt);
+    }
+    
+    sqlite3_finalize(stmt);
+    return result;
+}
+
+bool CaseProfileManager::update(const CaseProfile& caseProfile) {
+    if (!validateCaseProfile(caseProfile)) {
+        logMessage("ERROR", "CaseProfileManager::update - Invalid case profile data");
+        return false;
+    }
+    
+    if (!exists(caseProfile.getCaseProfileId())) {
+        logMessage("ERROR", "CaseProfileManager::update - Case profile not found with ID: " + toString(caseProfile.getCaseProfileId()));
+        return false;
+    }
+    
+    const string sql = R"(
+        UPDATE case_profile 
+        SET client_id = ?, assessor_id = ?, status = ?, notes = ?, 
+            closed_at = ?, modified_at = ?
+        WHERE id = ?
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare update statement");
+        return false;
+    }
+    
+    // Bind parameters
+    sqlite3_bind_int(stmt, 1, caseProfile.getClientId());
+    sqlite3_bind_int(stmt, 2, caseProfile.getAssessorId());
+    sqlite3_bind_text(stmt, 3, caseProfile.getStatus().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, caseProfile.getNotes().c_str(), -1, SQLITE_TRANSIENT);
+    
+    // Handle closed_at - can be NULL
+    if (caseProfile.isClosed() && !caseProfile.getClosedAt().toString().empty()) {
+        sqlite3_bind_text(stmt, 5, caseProfile.getClosedAt().toString().c_str(), -1, SQLITE_TRANSIENT);
+    } else {
+        sqlite3_bind_null(stmt, 5);
+    }
+    
+    sqlite3_bind_text(stmt, 6, DateTime::now().toString().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 7, caseProfile.getCaseProfileId());
+    
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    if (result != SQLITE_DONE) {
+        logDatabaseError("execute update statement");
+        return false;
+    }
+    
+    logMessage("INFO", "Case profile updated successfully with ID: " + toString(caseProfile.getCaseProfileId()));
+    return true;
+}
+
+bool CaseProfileManager::deleteById(int caseProfileId) {
+    if (!canDelete(caseProfileId)) {
+        logMessage("ERROR", "CaseProfileManager::deleteById - Cannot delete case profile with ID: " + toString(caseProfileId));
+        return false;
+    }
+    
+    // Soft delete - mark as cancelled instead of actual deletion
+    return updateCaseStatus(caseProfileId, "Cancelled", "Deleted by user");
+}
+
+// ========================================
+// Relationship-based Operations Implementation
+// ========================================
+
+vector<CaseProfile> CaseProfileManager::getCasesByClientId(int clientId) const {
+    vector<CaseProfile> caseProfiles;
+    
+    const string sql = R"(
+        SELECT cp.id, cp.client_id, cp.assessor_id, cp.status, cp.notes, 
+               cp.created_at, cp.closed_at, cp.modified_at
+        FROM case_profile cp
+        WHERE cp.client_id = ?
+        ORDER BY cp.created_at DESC
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare getCasesByClientId statement");
+        return caseProfiles;
+    }
+    
+    sqlite3_bind_int(stmt, 1, clientId);
+    
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        caseProfiles.push_back(createCaseProfileFromRow(stmt));
+    }
+    
+    sqlite3_finalize(stmt);
+    return caseProfiles;
+}
+
+vector<CaseProfile> CaseProfileManager::getCasesByAssessorId(int assessorId) const {
+    vector<CaseProfile> caseProfiles;
+    
+    const string sql = R"(
+        SELECT cp.id, cp.client_id, cp.assessor_id, cp.status, cp.notes, 
+               cp.created_at, cp.closed_at, cp.modified_at
+        FROM case_profile cp
+        WHERE cp.assessor_id = ?
+        ORDER BY cp.created_at DESC
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare getCasesByAssessorId statement");
+        return caseProfiles;
+    }
+    
+    sqlite3_bind_int(stmt, 1, assessorId);
+    
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        caseProfiles.push_back(createCaseProfileFromRow(stmt));
+    }
+    
+    sqlite3_finalize(stmt);
+    return caseProfiles;
+}
+
+vector<CaseProfile> CaseProfileManager::getCasesByClientAndAssessor(int clientId, int assessorId) const {
+    vector<CaseProfile> caseProfiles;
+    
+    const string sql = R"(
+        SELECT cp.id, cp.client_id, cp.assessor_id, cp.status, cp.notes, 
+               cp.created_at, cp.closed_at, cp.modified_at
+        FROM case_profile cp
+        WHERE cp.client_id = ? AND cp.assessor_id = ?
+        ORDER BY cp.created_at DESC
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare getCasesByClientAndAssessor statement");
+        return caseProfiles;
+    }
+    
+    sqlite3_bind_int(stmt, 1, clientId);
+    sqlite3_bind_int(stmt, 2, assessorId);
+    
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        caseProfiles.push_back(createCaseProfileFromRow(stmt));
+    }
+    
+    sqlite3_finalize(stmt);
+    return caseProfiles;
+}
+
+// ========================================
+// Workflow Management Implementation
+// ========================================
+
+bool CaseProfileManager::activateCase(int caseProfileId, int assessorId) {
+    if (!validateAssessorPermission(caseProfileId, assessorId)) {
+        logMessage("ERROR", "CaseProfileManager::activateCase - Assessor not authorized for case: " + toString(caseProfileId));
+        return false;
+    }
+    
+    auto caseProfile = readById(caseProfileId);
+    if (!caseProfile.has_value()) {
+        logMessage("ERROR", "CaseProfileManager::activateCase - Case not found: " + toString(caseProfileId));
+        return false;
+    }
+    
+    if (!caseProfile->isPending()) {
+        logMessage("ERROR", "CaseProfileManager::activateCase - Case is not in pending status: " + toString(caseProfileId));
+        return false;
+    }
+    
+    return updateCaseStatus(caseProfileId, "Active", "Activated by assessor " + toString(assessorId));
+}
+
+bool CaseProfileManager::closeCase(int caseProfileId, int assessorId, const string& reason) {
+    if (!validateAssessorPermission(caseProfileId, assessorId)) {
+        logMessage("ERROR", "CaseProfileManager::closeCase - Assessor not authorized for case: " + toString(caseProfileId));
+        return false;
+    }
+    
+    auto caseProfile = readById(caseProfileId);
+    if (!caseProfile.has_value()) {
+        logMessage("ERROR", "CaseProfileManager::closeCase - Case not found: " + toString(caseProfileId));
+        return false;
+    }
+    
+    if (!caseProfile->isActive()) {
+        logMessage("ERROR", "CaseProfileManager::closeCase - Case is not active: " + toString(caseProfileId));
+        return false;
+    }
+    
+    // Update status and set closed_at timestamp
+    const string sql = R"(
+        UPDATE case_profile 
+        SET status = 'Closed', notes = ?, closed_at = ?, modified_at = ?
+        WHERE id = ?
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare closeCase statement");
+        return false;
+    }
+    
+    string updatedNotes = caseProfile->getNotes();
+    if (!reason.empty()) {
+        updatedNotes += "\n[CLOSED] " + reason + " - " + getCurrentTimestamp();
+    }
+    
+    string currentTime = getCurrentTimestamp();
+    sqlite3_bind_text(stmt, 1, updatedNotes.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, currentTime.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, currentTime.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 4, caseProfileId);
+    
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    if (result != SQLITE_DONE) {
+        logDatabaseError("execute closeCase statement");
+        return false;
+    }
+    
+    logMessage("INFO", "Case closed successfully: " + toString(caseProfileId));
+    return true;
+}
+
+bool CaseProfileManager::transferCase(int caseProfileId, int newAssessorId, int currentAssessorId) {
+    if (!validateAssessorPermission(caseProfileId, currentAssessorId)) {
+        logMessage("ERROR", "CaseProfileManager::transferCase - Current assessor not authorized: " + toString(currentAssessorId));
+        return false;
+    }
+    
+    // Validate new assessor exists
+    if (!validateRelationship(0, newAssessorId)) { // We only care about assessor existing
+        logMessage("ERROR", "CaseProfileManager::transferCase - New assessor not found: " + toString(newAssessorId));
+        return false;
+    }
+    
+    const string sql = R"(
+        UPDATE case_profile 
+        SET assessor_id = ?, notes = ?, modified_at = ?
+        WHERE id = ?
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare transferCase statement");
+        return false;
+    }
+    
+    // Get current notes and add transfer information
+    auto caseProfile = readById(caseProfileId);
+    string updatedNotes = caseProfile.has_value() ? caseProfile->getNotes() : "";
+    updatedNotes += "\n[TRANSFER] From assessor " + toString(currentAssessorId) + 
+                   " to " + toString(newAssessorId) + " - " + getCurrentTimestamp();
+    
+    sqlite3_bind_int(stmt, 1, newAssessorId);
+    sqlite3_bind_text(stmt, 2, updatedNotes.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, getCurrentTimestamp().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 4, caseProfileId);
+    
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    if (result != SQLITE_DONE) {
+        logDatabaseError("execute transferCase statement");
+        return false;
+    }
+    
+    logMessage("INFO", "Case transferred successfully: " + toString(caseProfileId));
+    return true;
+}
+
+// ========================================
+// Helper Methods Implementation
+// ========================================
+
+CaseProfile CaseProfileManager::createCaseProfileFromRow(sqlite3_stmt* stmt) const {
+    // Extract case profile data with NULL safety
+    int id = sqlite3_column_int(stmt, 0);
+    int clientId = sqlite3_column_int(stmt, 1);
+    int assessorId = sqlite3_column_int(stmt, 2);
+    
+    const char* statusPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+    string status = statusPtr ? statusPtr : "Pending";
+    
+    const char* notesPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+    string notes = notesPtr ? notesPtr : "";
+    
+    const char* createdAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+    DateTime createdAt = createdAtPtr ? DateTime::fromString(createdAtPtr) : DateTime();
+    
+    const char* closedAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6));
+    DateTime closedAt = closedAtPtr ? DateTime::fromString(closedAtPtr) : DateTime();
+    
+    const char* modifiedAtPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
+    DateTime modifiedAt = modifiedAtPtr ? DateTime::fromString(modifiedAtPtr) : DateTime();
+    
+    return CaseProfile(id, clientId, assessorId, status, notes, createdAt, closedAt, modifiedAt);
+}
+
+bool CaseProfileManager::validateCaseProfile(const CaseProfile& caseProfile) const {
+    // Validate ID range (400001-499999)
+    if (caseProfile.getCaseProfileId() < 400001 || caseProfile.getCaseProfileId() > 499999) {
+        logMessage("ERROR", "Validation failed: Invalid case profile ID range: " + toString(caseProfile.getCaseProfileId()));
+        return false;
+    }
+    
+    // Validate client ID range (300001-399999)
+    if (caseProfile.getClientId() < 300001 || caseProfile.getClientId() > 399999) {
+        logMessage("ERROR", "Validation failed: Invalid client ID range: " + toString(caseProfile.getClientId()));
+        return false;
+    }
+    
+    // Validate assessor ID range (100001-199999)
+    if (caseProfile.getAssessorId() < 100001 || caseProfile.getAssessorId() > 199999) {
+        logMessage("ERROR", "Validation failed: Invalid assessor ID range: " + toString(caseProfile.getAssessorId()));
+        return false;
+    }
+    
+    // Validate status
+    string status = caseProfile.getStatus();
+    if (status != "Pending" && status != "Active" && status != "Closed" && status != "Cancelled") {
+        logMessage("ERROR", "Validation failed: Invalid status: " + status);
+        return false;
+    }
+    
+    // Validate notes length
+    if (caseProfile.getNotes().length() > 1500) {
+        logMessage("ERROR", "Validation failed: Notes too long: " + toString(caseProfile.getNotes().length()) + " characters");
+        return false;
+    }
+    
+    return true;
+}
+
+bool CaseProfileManager::exists(int caseProfileId) const {
+    const string sql = "SELECT 1 FROM case_profile WHERE id = ? LIMIT 1";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare exists statement");
+        return false;
+    }
+    
+    sqlite3_bind_int(stmt, 1, caseProfileId);
+    
+    bool exists = (sqlite3_step(stmt) == SQLITE_ROW);
+    sqlite3_finalize(stmt);
+    
+    return exists;
+}
+
+bool CaseProfileManager::validateRelationship(int clientId, int assessorId) const {
+    // Check if client exists (if clientId is provided)
+    if (clientId > 0) {
+        const string clientSql = "SELECT 1 FROM client WHERE id = ? LIMIT 1";
+        sqlite3_stmt* clientStmt;
+        if (sqlite3_prepare_v2(m_db, clientSql.c_str(), -1, &clientStmt, nullptr) != SQLITE_OK) {
+            return false;
+        }
+        sqlite3_bind_int(clientStmt, 1, clientId);
+        bool clientExists = (sqlite3_step(clientStmt) == SQLITE_ROW);
+        sqlite3_finalize(clientStmt);
+        
+        if (!clientExists) {
+            return false;
+        }
+    }
+    
+    // Check if assessor exists
+    const string assessorSql = "SELECT 1 FROM assessor WHERE id = ? LIMIT 1";
+    sqlite3_stmt* assessorStmt;
+    if (sqlite3_prepare_v2(m_db, assessorSql.c_str(), -1, &assessorStmt, nullptr) != SQLITE_OK) {
+        return false;
+    }
+    sqlite3_bind_int(assessorStmt, 1, assessorId);
+    bool assessorExists = (sqlite3_step(assessorStmt) == SQLITE_ROW);
+    sqlite3_finalize(assessorStmt);
+    
+    return assessorExists;
+}
+
+bool CaseProfileManager::validateAssessorPermission(int caseProfileId, int assessorId) const {
+    const string sql = "SELECT assessor_id FROM case_profile WHERE id = ?";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    }
+    
+    sqlite3_bind_int(stmt, 1, caseProfileId);
+    
+    bool authorized = false;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        int currentAssessorId = sqlite3_column_int(stmt, 0);
+        authorized = (currentAssessorId == assessorId);
+    }
+    
+    sqlite3_finalize(stmt);
+    return authorized;
+}
+
+bool CaseProfileManager::updateCaseStatus(int caseProfileId, const string& newStatus, const string& reason) {
+    const string sql = R"(
+        UPDATE case_profile 
+        SET status = ?, notes = ?, modified_at = ?
+        WHERE id = ?
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare updateCaseStatus statement");
+        return false;
+    }
+    
+    // Get current notes and add status change information
+    auto caseProfile = readById(caseProfileId);
+    string updatedNotes = caseProfile.has_value() ? caseProfile->getNotes() : "";
+    if (!reason.empty()) {
+        updatedNotes += "\n[STATUS CHANGE] " + newStatus + ": " + reason + " - " + getCurrentTimestamp();
+    }
+    
+    sqlite3_bind_text(stmt, 1, newStatus.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, updatedNotes.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, getCurrentTimestamp().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 4, caseProfileId);
+    
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    return (result == SQLITE_DONE);
+}
+
+string CaseProfileManager::getCurrentTimestamp() const {
+    return DateTime::now().toString();
+}
+
+void CaseProfileManager::logDatabaseError(const string& operation) const {
+    string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
+    logMessage("ERROR", errorMsg);
+}
+
+// ========================================
+// Additional utility methods (simplified for now)
+// ========================================
+
+int CaseProfileManager::getCount() const {
+    const string sql = "SELECT COUNT(*) FROM case_profile";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        return 0;
+    }
+    
+    int count = 0;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        count = sqlite3_column_int(stmt, 0);
+    }
+    
+    sqlite3_finalize(stmt);
+    return count;
+}
+
+bool CaseProfileManager::canDelete(int caseProfileId) const {
+    auto caseProfile = readById(caseProfileId);
+    if (!caseProfile.has_value()) {
+        return false;
+    }
+    
+    // Business rule: Can only delete pending cases
+    return caseProfile->isPending();
+}
+
+vector<CaseProfile> CaseProfileManager::getCasesByStatus(const string& status) const {
+    vector<CaseProfile> caseProfiles;
+    
+    const string sql = R"(
+        SELECT cp.id, cp.client_id, cp.assessor_id, cp.status, cp.notes, 
+               cp.created_at, cp.closed_at, cp.modified_at
+        FROM case_profile cp
+        WHERE cp.status = ?
+        ORDER BY cp.created_at DESC
+    )";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        logDatabaseError("prepare getCasesByStatus statement");
+        return caseProfiles;
+    }
+    
+    sqlite3_bind_text(stmt, 1, status.c_str(), -1, SQLITE_TRANSIENT);
+    
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        caseProfiles.push_back(createCaseProfileFromRow(stmt));
+    }
+    
+    sqlite3_finalize(stmt);
+    return caseProfiles;
+}
+
+// ========================================
+// PDF Export and Reporting Implementation
+// ========================================
+
+bool CaseProfileManager::generatePDFReport(int caseProfileId, const string& outputPath, const string& reportType) const {
+    // Get case profile data
+    auto caseProfile = readById(caseProfileId);
+    if (!caseProfile.has_value()) {
+        logMessage("ERROR", "CaseProfileManager::generatePDFReport - Case profile not found: " + to_string(caseProfileId));
+        return false;
+    }
+    
+    // Initialize PDF document
+    HPDF_Doc pdf = HPDF_New(nullptr, nullptr);
+    if (!pdf) {
+        logMessage("ERROR", "CaseProfileManager::generatePDFReport - Failed to create PDF document");
+        return false;
+    }
+    
+    try {
+        // Set compression mode
+        HPDF_SetCompressionMode(pdf, HPDF_COMP_ALL);
+        
+        // Add a page
+        HPDF_Page page = HPDF_AddPage(pdf);
+        HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+        
+        // Get template configuration
+        PDFConfig::ReportTemplate template_config = PDFConfig::getTemplate(reportType);
+        
+        // Generate PDF content
+        float currentY = PDFConfig::PAGE_HEIGHT - PDFConfig::MARGIN_TOP;
+        
+        if (template_config.includeHeader) {
+            // Generate header inline
+            HPDF_Font font = HPDF_GetFont(pdf, "Helvetica-Bold", nullptr);
+            HPDF_Page_SetFontAndSize(page, font, PDFConfig::TITLE_FONT_SIZE);
+            HPDF_Page_SetRGBFill(page, PDFConfig::HEADER_BLUE.r, PDFConfig::HEADER_BLUE.g, PDFConfig::HEADER_BLUE.b);
+            
+            float textWidth = HPDF_Page_TextWidth(page, PDFConfig::CLINIC_NAME.c_str());
+            float x = (PDFConfig::PAGE_WIDTH - textWidth) / 2;
+            float y = currentY - 20;
+            
+            HPDF_Page_BeginText(page);
+            HPDF_Page_TextOut(page, x, y, PDFConfig::CLINIC_NAME.c_str());
+            HPDF_Page_EndText(page);
+            
+            currentY -= 80; // Header height
+        }
+        
+        if (template_config.includeClientInfo) {
+            // Generate case info inline
+            HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", nullptr);
+            HPDF_Page_SetFontAndSize(page, font, PDFConfig::TEXT_FONT_SIZE);
+            HPDF_Page_SetRGBFill(page, PDFConfig::TEXT_BLACK.r, PDFConfig::TEXT_BLACK.g, PDFConfig::TEXT_BLACK.b);
+            
+            float x = PDFConfig::MARGIN_LEFT;
+            float y = currentY - 20;
+            
+            string caseInfo = "Case ID: " + to_string(caseProfile->getCaseProfileId());
+            HPDF_Page_BeginText(page);
+            HPDF_Page_TextOut(page, x, y, caseInfo.c_str());
+            HPDF_Page_EndText(page);
+            
+            currentY -= 60; // Case info section height
+        }
+        
+        if (template_config.includeFooter) {
+            // Generate footer inline
+            HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", nullptr);
+            HPDF_Page_SetFontAndSize(page, font, PDFConfig::FOOTER_FONT_SIZE);
+            HPDF_Page_SetRGBFill(page, PDFConfig::TEXT_SECONDARY.r, PDFConfig::TEXT_SECONDARY.g, PDFConfig::TEXT_SECONDARY.b);
+            
+            float x = PDFConfig::MARGIN_LEFT;
+            float y = PDFConfig::MARGIN_BOTTOM + 20;
+            
+            HPDF_Page_BeginText(page);
+            HPDF_Page_TextOut(page, x, y, PDFConfig::CONFIDENTIALITY_NOTICE.c_str());
+            HPDF_Page_EndText(page);
+        }
+        
+        // Save PDF to file
+        HPDF_SaveToFile(pdf, outputPath.c_str());
+        
+        logMessage("INFO", "PDF report generated successfully: " + outputPath);
+        
+    } catch (const exception& e) {
+        logMessage("ERROR", "CaseProfileManager::generatePDFReport - Exception: " + string(e.what()));
+        HPDF_Free(pdf);
+        return false;
+    }
+    
+    // Clean up
+    HPDF_Free(pdf);
+    return true;
+}
+
+int CaseProfileManager::generateBulkPDFReports(const vector<int>& caseProfileIds, const string& outputDirectory, const string& reportType) const {
+    int successCount = 0;
+    
+    for (int caseId : caseProfileIds) {
+        string filename = "case_profile_" + to_string(caseId) + "_" + reportType + ".pdf";
+        string fullPath = outputDirectory + "/" + filename;
+        
+        if (generatePDFReport(caseId, fullPath, reportType)) {
+            successCount++;
+        }
+    }
+    
+    logMessage("INFO", "Bulk PDF generation completed: " + to_string(successCount) + " of " + to_string(caseProfileIds.size()) + " PDFs generated");
+    return successCount;
+}
+
+bool CaseProfileManager::generateCustomPDFReport(int caseProfileId, const string& outputPath, 
+                                                bool includeTimeline, bool includeFullNotes, 
+                                                const string& watermarkText) const {
+    // Custom implementation similar to generatePDFReport but with custom options
+    logMessage("INFO", "Custom PDF generation requested for case: " + to_string(caseProfileId));
+    
+    // For now, use the detailed template and modify behavior
+    return generatePDFReport(caseProfileId, outputPath, "detailed");
+}
+
+// ========================================
+// PDF Generation Helper Methods
+// ========================================
+
+bool CaseProfileManager::generatePDFHeader(void* pdfPage, const string& reportType) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+bool CaseProfileManager::generatePDFCaseInfo(void* pdfPage, const CaseProfile& caseProfile) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+bool CaseProfileManager::generatePDFClientInfo(void* pdfPage, int clientId) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+bool CaseProfileManager::generatePDFAssessorInfo(void* pdfPage, int assessorId) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+bool CaseProfileManager::generatePDFTimeline(void* pdfPage, int caseProfileId) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+bool CaseProfileManager::generatePDFNotes(void* pdfPage, const string& notes) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+bool CaseProfileManager::generatePDFFooter(void* pdfPage) const {
+    // This method is no longer used - PDF generation is now inline
+    return true;
+}
+
+// Helper methods for PDF formatting
+string CaseProfileManager::formatDateForPDF(const string& isoDate) const {
+    return PDFConfig::formatDate(isoDate, true);
+}
+
+string CaseProfileManager::getStatusIcon(const string& status) const {
+    auto icons = PDFConfig::getStatusIcons();
+    auto it = icons.find(status);
+    return (it != icons.end()) ? it->second : "●";
+}
+
+} // namespace SilverClinic
