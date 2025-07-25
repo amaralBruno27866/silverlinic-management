@@ -59,10 +59,26 @@ Set-Location "build"
 # Configure with CMake
 Write-Host "[INFO] Configuring project with CMake..." -ForegroundColor Green
 
-$cmakeArgs = @(
-    "-G", "Visual Studio 17 2022",
-    "-A", "x64"
-)
+# Detect operating system and set appropriate generator
+$isWindowsOS = $PSVersionTable.Platform -eq "Win32NT" -or $env:OS -eq "Windows_NT"
+$isLinuxOS = $PSVersionTable.Platform -eq "Unix" -and $env:USER
+
+if ($isWindowsOS) {
+    Write-Host "[INFO] Detected Windows environment - using Visual Studio generator" -ForegroundColor Green
+    $cmakeArgs = @(
+        "-G", "Visual Studio 17 2022",
+        "-A", "x64"
+    )
+} else {
+    Write-Host "[INFO] Detected Linux environment - using Unix Makefiles generator" -ForegroundColor Green
+    $cmakeArgs = @(
+        "-G", "Unix Makefiles",
+        "-DCMAKE_BUILD_TYPE=$Configuration"
+    )
+}
+
+# Add common CMake arguments
+$cmakeArgs += "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
 
 # Add vcpkg toolchain if available
 if ($env:VCPKG_ROOT) {
@@ -82,7 +98,11 @@ try {
     if ($env:VCPKG_ROOT) {
         Write-Host "[INFO] Trying without vcpkg..." -ForegroundColor Yellow
         try {
-            & cmake -G "Visual Studio 17 2022" -A x64 ..
+            if ($isWindowsOS) {
+                & cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+            } else {
+                & cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=$Configuration -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+            }
             if ($LASTEXITCODE -ne 0) {
                 throw "CMake configuration failed completely"
             }
@@ -100,7 +120,11 @@ try {
 # Build the project
 Write-Host "[INFO] Building project ($Configuration)..." -ForegroundColor Green
 try {
-    & cmake --build . --config $Configuration --parallel
+    if ($isWindowsOS) {
+        & cmake --build . --config $Configuration --parallel
+    } else {
+        & cmake --build . --parallel
+    }
     if ($LASTEXITCODE -ne 0) {
         throw "Build failed"
     }
@@ -113,30 +137,36 @@ try {
 Write-Host "[SUCCESS] Build completed successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "📁 Build Results:" -ForegroundColor Cyan
-Write-Host "  Build directory: build/$Configuration/" -ForegroundColor Gray
-Write-Host "  Main application: build/$Configuration/SilverClinic.exe" -ForegroundColor Gray
-Write-Host "  Test executables: build/$Configuration/test_*.exe" -ForegroundColor Gray
-Write-Host "  Example demos: build/$Configuration/*_demo.exe" -ForegroundColor Gray
-Write-Host ""
 
-# Check if executables were created
-$mainExe = "build/$Configuration/SilverClinic.exe"
-if (Test-Path $mainExe) {
-    Write-Host "✅ Main application ready to run" -ForegroundColor Green
-    Write-Host "   To execute: .\build\$Configuration\SilverClinic.exe" -ForegroundColor Gray
+if ($isWindowsOS) {
+    Write-Host "  Build directory: build/$Configuration/" -ForegroundColor Gray
+    Write-Host "  Main application: build/$Configuration/SilverClinic.exe" -ForegroundColor Gray
+    Write-Host "  Test executables: build/$Configuration/test_*.exe" -ForegroundColor Gray
+    Write-Host "  Example demos: build/$Configuration/*_demo.exe" -ForegroundColor Gray
+    
+    # Check if executables were created
+    $mainExe = "$Configuration/SilverClinic.exe"
+    if (Test-Path $mainExe) {
+        Write-Host "✅ Main application ready to run" -ForegroundColor Green
+        Write-Host "   To execute: .\build\$Configuration\SilverClinic.exe" -ForegroundColor Gray
+    }
 } else {
-    Write-Host "⚠️  Main executable not found at expected location" -ForegroundColor Yellow
+    Write-Host "  Build directory: build/" -ForegroundColor Gray
+    Write-Host "  Main application: build/SilverClinic" -ForegroundColor Gray
+    Write-Host "  Test executables: build/test_*" -ForegroundColor Gray
+    Write-Host "  Example demos: build/*_demo" -ForegroundColor Gray
+    
+    # Check if executables were created
+    $mainExe = "SilverClinic"
+    if (Test-Path $mainExe) {
+        Write-Host "✅ Main application ready to run" -ForegroundColor Green
+        Write-Host "   To execute: ./build/SilverClinic" -ForegroundColor Gray
+    } else {
+        Write-Host "⚠️  Main executable not found at expected location" -ForegroundColor Yellow
+    }
 }
 
 Set-Location ".."
 
-# Offer to run the application
-$runApp = Read-Host "Do you want to run the application now? (y/N)"
-if ($runApp -eq 'y' -or $runApp -eq 'Y') {
-    if (Test-Path "build\$Configuration\SilverClinic.exe") {
-        Write-Host "[INFO] Starting Silver Clinic..." -ForegroundColor Green
-        & "build\$Configuration\SilverClinic.exe"
-    } else {
-        Write-Host "[ERROR] Executable not found!" -ForegroundColor Red
-    }
-}
+Write-Host ""
+Write-Host "🎉 Build process completed!" -ForegroundColor Green

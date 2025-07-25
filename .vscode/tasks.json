@@ -210,6 +210,131 @@
                 "$gcc"
             ],
             "detail": "Legacy build task for main application"
+        },
+        {
+            "label": "PowerShell: Setup Environment",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "./dev_setup.ps1",
+                "-Task",
+                "setup"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Setup development environment using PowerShell"
+        },
+        {
+            "label": "PowerShell: Build Debug",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "./dev_setup.ps1",
+                "-Task",
+                "build",
+                "-Configuration",
+                "Debug"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build project in Debug mode using PowerShell"
+        },
+        {
+            "label": "PowerShell: Build Release",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "./dev_setup.ps1",
+                "-Task",
+                "build",
+                "-Configuration",
+                "Release"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Build project in Release mode using PowerShell"
+        },
+        {
+            "label": "PowerShell: Run Tests",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "./dev_setup.ps1",
+                "-Task",
+                "test"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Run all tests using PowerShell"
+        },
+        {
+            "label": "PowerShell: Run Application",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "./dev_setup.ps1",
+                "-Task",
+                "run"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Build and run the application using PowerShell"
+        },
+        {
+            "label": "PowerShell: Clean",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "./dev_setup.ps1",
+                "-Task",
+                "clean"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Clean build directories using PowerShell"
         }
     ]
 }

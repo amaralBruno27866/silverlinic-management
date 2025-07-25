@@ -19,24 +19,42 @@ if ($Help) {
 Write-Host "=== Silver Clinic - Application Runner ===" -ForegroundColor Cyan
 Write-Host "Configuration: $Configuration" -ForegroundColor Yellow
 
+# Detect operating system
+$isWindowsOS = $PSVersionTable.Platform -eq "Win32NT" -or $env:OS -eq "Windows_NT"
+
 # Check if executable exists
-$appPath = "build\$Configuration\SilverClinic.exe"
+if ($isWindowsOS) {
+    $appPath = "build\$Configuration\SilverClinic.exe"
+    $debugPath = "build\Debug\SilverClinic.exe"
+    $releasePath = "build\Release\SilverClinic.exe"
+} else {
+    $appPath = "build/SilverClinic"
+    $debugPath = "build/SilverClinic"
+    $releasePath = "build/SilverClinic"
+}
+
 if (-not (Test-Path $appPath)) {
     Write-Host "[ERROR] Application not found: $appPath" -ForegroundColor Red
     Write-Host "Please run .\build_windows.ps1 first to build the application" -ForegroundColor Yellow
     
     # Check if other configurations exist
-    $debugPath = "build\Debug\SilverClinic.exe"
-    $releasePath = "build\Release\SilverClinic.exe"
     
     if ((Test-Path $debugPath) -or (Test-Path $releasePath)) {
         Write-Host ""
         Write-Host "Available configurations:" -ForegroundColor Cyan
         if (Test-Path $debugPath) { Write-Host "  Debug: $debugPath" -ForegroundColor Gray }
         if (Test-Path $releasePath) { Write-Host "  Release: $releasePath" -ForegroundColor Gray }
+        
+        # For Linux, just use the available executable
+        if (-not $isWindowsOS -and (Test-Path $debugPath)) {
+            Write-Host "[INFO] Using available executable: $debugPath" -ForegroundColor Green
+            $appPath = $debugPath
+        } else {
+            exit 1
+        }
+    } else {
+        exit 1
     }
-    
-    exit 1
 }
 
 Write-Host "[INFO] Starting Silver Clinic..." -ForegroundColor Green
