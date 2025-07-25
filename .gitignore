@@ -26,6 +26,7 @@ Makefile
 *.ilk
 *.pdb
 *.tlog/
+compile_commands.json
 
 # Database files (only runtime databases, keep test schemas)
 data/clinic.db
