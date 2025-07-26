@@ -76,7 +76,7 @@
   "terminal.integrated.env.linux": {
     "PWSH_DEVELOPMENT": "1"
   },
-  "powershell.powerShellDefaultVersion": "PowerShell 7.x",
+  "powershell.powerShellDefaultVersion": "PowerShell",
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/include",
     "/usr/include/c++/13",
