@@ -9,6 +9,7 @@
 #include "forms/AutomobileAnxietyInventory.h"
 #include "forms/BeckDepressionInventory.h"
 #include "forms/BeckAnxietyInventory.h"
+#include "forms/PainBodyMap.h"
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
@@ -319,6 +320,24 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
+    // Pain Body Map form table
+    string createPainBodyMapTable = R"(
+        CREATE TABLE IF NOT EXISTS pain_body_map(
+            id INTEGER PRIMARY KEY,
+            case_profile_id INTEGER NOT NULL,
+            type TEXT NOT NULL DEFAULT 'PBM',
+            pain_data_json TEXT NOT NULL DEFAULT '{}',
+            additional_comments TEXT CHECK(length(additional_comments) <= 1000),
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createPainBodyMapTable, "PainBodyMap table creation")) {
+        return false;
+    }
+    
     logMessage("INFO", "All database tables created successfully");
     return true;
 }
@@ -482,6 +501,24 @@ int main() {
             if (sqlite3_step(stmt) == SQLITE_ROW) {
                 int count = sqlite3_column_int(stmt, 0);
                 cout << "BDI Forms in database: " << count << endl;
+            }
+            sqlite3_finalize(stmt);
+        }
+        
+        // Count beck anxiety inventories
+        if (sqlite3_prepare_v2(db, "SELECT COUNT(*) FROM beck_anxiety_inventory", -1, &stmt, nullptr) == SQLITE_OK) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                int count = sqlite3_column_int(stmt, 0);
+                cout << "BAI Forms in database: " << count << endl;
+            }
+            sqlite3_finalize(stmt);
+        }
+        
+        // Count pain body maps
+        if (sqlite3_prepare_v2(db, "SELECT COUNT(*) FROM pain_body_map", -1, &stmt, nullptr) == SQLITE_OK) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                int count = sqlite3_column_int(stmt, 0);
+                cout << "PBM Forms in database: " << count << endl;
             }
             sqlite3_finalize(stmt);
         }

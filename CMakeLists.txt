@@ -145,12 +145,18 @@ target_link_libraries(test_beck_depression_inventory ${PROJECT_NAME}_lib)
 add_executable(test_beck_anxiety_inventory tests/unit/test_beck_anxiety_inventory.cpp)
 target_link_libraries(test_beck_anxiety_inventory ${PROJECT_NAME}_lib)
 
+add_executable(test_pain_body_map tests/forms/test_PainBodyMap.cpp)
+target_link_libraries(test_pain_body_map ${PROJECT_NAME}_lib)
+
 # Example executables
 add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
 target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
 
 add_executable(beck_anxiety_inventory_demo examples/beck_anxiety_inventory_demo.cpp)
 target_link_libraries(beck_anxiety_inventory_demo ${PROJECT_NAME}_lib)
+
+add_executable(pain_body_map_demo examples/pain_body_map_demo.cpp)
+target_link_libraries(pain_body_map_demo ${PROJECT_NAME}_lib)
 
 # Link libraries to all targets
 target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
@@ -161,13 +167,14 @@ foreach(test_target
     test_core_classes test_family_physician test_database test_datetime test_address 
     test_assessor test_utils test_emergency_contact test_legal_representative 
     test_insurance_company test_assessor_manager test_client_manager 
-    test_automobile_anxiety_inventory test_beck_depression_inventory test_beck_anxiety_inventory)
+    test_automobile_anxiety_inventory test_beck_depression_inventory test_beck_anxiety_inventory test_pain_body_map)
     target_link_libraries(${test_target} ${PROJECT_NAME}_lib)
 endforeach()
 
 # Link to example executables
 target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
 target_link_libraries(beck_anxiety_inventory_demo ${PROJECT_NAME}_lib)
+target_link_libraries(pain_body_map_demo ${PROJECT_NAME}_lib)
 
 # PDF Test executable
 add_executable(test_pdf tests/integration/test_pdf.cpp)
