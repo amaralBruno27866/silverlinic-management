@@ -16,19 +16,19 @@ Set-Alias -Name "test" -Value "$ProjectRoot/run_tests_windows.ps1"
 Set-Alias -Name "run" -Value "$ProjectRoot/run_app.ps1"
 
 # Functions for quick development tasks
-function Quick-Build { 
+function Invoke-Build { 
     & pwsh "$ProjectRoot/dev_setup.ps1" -Task build -Configuration Debug 
 }
 
-function Quick-Test { 
+function Invoke-Test { 
     & pwsh "$ProjectRoot/dev_setup.ps1" -Task test 
 }
 
-function Quick-Run { 
+function Invoke-Run { 
     & pwsh "$ProjectRoot/dev_setup.ps1" -Task run 
 }
 
-function Quick-Clean { 
+function Invoke-Clean { 
     & pwsh "$ProjectRoot/dev_setup.ps1" -Task clean 
 }
 
@@ -39,10 +39,10 @@ function Show-ProjectInfo {
     Write-Host "Data Dir: $DataDir" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Quick Commands:" -ForegroundColor Green
-    Write-Host "  Quick-Build  - Build project" -ForegroundColor White
-    Write-Host "  Quick-Test   - Run tests" -ForegroundColor White
-    Write-Host "  Quick-Run    - Build and run" -ForegroundColor White
-    Write-Host "  Quick-Clean  - Clean build dirs" -ForegroundColor White
+    Write-Host "  Invoke-Build  - Build project" -ForegroundColor White
+    Write-Host "  Invoke-Test   - Run tests" -ForegroundColor White
+    Write-Host "  Invoke-Run    - Build and run" -ForegroundColor White
+    Write-Host "  Invoke-Clean  - Clean build dirs" -ForegroundColor White
     Write-Host ""
     Write-Host "Full Commands:" -ForegroundColor Green
     Write-Host "  pwsh ./dev_setup.ps1 -Task help" -ForegroundColor White
