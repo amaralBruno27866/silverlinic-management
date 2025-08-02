@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCL-90-R - Formulário de Avaliação</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .form-section {
+            background: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0.375rem;
+        }
+        .question-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .question-text {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .scale-legend {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 0.375rem;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        .severity-indicator {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .alert-info {
+            border-left: 4px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <h1 class="display-6 text-primary mb-3">
+                        <i class="bi bi-clipboard-data me-2"></i>
+                        SCL-90-R
+                    </h1>
+                    <p class="lead text-muted">Symptom Checklist-90-Revised</p>
+                </div>
+
+                <!-- Instructions -->
+                <div class="alert alert-info mb-4">
+                    <h5 class="alert-heading">
+                        <i class="bi bi-info-circle me-2"></i>Instruções
+                    </h5>
+                    <p class="mb-2">
+                        Este questionário contém uma lista de problemas e sintomas que às vezes as pessoas sentem. 
+                        Para cada item, selecione o número que melhor descreve <strong>o quanto esse problema 
+                        incomodou ou angustiou você durante a semana passada, incluindo hoje</strong>.
+                    </p>
+                    <p class="mb-2">
+                        Leia cada item cuidadosamente e selecione uma das opções de 0 a 3 que indique o grau 
+                        em que você sentiu desconforto devido a esse problema.
+                    </p>
+                    <p class="mb-0">
+                        <strong>Importante:</strong> Responda todas as perguntas. Não há respostas certas ou erradas.
+                    </p>
+                </div>
+
+                <!-- Scale Legend -->
+                <div class="scale-legend mb-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-bar-chart me-2"></i>Escala de Avaliação
+                    </h6>
+                    <div class="row">
+                        <div class="col-6 col-md-3 mb-2">
+                            <span class="badge bg-success me-2">0</span>
+                            <strong>Nada</strong>
+                            <div class="severity-indicator">Não incomodou nada</div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-2">
+                            <span class="badge bg-warning me-2">1</span>
+                            <strong>Um Pouco</strong>
+                            <div class="severity-indicator">Incomodou levemente</div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-2">
+                            <span class="badge bg-orange me-2" style="background-color: #fd7e14;">2</span>
+                            <strong>Moderadamente</strong>
+                            <div class="severity-indicator">Incomodou moderadamente</div>
+                        </div>
+                        <div class="col-6 col-md-3 mb-2">
+                            <span class="badge bg-danger me-2">3</span>
+                            <strong>Extremamente</strong>
+                            <div class="severity-indicator">Incomodou muito</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="scl90rForm">
+                    <!-- Form metadata -->
+                    <input type="hidden" id="scl_id" value="{{SCL_ID}}">
+                    <input type="hidden" id="case_profile_id" value="{{CASE_PROFILE_ID}}">
+                    <input type="hidden" id="form_type" value="SCL90R">
+
+                    <div class="form-section">
+                        <h4 class="mb-4">
+                            <i class="bi bi-list-check me-2"></i>
+                            Questões do SCL-90-R
+                        </h4>
+
+                        <!-- Question 1 -->
+                        <div class="question-item">
+                            <div class="question-text">1. Dores de cabeça</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_1" id="q1_0" value="0" required>
+                                        <label class="form-check-label" for="q1_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_1" id="q1_1" value="1">
+                                        <label class="form-check-label" for="q1_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_1" id="q1_2" value="2">
+                                        <label class="form-check-label" for="q1_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_1" id="q1_3" value="3">
+                                        <label class="form-check-label" for="q1_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-item">
+                            <div class="question-text">2. Nervosismo ou agitação interior</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_2" id="q2_0" value="0" required>
+                                        <label class="form-check-label" for="q2_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_2" id="q2_1" value="1">
+                                        <label class="form-check-label" for="q2_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_2" id="q2_2" value="2">
+                                        <label class="form-check-label" for="q2_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_2" id="q2_3" value="3">
+                                        <label class="form-check-label" for="q2_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-item">
+                            <div class="question-text">3. Pensamentos desagradáveis repetitivos que não saem da mente</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_3" id="q3_0" value="0" required>
+                                        <label class="form-check-label" for="q3_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_3" id="q3_1" value="1">
+                                        <label class="form-check-label" for="q3_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_3" id="q3_2" value="2">
+                                        <label class="form-check-label" for="q3_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_3" id="q3_3" value="3">
+                                        <label class="form-check-label" for="q3_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-item">
+                            <div class="question-text">4. Desmaios ou tonturas</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_4" id="q4_0" value="0" required>
+                                        <label class="form-check-label" for="q4_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_4" id="q4_1" value="1">
+                                        <label class="form-check-label" for="q4_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_4" id="q4_2" value="2">
+                                        <label class="form-check-label" for="q4_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_4" id="q4_3" value="3">
+                                        <label class="form-check-label" for="q4_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="question-item">
+                            <div class="question-text">5. Perda de interesse ou prazer sexual</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_5" id="q5_0" value="0" required>
+                                        <label class="form-check-label" for="q5_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_5" id="q5_1" value="1">
+                                        <label class="form-check-label" for="q5_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_5" id="q5_2" value="2">
+                                        <label class="form-check-label" for="q5_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_5" id="q5_3" value="3">
+                                        <label class="form-check-label" for="q5_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 6 -->
+                        <div class="question-item">
+                            <div class="question-text">6. Sentir-se crítico com outros</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_6" id="q6_0" value="0" required>
+                                        <label class="form-check-label" for="q6_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_6" id="q6_1" value="1">
+                                        <label class="form-check-label" for="q6_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_6" id="q6_2" value="2">
+                                        <label class="form-check-label" for="q6_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_6" id="q6_3" value="3">
+                                        <label class="form-check-label" for="q6_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 7 -->
+                        <div class="question-item">
+                            <div class="question-text">7. A ideia de que alguém pode controlar seus pensamentos</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_7" id="q7_0" value="0" required>
+                                        <label class="form-check-label" for="q7_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_7" id="q7_1" value="1">
+                                        <label class="form-check-label" for="q7_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_7" id="q7_2" value="2">
+                                        <label class="form-check-label" for="q7_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_7" id="q7_3" value="3">
+                                        <label class="form-check-label" for="q7_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 8 -->
+                        <div class="question-item">
+                            <div class="question-text">8. Sentir que outros são culpados pela maioria dos seus problemas</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_8" id="q8_0" value="0" required>
+                                        <label class="form-check-label" for="q8_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_8" id="q8_1" value="1">
+                                        <label class="form-check-label" for="q8_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_8" id="q8_2" value="2">
+                                        <label class="form-check-label" for="q8_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_8" id="q8_3" value="3">
+                                        <label class="form-check-label" for="q8_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 9 -->
+                        <div class="question-item">
+                            <div class="question-text">9. Problemas de memória</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_9" id="q9_0" value="0" required>
+                                        <label class="form-check-label" for="q9_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_9" id="q9_1" value="1">
+                                        <label class="form-check-label" for="q9_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_9" id="q9_2" value="2">
+                                        <label class="form-check-label" for="q9_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_9" id="q9_3" value="3">
+                                        <label class="form-check-label" for="q9_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 10 -->
+                        <div class="question-item">
+                            <div class="question-text">10. Preocupado com desleixo ou descuido</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_10" id="q10_0" value="0" required>
+                                        <label class="form-check-label" for="q10_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_10" id="q10_1" value="1">
+                                        <label class="form-check-label" for="q10_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_10" id="q10_2" value="2">
+                                        <label class="form-check-label" for="q10_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_10" id="q10_3" value="3">
+                                        <label class="form-check-label" for="q10_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Continue with the remaining 80 questions following the same pattern -->
+
+                        <!-- Question 11 -->
+                        <div class="question-item">
+                            <div class="question-text">11. Sentir-se facilmente incomodado ou irritado</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_11" id="q11_0" value="0" required>
+                                        <label class="form-check-label" for="q11_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_11" id="q11_1" value="1">
+                                        <label class="form-check-label" for="q11_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_11" id="q11_2" value="2">
+                                        <label class="form-check-label" for="q11_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_11" id="q11_3" value="3">
+                                        <label class="form-check-label" for="q11_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 12 -->
+                        <div class="question-item">
+                            <div class="question-text">12. Dores no coração ou no peito</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_12" id="q12_0" value="0" required>
+                                        <label class="form-check-label" for="q12_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_12" id="q12_1" value="1">
+                                        <label class="form-check-label" for="q12_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_12" id="q12_2" value="2">
+                                        <label class="form-check-label" for="q12_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_12" id="q12_3" value="3">
+                                        <label class="form-check-label" for="q12_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 13 -->
+                        <div class="question-item">
+                            <div class="question-text">13. Sentir medo em lugares abertos ou na rua</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_13" id="q13_0" value="0" required>
+                                        <label class="form-check-label" for="q13_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_13" id="q13_1" value="1">
+                                        <label class="form-check-label" for="q13_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_13" id="q13_2" value="2">
+                                        <label class="form-check-label" for="q13_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_13" id="q13_3" value="3">
+                                        <label class="form-check-label" for="q13_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 14 -->
+                        <div class="question-item">
+                            <div class="question-text">14. Sentir-se com pouca energia ou lento</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_14" id="q14_0" value="0" required>
+                                        <label class="form-check-label" for="q14_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_14" id="q14_1" value="1">
+                                        <label class="form-check-label" for="q14_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_14" id="q14_2" value="2">
+                                        <label class="form-check-label" for="q14_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_14" id="q14_3" value="3">
+                                        <label class="form-check-label" for="q14_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 15 -->
+                        <div class="question-item">
+                            <div class="question-text">15. Pensamentos de acabar com a própria vida</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_15" id="q15_0" value="0" required>
+                                        <label class="form-check-label" for="q15_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_15" id="q15_1" value="1">
+                                        <label class="form-check-label" for="q15_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_15" id="q15_2" value="2">
+                                        <label class="form-check-label" for="q15_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_15" id="q15_3" value="3">
+                                        <label class="form-check-label" for="q15_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 16 -->
+                        <div class="question-item">
+                            <div class="question-text">16. Ouvir vozes que outras pessoas não ouvem</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_16" id="q16_0" value="0" required>
+                                        <label class="form-check-label" for="q16_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_16" id="q16_1" value="1">
+                                        <label class="form-check-label" for="q16_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_16" id="q16_2" value="2">
+                                        <label class="form-check-label" for="q16_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_16" id="q16_3" value="3">
+                                        <label class="form-check-label" for="q16_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 17 -->
+                        <div class="question-item">
+                            <div class="question-text">17. Tremores</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_17" id="q17_0" value="0" required>
+                                        <label class="form-check-label" for="q17_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_17" id="q17_1" value="1">
+                                        <label class="form-check-label" for="q17_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_17" id="q17_2" value="2">
+                                        <label class="form-check-label" for="q17_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_17" id="q17_3" value="3">
+                                        <label class="form-check-label" for="q17_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 18 -->
+                        <div class="question-item">
+                            <div class="question-text">18. Sentir que a maioria das pessoas não pode ser confiável</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_18" id="q18_0" value="0" required>
+                                        <label class="form-check-label" for="q18_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_18" id="q18_1" value="1">
+                                        <label class="form-check-label" for="q18_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_18" id="q18_2" value="2">
+                                        <label class="form-check-label" for="q18_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_18" id="q18_3" value="3">
+                                        <label class="form-check-label" for="q18_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 19 -->
+                        <div class="question-item">
+                            <div class="question-text">19. Falta de apetite</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_19" id="q19_0" value="0" required>
+                                        <label class="form-check-label" for="q19_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_19" id="q19_1" value="1">
+                                        <label class="form-check-label" for="q19_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_19" id="q19_2" value="2">
+                                        <label class="form-check-label" for="q19_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_19" id="q19_3" value="3">
+                                        <label class="form-check-label" for="q19_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 20 -->
+                        <div class="question-item">
+                            <div class="question-text">20. Chorar facilmente</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_20" id="q20_0" value="0" required>
+                                        <label class="form-check-label" for="q20_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_20" id="q20_1" value="1">
+                                        <label class="form-check-label" for="q20_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_20" id="q20_2" value="2">
+                                        <label class="form-check-label" for="q20_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_20" id="q20_3" value="3">
+                                        <label class="form-check-label" for="q20_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 21 -->
+                        <div class="question-item">
+                            <div class="question-text">21. Sentir-se tímido ou desconfortável com o sexo oposto</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_21" id="q21_0" value="0" required>
+                                        <label class="form-check-label" for="q21_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_21" id="q21_1" value="1">
+                                        <label class="form-check-label" for="q21_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_21" id="q21_2" value="2">
+                                        <label class="form-check-label" for="q21_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_21" id="q21_3" value="3">
+                                        <label class="form-check-label" for="q21_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 22 -->
+                        <div class="question-item">
+                            <div class="question-text">22. Sentimentos de estar preso ou apanhado</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_22" id="q22_0" value="0" required>
+                                        <label class="form-check-label" for="q22_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_22" id="q22_1" value="1">
+                                        <label class="form-check-label" for="q22_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_22" id="q22_2" value="2">
+                                        <label class="form-check-label" for="q22_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_22" id="q22_3" value="3">
+                                        <label class="form-check-label" for="q22_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 23 -->
+                        <div class="question-item">
+                            <div class="question-text">23. Ficar assustado de repente sem motivo</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_23" id="q23_0" value="0" required>
+                                        <label class="form-check-label" for="q23_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_23" id="q23_1" value="1">
+                                        <label class="form-check-label" for="q23_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_23" id="q23_2" value="2">
+                                        <label class="form-check-label" for="q23_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_23" id="q23_3" value="3">
+                                        <label class="form-check-label" for="q23_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 24 -->
+                        <div class="question-item">
+                            <div class="question-text">24. Explosões de raiva que você não consegue controlar</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_24" id="q24_0" value="0" required>
+                                        <label class="form-check-label" for="q24_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_24" id="q24_1" value="1">
+                                        <label class="form-check-label" for="q24_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_24" id="q24_2" value="2">
+                                        <label class="form-check-label" for="q24_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_24" id="q24_3" value="3">
+                                        <label class="form-check-label" for="q24_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 25 -->
+                        <div class="question-item">
+                            <div class="question-text">25. Sentir medo de sair de casa sozinho</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_25" id="q25_0" value="0" required>
+                                        <label class="form-check-label" for="q25_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_25" id="q25_1" value="1">
+                                        <label class="form-check-label" for="q25_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_25" id="q25_2" value="2">
+                                        <label class="form-check-label" for="q25_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_25" id="q25_3" value="3">
+                                        <label class="form-check-label" for="q25_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 26 -->
+                        <div class="question-item">
+                            <div class="question-text">26. Culpar-se pelas coisas</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_26" id="q26_0" value="0" required>
+                                        <label class="form-check-label" for="q26_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_26" id="q26_1" value="1">
+                                        <label class="form-check-label" for="q26_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_26" id="q26_2" value="2">
+                                        <label class="form-check-label" for="q26_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_26" id="q26_3" value="3">
+                                        <label class="form-check-label" for="q26_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 27 -->
+                        <div class="question-item">
+                            <div class="question-text">27. Dores na parte inferior das costas</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_27" id="q27_0" value="0" required>
+                                        <label class="form-check-label" for="q27_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_27" id="q27_1" value="1">
+                                        <label class="form-check-label" for="q27_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_27" id="q27_2" value="2">
+                                        <label class="form-check-label" for="q27_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_27" id="q27_3" value="3">
+                                        <label class="form-check-label" for="q27_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 28 -->
+                        <div class="question-item">
+                            <div class="question-text">28. Sentir-se bloqueado para realizar coisas</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_28" id="q28_0" value="0" required>
+                                        <label class="form-check-label" for="q28_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_28" id="q28_1" value="1">
+                                        <label class="form-check-label" for="q28_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_28" id="q28_2" value="2">
+                                        <label class="form-check-label" for="q28_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_28" id="q28_3" value="3">
+                                        <label class="form-check-label" for="q28_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 29 -->
+                        <div class="question-item">
+                            <div class="question-text">29. Sentir-se sozinho</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_29" id="q29_0" value="0" required>
+                                        <label class="form-check-label" for="q29_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_29" id="q29_1" value="1">
+                                        <label class="form-check-label" for="q29_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_29" id="q29_2" value="2">
+                                        <label class="form-check-label" for="q29_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_29" id="q29_3" value="3">
+                                        <label class="form-check-label" for="q29_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 30 -->
+                        <div class="question-item">
+                            <div class="question-text">30. Sentir-se triste</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_30" id="q30_0" value="0" required>
+                                        <label class="form-check-label" for="q30_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_30" id="q30_1" value="1">
+                                        <label class="form-check-label" for="q30_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_30" id="q30_2" value="2">
+                                        <label class="form-check-label" for="q30_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_30" id="q30_3" value="3">
+                                        <label class="form-check-label" for="q30_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Questions 31-89 -->
+                        <div class="question-item">
+                            <div class="question-text">31. Preocupar-se demais com as coisas</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_31" id="q31_0" value="0" required><label class="form-check-label" for="q31_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_31" id="q31_1" value="1"><label class="form-check-label" for="q31_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_31" id="q31_2" value="2"><label class="form-check-label" for="q31_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_31" id="q31_3" value="3"><label class="form-check-label" for="q31_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">32. Sentir falta de interesse pelas coisas</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_32" id="q32_0" value="0" required><label class="form-check-label" for="q32_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_32" id="q32_1" value="1"><label class="form-check-label" for="q32_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_32" id="q32_2" value="2"><label class="form-check-label" for="q32_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_32" id="q32_3" value="3"><label class="form-check-label" for="q32_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">33. Sentir-se com medo</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_33" id="q33_0" value="0" required><label class="form-check-label" for="q33_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_33" id="q33_1" value="1"><label class="form-check-label" for="q33_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_33" id="q33_2" value="2"><label class="form-check-label" for="q33_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_33" id="q33_3" value="3"><label class="form-check-label" for="q33_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">34. Seus sentimentos serem facilmente feridos</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_34" id="q34_0" value="0" required><label class="form-check-label" for="q34_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_34" id="q34_1" value="1"><label class="form-check-label" for="q34_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_34" id="q34_2" value="2"><label class="form-check-label" for="q34_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_34" id="q34_3" value="3"><label class="form-check-label" for="q34_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">35. Outras pessoas estarem cientes de seus pensamentos íntimos</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_35" id="q35_0" value="0" required><label class="form-check-label" for="q35_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_35" id="q35_1" value="1"><label class="form-check-label" for="q35_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_35" id="q35_2" value="2"><label class="form-check-label" for="q35_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_35" id="q35_3" value="3"><label class="form-check-label" for="q35_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">36. Sentir que outros não o compreendem ou não são simpáticos</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_36" id="q36_0" value="0" required><label class="form-check-label" for="q36_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_36" id="q36_1" value="1"><label class="form-check-label" for="q36_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_36" id="q36_2" value="2"><label class="form-check-label" for="q36_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_36" id="q36_3" value="3"><label class="form-check-label" for="q36_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">37. Sentir que as pessoas são hostis ou não gostam de você</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_37" id="q37_0" value="0" required><label class="form-check-label" for="q37_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_37" id="q37_1" value="1"><label class="form-check-label" for="q37_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_37" id="q37_2" value="2"><label class="form-check-label" for="q37_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_37" id="q37_3" value="3"><label class="form-check-label" for="q37_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">38. Ter que fazer as coisas muito devagar para garantir que estão corretas</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_38" id="q38_0" value="0" required><label class="form-check-label" for="q38_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_38" id="q38_1" value="1"><label class="form-check-label" for="q38_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_38" id="q38_2" value="2"><label class="form-check-label" for="q38_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_38" id="q38_3" value="3"><label class="form-check-label" for="q38_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">39. Coração acelerado ou batendo forte</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_39" id="q39_0" value="0" required><label class="form-check-label" for="q39_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_39" id="q39_1" value="1"><label class="form-check-label" for="q39_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_39" id="q39_2" value="2"><label class="form-check-label" for="q39_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_39" id="q39_3" value="3"><label class="form-check-label" for="q39_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">40. Náusea ou dor de estômago</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_40" id="q40_0" value="0" required><label class="form-check-label" for="q40_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_40" id="q40_1" value="1"><label class="form-check-label" for="q40_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_40" id="q40_2" value="2"><label class="form-check-label" for="q40_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_40" id="q40_3" value="3"><label class="form-check-label" for="q40_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Continuing the full list to complete all 90 questions -->
+                        <!-- I'll add the remaining questions in a compact format for space efficiency -->
+
+                        <div class="question-item">
+                            <div class="question-text">41. Sentir-se inferior a outros</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_41" id="q41_0" value="0" required><label class="form-check-label" for="q41_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_41" id="q41_1" value="1"><label class="form-check-label" for="q41_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_41" id="q41_2" value="2"><label class="form-check-label" for="q41_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_41" id="q41_3" value="3"><label class="form-check-label" for="q41_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">42. Dores musculares</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_42" id="q42_0" value="0" required><label class="form-check-label" for="q42_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_42" id="q42_1" value="1"><label class="form-check-label" for="q42_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_42" id="q42_2" value="2"><label class="form-check-label" for="q42_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_42" id="q42_3" value="3"><label class="form-check-label" for="q42_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Continue with questions 43-89 following same compact pattern -->
+                        <!-- I'll add key remaining questions in batches -->
+
+                        <div class="question-item">
+                            <div class="question-text">43. Sentir que você está sendo observado ou que falam sobre você</div>
+                            <div class="row">
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_43" id="q43_0" value="0" required><label class="form-check-label" for="q43_0">0 - Nada</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_43" id="q43_1" value="1"><label class="form-check-label" for="q43_1">1 - Um pouco</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_43" id="q43_2" value="2"><label class="form-check-label" for="q43_2">2 - Moderadamente</label></div></div>
+                                <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_43" id="q43_3" value="3"><label class="form-check-label" for="q43_3">3 - Extremamente</label></div></div>
+                            </div>
+                        </div>
+
+                        <!-- I need to continue adding all 90 questions but will summarize with key remaining ones -->
+                        <!-- Adding critical questions that complete the assessment -->
+
+                        <script>
+                        // Auto-generate remaining questions 44-89 to save space
+                        const remainingQuestions = [
+                            "Problemas para adormecer",
+                            "Ter que verificar e verificar novamente o que você faz",
+                            "Dificuldade para tomar decisões",
+                            "Sentir medo de viajar de ônibus, metrô ou trens",
+                            "Dificuldade para respirar",
+                            "Ondas de calor ou frio",
+                            "Ter que evitar certas coisas, lugares ou atividades porque o assustam",
+                            "Sua mente ficar em branco",
+                            "Dormência ou formigamento em partes do corpo",
+                            "Um nó na garganta",
+                            "Sentir-se sem esperança sobre o futuro",
+                            "Problemas de concentração",
+                            "Sentir fraqueza em partes do corpo",
+                            "Sentir-se tenso ou nervoso",
+                            "Sensações pesadas nos braços e pernas",
+                            "Pensamentos de morte e morrer",
+                            "Comer demais",
+                            "Sentir-se desconfortável quando as pessoas olham ou falam sobre você",
+                            "Ter pensamentos que não são seus",
+                            "Ter impulsos para bater, ferir ou machucar alguém",
+                            "Acordar muito cedo de manhã",
+                            "Ter que repetir as mesmas ações como tocar, contar ou lavar",
+                            "Sono agitado ou perturbado",
+                            "Ter impulsos para quebrar ou esmagar coisas",
+                            "Ter crenças ou ideias que outros não compartilham",
+                            "Sentir-se muito constrangido com outros",
+                            "Sentir-se desconfortável em multidões",
+                            "Sentir que tudo é um esforço",
+                            "Períodos de terror ou pânico",
+                            "Sentir-se desconfortável ao comer ou beber em público",
+                            "Entrar em discussões frequentes",
+                            "Sentir-se nervoso quando fica sozinho",
+                            "Outros não darem o devido crédito por suas conquistas",
+                            "Sentir-se sozinho mesmo quando está com pessoas",
+                            "Sentir-se tão inquieto que não consegue ficar parado",
+                            "Sentimentos de inutilidade",
+                            "O sentimento de que algo ruim vai acontecer com você",
+                            "Gritar ou jogar coisas",
+                            "Sentir medo de desmaiar em público",
+                            "Sentir que outras pessoas vão se aproveitar de você se deixar",
+                            "Ter pensamentos sobre sexo que o incomodam muito",
+                            "A ideia de que você deveria ser punido por seus pecados",
+                            "Pensamentos e imagens de natureza assustadora",
+                            "A ideia de que algo sério está errado com seu corpo",
+                            "Nunca se sentir próximo de outra pessoa",
+                            "Sentimentos de culpa"
+                        ];
+
+                        // Generate HTML for questions 44-89
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const questionContainer = document.querySelector('.form-section');
+                            const lastQuestion = document.querySelector('#q43_3').closest('.question-item');
+                            
+                            remainingQuestions.forEach((questionText, index) => {
+                                const questionNum = index + 44;
+                                const questionDiv = document.createElement('div');
+                                questionDiv.className = 'question-item';
+                                questionDiv.innerHTML = `
+                                    <div class="question-text">${questionNum}. ${questionText}</div>
+                                    <div class="row">
+                                        <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_${questionNum}" id="q${questionNum}_0" value="0" required><label class="form-check-label" for="q${questionNum}_0">0 - Nada</label></div></div>
+                                        <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_${questionNum}" id="q${questionNum}_1" value="1"><label class="form-check-label" for="q${questionNum}_1">1 - Um pouco</label></div></div>
+                                        <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_${questionNum}" id="q${questionNum}_2" value="2"><label class="form-check-label" for="q${questionNum}_2">2 - Moderadamente</label></div></div>
+                                        <div class="col-3"><div class="form-check"><input class="form-check-input" type="radio" name="question_${questionNum}" id="q${questionNum}_3" value="3"><label class="form-check-label" for="q${questionNum}_3">3 - Extremamente</label></div></div>
+                                    </div>
+                                `;
+                                lastQuestion.parentNode.insertBefore(questionDiv, lastQuestion.nextSibling);
+                            });
+                            
+                            // Add event listeners to new radio buttons
+                            const newRadios = document.querySelectorAll('input[type="radio"]');
+                            newRadios.forEach(radio => {
+                                radio.addEventListener('change', updateProgress);
+                            });
+                        });
+                        </script>
+
+                        <!-- Question 90 -->
+                        <div class="question-item">
+                            <div class="question-text">90. A ideia de que algo está errado com sua mente</div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_90" id="q90_0" value="0" required>
+                                        <label class="form-check-label" for="q90_0">0 - Nada</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_90" id="q90_1" value="1">
+                                        <label class="form-check-label" for="q90_1">1 - Um pouco</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_90" id="q90_2" value="2">
+                                        <label class="form-check-label" for="q90_2">2 - Moderadamente</label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_90" id="q90_3" value="3">
+                                        <label class="form-check-label" for="q90_3">3 - Extremamente</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-4">
+                        <div class="col-12 d-flex justify-content-center gap-3">
+                            <button type="button" class="btn btn-outline-secondary btn-lg" onclick="clearForm()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                Limpar Formulário
+                            </button>
+                            <button type="button" class="btn btn-success btn-lg" id="saveButton" disabled onclick="saveForm()">
+                                <i class="bi bi-floppy me-2"></i>
+                                Salvar Avaliação
+                            </button>
+                            <button type="button" class="btn btn-primary btn-lg" id="exportButton" disabled onclick="exportToCSV()">
+                                <i class="bi bi-download me-2"></i>
+                                Exportar CSV
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Progress indicator -->
+                <div class="mt-3">
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%" id="progressBar"></div>
+                    </div>
+                    <small class="text-muted" id="progressText">0 de 90 questões respondidas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation and progress tracking
+        function updateProgress() {
+            const totalQuestions = 90;
+            let answeredQuestions = 0;
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                const radios = document.querySelectorAll(`input[name="question_${i}"]`);
+                const isAnswered = Array.from(radios).some(radio => radio.checked);
+                if (isAnswered) answeredQuestions++;
+            }
+            
+            const percentage = (answeredQuestions / totalQuestions) * 100;
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const saveButton = document.getElementById('saveButton');
+            const exportButton = document.getElementById('exportButton');
+            
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `${answeredQuestions} de ${totalQuestions} questões respondidas`;
+            
+            // Enable buttons only when all questions are answered
+            const allAnswered = answeredQuestions === totalQuestions;
+            saveButton.disabled = !allAnswered;
+            exportButton.disabled = !allAnswered;
+            
+            if (allAnswered) {
+                progressBar.classList.add('bg-success');
+                progressText.classList.add('text-success');
+                progressText.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i>${answeredQuestions} de ${totalQuestions} questões respondidas - Formulário completo!`;
+            } else {
+                progressBar.classList.remove('bg-success');
+                progressText.classList.remove('text-success');
+            }
+        }
+
+        // Add event listeners to all radio buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => {
+                radio.addEventListener('change', updateProgress);
+            });
+            updateProgress(); // Initial check
+        });
+
+        function clearForm() {
+            if (confirm('Tem certeza que deseja limpar todas as respostas?')) {
+                document.getElementById('scl90rForm').reset();
+                updateProgress();
+            }
+        }
+
+        function saveForm() {
+            // Collect all form data
+            const formData = {
+                scl_id: document.getElementById('scl_id').value,
+                case_profile_id: document.getElementById('case_profile_id').value,
+                form_type: document.getElementById('form_type').value,
+                timestamp: new Date().toISOString(),
+                responses: {}
+            };
+
+            // Collect all question responses
+            for (let i = 1; i <= 90; i++) {
+                const selectedRadio = document.querySelector(`input[name="question_${i}"]:checked`);
+                if (selectedRadio) {
+                    formData.responses[`question_${i}`] = parseInt(selectedRadio.value);
+                }
+            }
+
+            // Calculate summary scores
+            const responses = Object.values(formData.responses);
+            formData.totalScore = responses.reduce((sum, score) => sum + score, 0);
+            formData.positiveSymptoms = responses.filter(score => score > 0).length;
+            formData.averageScore = responses.length > 0 ? (formData.totalScore / responses.length).toFixed(2) : 0;
+
+            // Here you would typically send the data to your backend
+            console.log('SCL-90-R Data:', formData);
+            
+            alert('Formulário SCL-90-R salvo com sucesso!\n\n' +
+                  `Pontuação Total: ${formData.totalScore}/270\n` +
+                  `Sintomas Positivos: ${formData.positiveSymptoms}/90\n` +
+                  `Pontuação Média: ${formData.averageScore}`);
+        }
+
+        function exportToCSV() {
+            const formData = {
+                scl_id: document.getElementById('scl_id').value,
+                case_profile_id: document.getElementById('case_profile_id').value,
+                form_type: 'SCL90R',
+                timestamp: new Date().toISOString()
+            };
+
+            // Collect responses
+            for (let i = 1; i <= 90; i++) {
+                const selectedRadio = document.querySelector(`input[name="question_${i}"]:checked`);
+                formData[`question_${i}`] = selectedRadio ? selectedRadio.value : '';
+            }
+
+            // Calculate summary
+            const responses = [];
+            for (let i = 1; i <= 90; i++) {
+                const value = formData[`question_${i}`];
+                if (value !== '') responses.push(parseInt(value));
+            }
+            
+            formData.total_score = responses.reduce((sum, score) => sum + score, 0);
+            formData.positive_symptoms = responses.filter(score => score > 0).length;
+            formData.average_score = responses.length > 0 ? (formData.total_score / responses.length).toFixed(2) : 0;
+
+            // Create CSV content
+            const headers = Object.keys(formData);
+            const values = Object.values(formData);
+            const csvContent = headers.join(',') + '\n' + values.join(',');
+
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SCL90R_${formData.case_profile_id}_${new Date().getFullYear()}${(new Date().getMonth()+1).toString().padStart(2,'0')}${new Date().getDate().toString().padStart(2,'0')}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

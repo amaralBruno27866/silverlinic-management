@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>SLT - Automobile Anxiety Inventory</title>
+</head>
+
+<style>
+  /* ========================= */
+  /*       Global Styles       */
+  /* ========================= */
+
+  :root{
+    --primary-color: #00325c;
+    --secondary-color: #00335cb6;
+    --third-color: #00335c3b;
+    --success-color: #18c427;
+    --success-color-hover: #16a125;
+    --error-color: #ff4d4f;
+    --error-color-hover: #ff1a1a;
+    --warning-color: #ffcc00;
+    --warning-color-hover: #e6b800;
+    --info-color: #1890ff;
+    --info-color-hover: #007acc;
+    --background-color: #c4c4c4;
+    --background-form: #ffffff;
+    --text-color-1: #222222;
+    --text-color-2: #d3d3d3;
+
+    --font-family: 'Roboto', sans-serif;
+    --font-size: 1rem;
+    --font-weight: 400;
+  }
+
+  /* ========================= */
+  /*      General Body         */
+  /* ========================= */
+  body {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    margin: 1rem auto;
+    padding: 1rem;
+    background: var(--background-color);
+    max-width: 75rem;
+    max-height: 100vh;
+  }
+
+  form {
+    background: var(--background-form);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-header {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+  }
+
+  /* ========================= */
+  /*      Fieldset Styles      */
+  /* ========================= */
+  fieldset {
+    border: 1px solid var(--third-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #f9f9f9;
+  }
+
+  legend {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+    width: auto;
+    letter-spacing: 0.5px;
+  }
+
+  /* ========================= */
+  /*      Form Layout          */
+  /* ========================= */
+  .aai-info,
+  .aai-questions,
+  .question-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .question-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .question-text {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .question-options {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .radio-group, .checkbox-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .radio-option, .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    color: var(--primary-color);
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #bfc9d1;
+    border-radius: 0.35rem;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--text-color-1);
+    transition: border-color 0.2s;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin-right: 0.3rem;
+    transform: scale(1.1);
+  }
+
+  input[readonly] {
+    background: #f1f1f1;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    background: #f0f6fa;
+  }
+
+  textarea {
+    min-height: 3rem;
+    resize: vertical;
+  }
+
+  /* Conditional fields styling */
+  .conditional-field {
+    margin-left: 2rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-left: 3px solid var(--primary-color);
+    border-radius: 0.25rem;
+  }
+
+  .sub-options {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f5f7fa;
+    border-radius: 0.25rem;
+  }
+
+  /* Footer já está estilizado */
+  .form-footer {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  /* ========================= */
+  /*      Button Styles        */
+  /* ========================= */
+  .button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .form-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 0.35rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px #00325c1a;
+  }
+
+  .form-action-btn:disabled {
+    background-color: #bfc9d1;
+    color: #eee;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+
+  .form-action-btn:hover:not(:disabled),
+  .form-action-btn:focus:not(:disabled) {
+    background-color: var(--secondary-color);
+    color: #fff;
+    outline: none;
+  }
+
+  @media (max-width: 767px) {
+    .button-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.2rem 0 0.5rem 0;
+    }
+    .form-action-btn {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      padding: 0.55rem 1rem;
+    }
+    .radio-group, .checkbox-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .question-options {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* ========================= */
+  /*      Responsividade       */
+  /* ========================= */
+
+  /* Laptops: 1920x1080 até 1280x720 */
+  @media (max-width: 1920px) and (min-width: 1280px) {
+    body {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Tablets: 1279px até 768px */
+  @media (max-width: 1279px) and (min-width: 768px) {
+    body {
+      font-size: 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  /* Smartphones: até 767px */
+  @media (max-width: 767px) {
+    body {
+      font-size: 0.95rem;
+      padding: 0 0.5rem;
+    }
+  }
+
+</style>
+
+<body>
+  <form>
+    <header>
+      <fieldset class="form-header">
+        <h1 style="margin: 0;">Silver Linings Therapy And Assessment Services</h1>
+        <h2 style="margin: 0.5rem 0;">Automobile Anxiety Inventory</h2>
+        <p style="margin: 0;">2 Andres St, Niagara on the Lake, Ontario, L0S 1J0</p>
+        <p style="margin: 0;"><i class="bi bi-telephone"></i> +1 (416) 937 - 6902 | Fax: +1 (647) 793 - 4140</p>
+        <p style="margin: 0;"><i class="bi bi-envelope"></i> silverliningsassociates@gmail.com</p>
+      </fieldset>
+    </header>
+
+    <!-- Form Information -->
+    <fieldset class="aai-info">
+      <legend>Form Information</legend>
+      <label for="aai-id">AAI ID:</label>
+      <input type="text" id="aai-id" name="aai-id" value="{{AAI_ID}}" readonly>
+      
+      <label for="case-profile-id">Case Profile ID:</label>
+      <input type="text" id="case-profile-id" name="case-profile-id" value="{{CASE_PROFILE_ID}}" readonly>
+      
+      <label for="created-at">Created at:</label>
+      <input type="text" id="created-at" name="created-at" value="{{CREATED_AT}}" readonly>
+      
+      <label for="assessor-name">Assessor:</label>
+      <input type="text" id="assessor-name" name="assessor-name" value="{{ASSESSOR_FULL_NAME}}" readonly>
+      
+      <label for="client-name">Client:</label>
+      <input type="text" id="client-name" name="client-name" value="{{CLIENT_FULL_NAME}}" readonly>
+    </fieldset>
+
+    <!-- AAI Questions -->
+    <fieldset class="aai-questions">
+      <legend>Automobile Anxiety Assessment</legend>
+      
+      <!-- Instructions -->
+      <div class="question-item" style="background: #e8f4fd; border-color: var(--info-color);">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <i class="bi bi-info-circle" style="font-size: 1.25rem; color: var(--info-color);"></i>
+          <h3 style="margin: 0; color: var(--info-color); font-size: 1.1rem;">How to Complete This Form</h3>
+        </div>
+        
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--info-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-color); font-size: 1rem;">📋 Instructions:</h4>
+          <p style="margin: 0 0 0.5rem 0; line-height: 1.5;">Please answer <strong>all questions</strong> honestly based on your experience with automobiles since your accident. Your responses will help your assessor understand your current anxiety levels and develop an appropriate treatment plan.</p>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--success-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--success-color); font-size: 1rem;">✅ How to Answer:</h4>
+          <ul style="margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+            <li style="margin-bottom: 0.25rem;"><strong>Yes/No Questions:</strong> Select the option that best describes your experience</li>
+            <li style="margin-bottom: 0.25rem;"><strong>Multiple Choice:</strong> Choose the single option that applies to you</li>
+            <li style="margin-bottom: 0.25rem;"><strong>Follow-up Questions:</strong> Some questions will reveal additional options when you select "Yes"</li>
+            <li style="margin-bottom: 0.25rem;"><strong>Text Fields:</strong> Provide specific details when prompted</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--warning-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--warning-color); font-size: 1rem;">⚠️ Important Notes:</h4>
+          <ul style="margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+            <li style="margin-bottom: 0.25rem;">You must answer <strong>all questions</strong> before the Save button becomes active</li>
+            <li style="margin-bottom: 0.25rem;">If you select "Yes" for certain questions, you'll need to provide additional details</li>
+            <li style="margin-bottom: 0.25rem;">Your form information (ID, assessor, etc.) is pre-filled and cannot be changed</li>
+            <li style="margin-bottom: 0.25rem;">Take your time - there's no rush to complete the form</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--primary-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-color); font-size: 1rem;">💾 Saving Your Responses:</h4>
+          <p style="margin: 0; line-height: 1.5;">Once you've answered all questions, click the <strong>"Save AAI Form"</strong> button to download your responses as a CSV file. Attach this file to an email and send it to your assessor for review and processing.</p>
+        </div>
+      </div>
+
+      <!-- Questions 1-13: Simple Yes/No -->
+      <div class="question-item">
+        <div class="question-text">1. Are you more nervous in an automobile since your accident?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q1-yes" name="question-1" value="true" data-question="1">
+              <label for="q1-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q1-no" name="question-1" value="false" data-question="1">
+              <label for="q1-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">2. Do you have a motor vehicle license?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q2-yes" name="question-2" value="true" data-question="2">
+              <label for="q2-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q2-no" name="question-2" value="false" data-question="2">
+              <label for="q2-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">3. Have you driven a car since your accident?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q3-yes" name="question-3" value="true" data-question="3">
+              <label for="q3-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q3-no" name="question-3" value="false" data-question="3">
+              <label for="q3-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">4. Do you avoid driving whenever possible?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q4-yes" name="question-4" value="true" data-question="4">
+              <label for="q4-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q4-no" name="question-4" value="false" data-question="4">
+              <label for="q4-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">5. Do you drive slower or more carefully since your accident?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q5-yes" name="question-5" value="true" data-question="5">
+              <label for="q5-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q5-no" name="question-5" value="false" data-question="5">
+              <label for="q5-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">6. Have you been a passenger in a car since your accident?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q6-yes" name="question-6" value="true" data-question="6">
+              <label for="q6-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q6-no" name="question-6" value="false" data-question="6">
+              <label for="q6-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">7. Do you avoid being a passenger whenever possible?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q7-yes" name="question-7" value="true" data-question="7">
+              <label for="q7-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q7-no" name="question-7" value="false" data-question="7">
+              <label for="q7-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">8. Are you more nervous in a car after nightfall?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q8-yes" name="question-8" value="true" data-question="8">
+              <label for="q8-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q8-no" name="question-8" value="false" data-question="8">
+              <label for="q8-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">9. Are you more nervous in traffic?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q9-yes" name="question-9" value="true" data-question="9">
+              <label for="q9-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q9-no" name="question-9" value="false" data-question="9">
+              <label for="q9-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">10. Are you more nervous when traveling on the highway?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q10-yes" name="question-10" value="true" data-question="10">
+              <label for="q10-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q10-no" name="question-10" value="false" data-question="10">
+              <label for="q10-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">11. Are you more nervous in intersections?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q11-yes" name="question-11" value="true" data-question="11">
+              <label for="q11-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q11-no" name="question-11" value="false" data-question="11">
+              <label for="q11-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">12. Are you more nervous when outside your immediate home area?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q12-yes" name="question-12" value="true" data-question="12">
+              <label for="q12-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q12-no" name="question-12" value="false" data-question="12">
+              <label for="q12-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">13. Are you more nervous in rain or bad weather?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q13-yes" name="question-13" value="true" data-question="13">
+              <label for="q13-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q13-no" name="question-13" value="false" data-question="13">
+              <label for="q13-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 14: Multiple Choice -->
+      <div class="question-item">
+        <div class="question-text">14. Are you more nervous as a:</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q14-driver" name="question-14" value="driver" data-question="14">
+              <label for="q14-driver">Driver</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q14-passenger" name="question-14" value="passenger" data-question="14">
+              <label for="q14-passenger">Passenger</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q14-no-diff" name="question-14" value="no-difference" data-question="14">
+              <label for="q14-no-diff">No difference</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 15: Yes/No + Text -->
+      <div class="question-item">
+        <div class="question-text">15a. Are you more nervous when certain people are in the car?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q15a-yes" name="question-15a" value="true" data-question="15a">
+              <label for="q15a-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q15a-no" name="question-15a" value="false" data-question="15a">
+              <label for="q15a-no">No</label>
+            </div>
+          </div>
+        </div>
+        <div id="q15b-container" class="conditional-field" style="display: none;">
+          <label for="q15b">15b. If yes, who?</label>
+          <textarea id="q15b" name="question-15b" placeholder="Please specify who makes you more nervous..." data-question="15b"></textarea>
+        </div>
+      </div>
+
+      <!-- Questions 16-18: Simple Yes/No -->
+      <div class="question-item">
+        <div class="question-text">16. Are you more nervous when other vehicles are nearby?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q16-yes" name="question-16" value="true" data-question="16">
+              <label for="q16-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q16-no" name="question-16" value="false" data-question="16">
+              <label for="q16-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">17. Are you more nervous when hearing car horns or brakes?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q17-yes" name="question-17" value="true" data-question="17">
+              <label for="q17-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q17-no" name="question-17" value="false" data-question="17">
+              <label for="q17-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">18. Are you more nervous when passing an accident scene?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q18-yes" name="question-18" value="true" data-question="18">
+              <label for="q18-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q18-no" name="question-18" value="false" data-question="18">
+              <label for="q18-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 19: Yes/No + Checkboxes -->
+      <div class="question-item">
+        <div class="question-text">19. Are you more nervous as a pedestrian?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q19-yes" name="question-19" value="true" data-question="19">
+              <label for="q19-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q19-no" name="question-19" value="false" data-question="19">
+              <label for="q19-no">No</label>
+            </div>
+          </div>
+        </div>
+        <div id="q19-options" class="sub-options" style="display: none;">
+          <div class="question-text" style="font-size: 0.9rem;">If yes, where are you more nervous?</div>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q19-sidewalks" name="question-19-location" value="sidewalks" data-question="19-location">
+              <label for="q19-sidewalks">On sidewalks</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q19-crossing" name="question-19-location" value="crossing" data-question="19-location">
+              <label for="q19-crossing">Crossing streets</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q19-both" name="question-19-location" value="both" data-question="19-location">
+              <label for="q19-both">Both</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions 20-23: Simple Yes/No -->
+      <div class="question-item">
+        <div class="question-text">20. Do you keep thinking about the accident when in a car?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q20-yes" name="question-20" value="true" data-question="20">
+              <label for="q20-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q20-no" name="question-20" value="false" data-question="20">
+              <label for="q20-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">21. Do you feel like you're about to have another accident?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q21-yes" name="question-21" value="true" data-question="21">
+              <label for="q21-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q21-no" name="question-21" value="false" data-question="21">
+              <label for="q21-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">22. Do you feel you will never regain your former confidence?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q22-yes" name="question-22" value="true" data-question="22">
+              <label for="q22-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q22-no" name="question-22" value="false" data-question="22">
+              <label for="q22-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <div class="question-text">23. Do you have panic attacks?</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q23-yes" name="question-23" value="true" data-question="23">
+              <label for="q23-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q23-no" name="question-23" value="false" data-question="23">
+              <label for="q23-no">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </fieldset>
+
+    <!-- Buttons for saving the form -->
+    <div class="button-container">
+      <button type="button" id="save-btn" class="form-action-btn">
+        <i class="bi bi-download"></i> Save AAI Form
+      </button>
+    </div>
+
+    <footer class="form-footer">
+      <div class="footer-contact">
+        <p style="margin: 0;">© <span id="copyright-year">2025</span> Silver Linings Therapy And Assessment Services</p>
+      </div>
+      <div class="footer-info">
+        <p style="margin: 0;">All information provided is confidential and used for assessment purposes only.</p>
+      </div>
+    </footer>
+  </form>
+
+  <script>
+    // ========================= 
+    //    AAI Form JavaScript
+    // ========================= 
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Setup conditional field handlers
+      setupConditionalFields();
+      
+      // Setup form save functionality
+      setupFormSave();
+      
+      // Setup form validation and button state
+      setupFormValidation();
+      
+      // Update copyright year
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    });
+
+    // Note: AAI ID, Case Profile ID, Created At, Assessor Name, and Client Name 
+    // will be populated by the FormManager when generating the personalized form
+
+    // Setup conditional field visibility
+    function setupConditionalFields() {
+      // Q15a - Show/hide Q15b textarea
+      const q15aInputs = document.querySelectorAll('input[name="question-15a"]');
+      const q15bContainer = document.getElementById('q15b-container');
+      
+      q15aInputs.forEach(input => {
+        input.addEventListener('change', function() {
+          if (this.value === 'true' && this.checked) {
+            q15bContainer.style.display = 'block';
+          } else if (this.value === 'false' && this.checked) {
+            q15bContainer.style.display = 'none';
+            // Clear textarea when hiding
+            document.getElementById('q15b').value = '';
+          }
+          // Update save button state
+          updateSaveButtonState();
+        });
+      });
+
+      // Q19 - Show/hide location options
+      const q19Inputs = document.querySelectorAll('input[name="question-19"]');
+      const q19Options = document.getElementById('q19-options');
+      
+      q19Inputs.forEach(input => {
+        input.addEventListener('change', function() {
+          if (this.value === 'true' && this.checked) {
+            q19Options.style.display = 'block';
+          } else if (this.value === 'false' && this.checked) {
+            q19Options.style.display = 'none';
+            // Clear location selections when hiding
+            const locationInputs = document.querySelectorAll('input[name="question-19-location"]');
+            locationInputs.forEach(loc => loc.checked = false);
+          }
+          // Update save button state
+          updateSaveButtonState();
+        });
+      });
+    }
+
+    // Setup form validation and button state management
+    function setupFormValidation() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Initially disable the save button
+      saveBtn.disabled = true;
+      
+      // Get all radio inputs for questions 1-23
+      const allRadioInputs = document.querySelectorAll('input[type="radio"]');
+      
+      // Add event listeners to all radio inputs
+      allRadioInputs.forEach(input => {
+        input.addEventListener('change', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      // Also listen to textarea changes for Q15b
+      const q15bTextarea = document.getElementById('q15b');
+      q15bTextarea.addEventListener('input', function() {
+        updateSaveButtonState();
+      });
+      
+      // Initial check
+      updateSaveButtonState();
+    }
+
+    // Update save button state based on form completion
+    function updateSaveButtonState() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Check if all required questions are answered
+      const requiredQuestions = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+      ];
+      
+      let allAnswered = true;
+      
+      for (let i of requiredQuestions) {
+        let questionAnswered = false;
+        
+        // Check regular questions (1-13, 16-18, 20-23)
+        if (i <= 13 || (i >= 16 && i <= 18) || i >= 20) {
+          const questionInput = document.querySelector(`input[name="question-${i}"]:checked`);
+          questionAnswered = questionInput !== null;
+        }
+        // Check question 14 (multiple choice)
+        else if (i === 14) {
+          const q14Input = document.querySelector('input[name="question-14"]:checked');
+          questionAnswered = q14Input !== null;
+        }
+        // Check question 15a
+        else if (i === 15) {
+          const q15aInput = document.querySelector('input[name="question-15a"]:checked');
+          questionAnswered = q15aInput !== null;
+          
+          // If Q15a is "Yes", also check if Q15b textarea is filled
+          if (questionAnswered && q15aInput.value === 'true') {
+            const q15bValue = document.getElementById('q15b').value.trim();
+            questionAnswered = q15bValue !== '';
+          }
+        }
+        // Check question 19
+        else if (i === 19) {
+          const q19Input = document.querySelector('input[name="question-19"]:checked');
+          questionAnswered = q19Input !== null;
+          
+          // If Q19 is "Yes", also check if location is selected
+          if (questionAnswered && q19Input.value === 'true') {
+            const q19LocationInput = document.querySelector('input[name="question-19-location"]:checked');
+            questionAnswered = q19LocationInput !== null;
+          }
+        }
+        
+        if (!questionAnswered) {
+          allAnswered = false;
+          break;
+        }
+      }
+      
+      // Enable/disable save button based on completion
+      saveBtn.disabled = !allAnswered;
+    }
+
+    // Setup form save functionality
+    function setupFormSave() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      saveBtn.addEventListener('click', function() {
+        if (validateForm()) {
+          saveFormData();
+        }
+      });
+    }
+
+    // Validate required fields
+    function validateForm() {
+      // Check if form information is populated (should be handled by FormManager)
+      const aaiId = document.getElementById('aai-id').value.trim();
+      const caseProfileId = document.getElementById('case-profile-id').value.trim();
+      
+      if (!aaiId || !caseProfileId) {
+        alert('Form information is incomplete. Please ensure this form was properly generated.');
+        return false;
+      }
+
+      // All questions must be answered (button is only enabled when complete)
+      return true;
+    }
+
+    // Save form data to CSV
+    function saveFormData() {
+      const formData = collectFormData();
+      const csvContent = generateCSV(formData);
+      downloadCSV(csvContent, `AAI_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+    }
+
+    // Collect all form data
+    function collectFormData() {
+      const data = {
+        aaiId: document.getElementById('aai-id').value,
+        caseProfileId: document.getElementById('case-profile-id').value,
+        createdAt: document.getElementById('created-at').value,
+        assessorName: document.getElementById('assessor-name').value,
+        clientName: document.getElementById('client-name').value,
+        answers: {}
+      };
+
+      // Collect all question answers
+      for (let i = 1; i <= 23; i++) {
+        const questionInput = document.querySelector(`input[name="question-${i}"]:checked`);
+        data.answers[`question_${i}`] = questionInput ? questionInput.value : '';
+      }
+
+      // Special handling for Q14 (multiple choice)
+      const q14Input = document.querySelector('input[name="question-14"]:checked');
+      data.answers.question_14 = q14Input ? q14Input.value : '';
+
+      // Special handling for Q15a and Q15b
+      const q15aInput = document.querySelector('input[name="question-15a"]:checked');
+      data.answers.question_15a = q15aInput ? q15aInput.value : '';
+      data.answers.question_15b = document.getElementById('q15b').value;
+
+      // Special handling for Q19 location
+      const q19LocationInput = document.querySelector('input[name="question-19-location"]:checked');
+      data.answers.question_19_location = q19LocationInput ? q19LocationInput.value : '';
+
+      return data;
+    }
+
+    // Generate CSV content
+    function generateCSV(data) {
+      const headers = [
+        'AAI_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
+        'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
+        'Q11', 'Q12', 'Q13', 'Q14', 'Q15a', 'Q15b', 'Q16', 'Q17', 'Q18',
+        'Q19', 'Q19_Location', 'Q20', 'Q21', 'Q22', 'Q23'
+      ];
+
+      const values = [
+        data.aaiId,
+        data.caseProfileId,
+        data.createdAt,
+        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
+        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+        data.answers.question_1,
+        data.answers.question_2,
+        data.answers.question_3,
+        data.answers.question_4,
+        data.answers.question_5,
+        data.answers.question_6,
+        data.answers.question_7,
+        data.answers.question_8,
+        data.answers.question_9,
+        data.answers.question_10,
+        data.answers.question_11,
+        data.answers.question_12,
+        data.answers.question_13,
+        data.answers.question_14,
+        data.answers.question_15a,
+        `"${data.answers.question_15b.replace(/"/g, '""')}"`, // Escape quotes in textarea
+        data.answers.question_16,
+        data.answers.question_17,
+        data.answers.question_18,
+        data.answers.question_19,
+        data.answers.question_19_location,
+        data.answers.question_20,
+        data.answers.question_21,
+        data.answers.question_22,
+        data.answers.question_23
+      ];
+
+      return headers.join(',') + '\n' + values.join(',');
+    }
+
+    // Download CSV file
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        alert(`AAI form saved as ${filename}`);
+      } else {
+        alert('Your browser does not support automatic file download. Please copy the CSV content manually.');
+      }
+    }
+
+    // Update copyright year
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

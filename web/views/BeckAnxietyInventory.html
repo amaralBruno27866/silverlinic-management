@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>SLT - Beck Anxiety Inventory</title>
+</head>
+
+<style>
+  /* ========================= */
+  /*       Global Styles       */
+  /* ========================= */
+
+  :root{
+    --primary-color: #00325c;
+    --secondary-color: #00335cb6;
+    --third-color: #00335c3b;
+    --success-color: #18c427;
+    --success-color-hover: #16a125;
+    --error-color: #ff4d4f;
+    --error-color-hover: #ff1a1a;
+    --warning-color: #ffcc00;
+    --warning-color-hover: #e6b800;
+    --info-color: #1890ff;
+    --info-color-hover: #007acc;
+    --background-color: #c4c4c4;
+    --background-form: #ffffff;
+    --text-color-1: #222222;
+    --text-color-2: #d3d3d3;
+
+    --font-family: 'Roboto', sans-serif;
+    --font-size: 1rem;
+    --font-weight: 400;
+  }
+
+  /* ========================= */
+  /*      General Body         */
+  /* ========================= */
+  body {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    margin: 1rem auto;
+    padding: 1rem;
+    background: var(--background-color);
+    max-width: 75rem;
+    max-height: 100vh;
+  }
+
+  form {
+    background: var(--background-form);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-header {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+  }
+
+  /* ========================= */
+  /*      Fieldset Styles      */
+  /* ========================= */
+  fieldset {
+    border: 1px solid var(--third-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #f9f9f9;
+  }
+
+  legend {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+    width: auto;
+    letter-spacing: 0.5px;
+  }
+
+  /* ========================= */
+  /*      Form Layout          */
+  /* ========================= */
+  .bai-info,
+  .bai-questions,
+  .question-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .question-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .question-text {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .question-options {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .radio-group, .checkbox-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .radio-option, .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    color: var(--primary-color);
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #bfc9d1;
+    border-radius: 0.35rem;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--text-color-1);
+    transition: border-color 0.2s;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin-right: 0.3rem;
+    transform: scale(1.1);
+  }
+
+  input[readonly] {
+    background: #f1f1f1;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    background: #f0f6fa;
+  }
+
+  textarea {
+    min-height: 3rem;
+    resize: vertical;
+  }
+
+  /* Footer já está estilizado */
+  .form-footer {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  /* ========================= */
+  /*      Button Styles        */
+  /* ========================= */
+  .button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .form-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 0.35rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px #00325c1a;
+  }
+
+  .form-action-btn:disabled {
+    background-color: #bfc9d1;
+    color: #eee;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+
+  .form-action-btn:hover:not(:disabled),
+  .form-action-btn:focus:not(:disabled) {
+    background-color: var(--secondary-color);
+    color: #fff;
+    outline: none;
+  }
+
+  @media (max-width: 767px) {
+    .button-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.2rem 0 0.5rem 0;
+    }
+    .form-action-btn {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      padding: 0.55rem 1rem;
+    }
+    .radio-group, .checkbox-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .question-options {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* ========================= */
+  /*      Responsividade       */
+  /* ========================= */
+
+  /* Laptops: 1920x1080 até 1280x720 */
+  @media (max-width: 1920px) and (min-width: 1280px) {
+    body {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Tablets: 1279px até 768px */
+  @media (max-width: 1279px) and (min-width: 768px) {
+    body {
+      font-size: 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  /* Smartphones: até 767px */
+  @media (max-width: 767px) {
+    body {
+      font-size: 0.95rem;
+      padding: 0 0.5rem;
+    }
+  }
+
+</style>
+
+<body>
+  <form>
+    <header>
+      <fieldset class="form-header">
+        <h1 style="margin: 0;">Silver Linings Therapy And Assessment Services</h1>
+        <h2 style="margin: 0.5rem 0;">Beck Anxiety Inventory (BAI)</h2>
+        <p style="margin: 0;">2 Andres St, Niagara on the Lake, Ontario, L0S 1J0</p>
+        <p style="margin: 0;"><i class="bi bi-telephone"></i> +1 (416) 937 - 6902 | Fax: +1 (647) 793 - 4140</p>
+        <p style="margin: 0;"><i class="bi bi-envelope"></i> silverliningsassociates@gmail.com</p>
+      </fieldset>
+    </header>
+
+    <!-- Form Information -->
+    <fieldset class="bai-info">
+      <legend>Form Information</legend>
+      <label for="bai-id">BAI ID:</label>
+      <input type="text" id="bai-id" name="bai-id" value="{{BAI_ID}}" readonly>
+      
+      <label for="case-profile-id">Case Profile ID:</label>
+      <input type="text" id="case-profile-id" name="case-profile-id" value="{{CASE_PROFILE_ID}}" readonly>
+      
+      <label for="created-at">Created at:</label>
+      <input type="text" id="created-at" name="created-at" value="{{CREATED_AT}}" readonly>
+      
+      <label for="assessor-name">Assessor:</label>
+      <input type="text" id="assessor-name" name="assessor-name" value="{{ASSESSOR_FULL_NAME}}" readonly>
+      
+      <label for="client-name">Client:</label>
+      <input type="text" id="client-name" name="client-name" value="{{CLIENT_FULL_NAME}}" readonly>
+    </fieldset>
+
+    <!-- BAI Questions -->
+    <fieldset class="bai-questions">
+      <legend>Beck Anxiety Inventory Assessment</legend>
+      
+      <!-- Instructions -->
+      <div class="question-item" style="background: #e8f4fd; border-color: var(--info-color);">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <i class="bi bi-info-circle" style="font-size: 1.25rem; color: var(--info-color);"></i>
+          <h3 style="margin: 0; color: var(--info-color); font-size: 1.1rem;">How to Complete This Form</h3>
+        </div>
+        
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--info-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-color); font-size: 1rem;">📋 Instructions:</h4>
+          <p style="margin: 0 0 0.5rem 0; line-height: 1.5;">Below is a list of common symptoms of anxiety. Please carefully read each item in the list. Indicate <strong>how much you have been bothered by each symptom during the past week, including today</strong>, by selecting the appropriate level.</p>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--success-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--success-color); font-size: 1rem;">✅ How to Answer:</h4>
+          <ul style="margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+            <li style="margin-bottom: 0.25rem;"><strong>0 - Not at all:</strong> You haven't experienced this symptom</li>
+            <li style="margin-bottom: 0.25rem;"><strong>1 - Mildly:</strong> It didn't bother you much</li>
+            <li style="margin-bottom: 0.25rem;"><strong>2 - Moderately:</strong> It was unpleasant but you could stand it</li>
+            <li style="margin-bottom: 0.25rem;"><strong>3 - Severely:</strong> You could barely stand it</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--warning-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--warning-color); font-size: 1rem;">⚠️ Important Notes:</h4>
+          <ul style="margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+            <li style="margin-bottom: 0.25rem;">You must answer <strong>all 21 questions</strong> before the Save button becomes active</li>
+            <li style="margin-bottom: 0.25rem;">Think about your symptoms during the <strong>past week</strong>, including today</li>
+            <li style="margin-bottom: 0.25rem;">Your form information (ID, assessor, etc.) is pre-filled and cannot be changed</li>
+            <li style="margin-bottom: 0.25rem;">Choose the level that best describes how much each symptom bothered you</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--primary-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-color); font-size: 1rem;">💾 Saving Your Responses:</h4>
+          <p style="margin: 0; line-height: 1.5;">Once you've answered all questions, click the <strong>"Save BAI Form"</strong> button to download your responses as a CSV file. Attach this file to an email and send it to your assessor for review and processing.</p>
+        </div>
+      </div>
+
+      <!-- Question 1: Numbness or tingling -->
+      <div class="question-item">
+        <div class="question-text">1. Numbness or tingling</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q1-0" name="question-1" value="0" data-question="1">
+              <label for="q1-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q1-1" name="question-1" value="1" data-question="1">
+              <label for="q1-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q1-2" name="question-1" value="2" data-question="1">
+              <label for="q1-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q1-3" name="question-1" value="3" data-question="1">
+              <label for="q1-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 2: Feeling hot -->
+      <div class="question-item">
+        <div class="question-text">2. Feeling hot</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q2-0" name="question-2" value="0" data-question="2">
+              <label for="q2-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q2-1" name="question-2" value="1" data-question="2">
+              <label for="q2-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q2-2" name="question-2" value="2" data-question="2">
+              <label for="q2-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q2-3" name="question-2" value="3" data-question="2">
+              <label for="q2-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 3: Wobbliness in legs -->
+      <div class="question-item">
+        <div class="question-text">3. Wobbliness in legs</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q3-0" name="question-3" value="0" data-question="3">
+              <label for="q3-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q3-1" name="question-3" value="1" data-question="3">
+              <label for="q3-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q3-2" name="question-3" value="2" data-question="3">
+              <label for="q3-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q3-3" name="question-3" value="3" data-question="3">
+              <label for="q3-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 4: Unable to relax -->
+      <div class="question-item">
+        <div class="question-text">4. Unable to relax</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q4-0" name="question-4" value="0" data-question="4">
+              <label for="q4-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q4-1" name="question-4" value="1" data-question="4">
+              <label for="q4-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q4-2" name="question-4" value="2" data-question="4">
+              <label for="q4-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q4-3" name="question-4" value="3" data-question="4">
+              <label for="q4-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 5: Fear of worst happening -->
+      <div class="question-item">
+        <div class="question-text">5. Fear of worst happening</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q5-0" name="question-5" value="0" data-question="5">
+              <label for="q5-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q5-1" name="question-5" value="1" data-question="5">
+              <label for="q5-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q5-2" name="question-5" value="2" data-question="5">
+              <label for="q5-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q5-3" name="question-5" value="3" data-question="5">
+              <label for="q5-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 6: Dizzy or lightheaded -->
+      <div class="question-item">
+        <div class="question-text">6. Dizzy or lightheaded</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q6-0" name="question-6" value="0" data-question="6">
+              <label for="q6-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q6-1" name="question-6" value="1" data-question="6">
+              <label for="q6-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q6-2" name="question-6" value="2" data-question="6">
+              <label for="q6-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q6-3" name="question-6" value="3" data-question="6">
+              <label for="q6-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 7: Heart pounding/racing -->
+      <div class="question-item">
+        <div class="question-text">7. Heart pounding/racing</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q7-0" name="question-7" value="0" data-question="7">
+              <label for="q7-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q7-1" name="question-7" value="1" data-question="7">
+              <label for="q7-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q7-2" name="question-7" value="2" data-question="7">
+              <label for="q7-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q7-3" name="question-7" value="3" data-question="7">
+              <label for="q7-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 8: Unsteady -->
+      <div class="question-item">
+        <div class="question-text">8. Unsteady</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q8-0" name="question-8" value="0" data-question="8">
+              <label for="q8-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q8-1" name="question-8" value="1" data-question="8">
+              <label for="q8-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q8-2" name="question-8" value="2" data-question="8">
+              <label for="q8-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q8-3" name="question-8" value="3" data-question="8">
+              <label for="q8-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 9: Terrified or afraid -->
+      <div class="question-item">
+        <div class="question-text">9. Terrified or afraid</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q9-0" name="question-9" value="0" data-question="9">
+              <label for="q9-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q9-1" name="question-9" value="1" data-question="9">
+              <label for="q9-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q9-2" name="question-9" value="2" data-question="9">
+              <label for="q9-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q9-3" name="question-9" value="3" data-question="9">
+              <label for="q9-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 10: Nervous -->
+      <div class="question-item">
+        <div class="question-text">10. Nervous</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q10-0" name="question-10" value="0" data-question="10">
+              <label for="q10-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q10-1" name="question-10" value="1" data-question="10">
+              <label for="q10-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q10-2" name="question-10" value="2" data-question="10">
+              <label for="q10-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q10-3" name="question-10" value="3" data-question="10">
+              <label for="q10-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 11: Feeling of choking -->
+      <div class="question-item">
+        <div class="question-text">11. Feeling of choking</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q11-0" name="question-11" value="0" data-question="11">
+              <label for="q11-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q11-1" name="question-11" value="1" data-question="11">
+              <label for="q11-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q11-2" name="question-11" value="2" data-question="11">
+              <label for="q11-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q11-3" name="question-11" value="3" data-question="11">
+              <label for="q11-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 12: Hands trembling -->
+      <div class="question-item">
+        <div class="question-text">12. Hands trembling</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q12-0" name="question-12" value="0" data-question="12">
+              <label for="q12-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q12-1" name="question-12" value="1" data-question="12">
+              <label for="q12-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q12-2" name="question-12" value="2" data-question="12">
+              <label for="q12-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q12-3" name="question-12" value="3" data-question="12">
+              <label for="q12-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 13: Shaky/unsteady -->
+      <div class="question-item">
+        <div class="question-text">13. Shaky/unsteady</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q13-0" name="question-13" value="0" data-question="13">
+              <label for="q13-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q13-1" name="question-13" value="1" data-question="13">
+              <label for="q13-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q13-2" name="question-13" value="2" data-question="13">
+              <label for="q13-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q13-3" name="question-13" value="3" data-question="13">
+              <label for="q13-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 14: Fear of losing control -->
+      <div class="question-item">
+        <div class="question-text">14. Fear of losing control</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q14-0" name="question-14" value="0" data-question="14">
+              <label for="q14-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q14-1" name="question-14" value="1" data-question="14">
+              <label for="q14-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q14-2" name="question-14" value="2" data-question="14">
+              <label for="q14-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q14-3" name="question-14" value="3" data-question="14">
+              <label for="q14-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 15: Difficulty in breathing -->
+      <div class="question-item">
+        <div class="question-text">15. Difficulty in breathing</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q15-0" name="question-15" value="0" data-question="15">
+              <label for="q15-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q15-1" name="question-15" value="1" data-question="15">
+              <label for="q15-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q15-2" name="question-15" value="2" data-question="15">
+              <label for="q15-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q15-3" name="question-15" value="3" data-question="15">
+              <label for="q15-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 16: Fear of dying -->
+      <div class="question-item">
+        <div class="question-text">16. Fear of dying</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q16-0" name="question-16" value="0" data-question="16">
+              <label for="q16-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q16-1" name="question-16" value="1" data-question="16">
+              <label for="q16-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q16-2" name="question-16" value="2" data-question="16">
+              <label for="q16-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q16-3" name="question-16" value="3" data-question="16">
+              <label for="q16-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 17: Scared -->
+      <div class="question-item">
+        <div class="question-text">17. Scared</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q17-0" name="question-17" value="0" data-question="17">
+              <label for="q17-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q17-1" name="question-17" value="1" data-question="17">
+              <label for="q17-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q17-2" name="question-17" value="2" data-question="17">
+              <label for="q17-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q17-3" name="question-17" value="3" data-question="17">
+              <label for="q17-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 18: Indigestion -->
+      <div class="question-item">
+        <div class="question-text">18. Indigestion</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q18-0" name="question-18" value="0" data-question="18">
+              <label for="q18-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q18-1" name="question-18" value="1" data-question="18">
+              <label for="q18-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q18-2" name="question-18" value="2" data-question="18">
+              <label for="q18-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q18-3" name="question-18" value="3" data-question="18">
+              <label for="q18-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 19: Faint/lightheaded -->
+      <div class="question-item">
+        <div class="question-text">19. Faint/lightheaded</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q19-0" name="question-19" value="0" data-question="19">
+              <label for="q19-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q19-1" name="question-19" value="1" data-question="19">
+              <label for="q19-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q19-2" name="question-19" value="2" data-question="19">
+              <label for="q19-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q19-3" name="question-19" value="3" data-question="19">
+              <label for="q19-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 20: Face flushed -->
+      <div class="question-item">
+        <div class="question-text">20. Face flushed</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q20-0" name="question-20" value="0" data-question="20">
+              <label for="q20-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q20-1" name="question-20" value="1" data-question="20">
+              <label for="q20-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q20-2" name="question-20" value="2" data-question="20">
+              <label for="q20-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q20-3" name="question-20" value="3" data-question="20">
+              <label for="q20-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 21: Hot/cold sweats -->
+      <div class="question-item">
+        <div class="question-text">21. Hot/cold sweats</div>
+        <div class="question-options">
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="q21-0" name="question-21" value="0" data-question="21">
+              <label for="q21-0">0 - Not at all</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q21-1" name="question-21" value="1" data-question="21">
+              <label for="q21-1">1 - Mildly</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q21-2" name="question-21" value="2" data-question="21">
+              <label for="q21-2">2 - Moderately</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="q21-3" name="question-21" value="3" data-question="21">
+              <label for="q21-3">3 - Severely</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </fieldset>
+
+    <!-- Buttons for saving the form -->
+    <div class="button-container">
+      <button type="button" id="save-btn" class="form-action-btn">
+        <i class="bi bi-download"></i> Save BAI Form
+      </button>
+    </div>
+
+    <footer class="form-footer">
+      <div class="footer-contact">
+        <p style="margin: 0;">© <span id="copyright-year">2025</span> Silver Linings Therapy And Assessment Services</p>
+      </div>
+      <div class="footer-info">
+        <p style="margin: 0;">All information provided is confidential and used for assessment purposes only.</p>
+      </div>
+    </footer>
+  </form>
+
+  <script>
+    // ========================= 
+    //    BAI Form JavaScript
+    // ========================= 
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Setup form save functionality
+      setupFormSave();
+      
+      // Setup form validation and button state
+      setupFormValidation();
+      
+      // Update copyright year
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    });
+
+    // Setup form validation and button state management
+    function setupFormValidation() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Initially disable the save button
+      saveBtn.disabled = true;
+      
+      // Get all radio inputs for questions 1-21
+      const allRadioInputs = document.querySelectorAll('input[type="radio"]');
+      
+      // Add event listeners to all radio inputs
+      allRadioInputs.forEach(input => {
+        input.addEventListener('change', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      // Initial check
+      updateSaveButtonState();
+    }
+
+    // Update save button state based on form completion
+    function updateSaveButtonState() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Check if all required questions are answered
+      const requiredQuestions = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+      ];
+      
+      let allAnswered = true;
+      
+      for (let i of requiredQuestions) {
+        const questionInput = document.querySelector(`input[name="question-${i}"]:checked`);
+        if (!questionInput) {
+          allAnswered = false;
+          break;
+        }
+      }
+      
+      // Enable/disable save button based on completion
+      saveBtn.disabled = !allAnswered;
+    }
+
+    // Setup form save functionality
+    function setupFormSave() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      saveBtn.addEventListener('click', function() {
+        if (validateForm()) {
+          saveFormData();
+        }
+      });
+    }
+
+    // Validate required fields
+    function validateForm() {
+      // Check if form information is populated (should be handled by FormManager)
+      const baiId = document.getElementById('bai-id').value.trim();
+      const caseProfileId = document.getElementById('case-profile-id').value.trim();
+      
+      if (!baiId || !caseProfileId) {
+        alert('Form information is incomplete. Please ensure this form was properly generated.');
+        return false;
+      }
+
+      // All questions must be answered (button is only enabled when complete)
+      return true;
+    }
+
+    // Save form data to CSV
+    function saveFormData() {
+      const formData = collectFormData();
+      const csvContent = generateCSV(formData);
+      downloadCSV(csvContent, `BAI_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+    }
+
+    // Collect all form data
+    function collectFormData() {
+      const data = {
+        baiId: document.getElementById('bai-id').value,
+        caseProfileId: document.getElementById('case-profile-id').value,
+        createdAt: document.getElementById('created-at').value,
+        assessorName: document.getElementById('assessor-name').value,
+        clientName: document.getElementById('client-name').value,
+        answers: {}
+      };
+
+      // Collect all question answers
+      for (let i = 1; i <= 21; i++) {
+        const questionInput = document.querySelector(`input[name="question-${i}"]:checked`);
+        data.answers[`question_${i}`] = questionInput ? questionInput.value : '';
+      }
+
+      return data;
+    }
+
+    // Generate CSV content
+    function generateCSV(data) {
+      const headers = [
+        'BAI_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
+        'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
+        'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21'
+      ];
+
+      const values = [
+        data.baiId,
+        data.caseProfileId,
+        data.createdAt,
+        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
+        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+        data.answers.question_1,
+        data.answers.question_2,
+        data.answers.question_3,
+        data.answers.question_4,
+        data.answers.question_5,
+        data.answers.question_6,
+        data.answers.question_7,
+        data.answers.question_8,
+        data.answers.question_9,
+        data.answers.question_10,
+        data.answers.question_11,
+        data.answers.question_12,
+        data.answers.question_13,
+        data.answers.question_14,
+        data.answers.question_15,
+        data.answers.question_16,
+        data.answers.question_17,
+        data.answers.question_18,
+        data.answers.question_19,
+        data.answers.question_20,
+        data.answers.question_21
+      ];
+
+      return headers.join(',') + '\n' + values.join(',');
+    }
+
+    // Download CSV file
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        alert(`BAI form saved as ${filename}`);
+      } else {
+        alert('Your browser does not support automatic file download. Please copy the CSV content manually.');
+      }
+    }
+
+    // Update copyright year
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
