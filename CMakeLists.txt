@@ -148,6 +148,9 @@ target_link_libraries(test_beck_anxiety_inventory ${PROJECT_NAME}_lib)
 add_executable(test_pain_body_map tests/forms/test_PainBodyMap.cpp)
 target_link_libraries(test_pain_body_map ${PROJECT_NAME}_lib)
 
+add_executable(test_activities_of_daily_living tests/forms/test_ActivitiesOfDailyLiving.cpp)
+target_link_libraries(test_activities_of_daily_living ${PROJECT_NAME}_lib)
+
 # Example executables
 add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
 target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)

@@ -10,13 +10,91 @@
 #include "forms/BeckDepressionInventory.h"
 #include "forms/BeckAnxietyInventory.h"
 #include "forms/PainBodyMap.h"
+#include "forms/ActivitiesOfDailyLiving.h"
 #include <iostream>
 #include <sqlite3.h>
 #include <string>
+#include <filesystem>
+#include <unistd.h>
 
 using namespace std;
 using namespace SilverClinic;
 using namespace utils;
+
+// Function to ensure we're running from the correct directory
+bool ensureCorrectWorkingDirectory() {
+    string currentDir = filesystem::current_path().string();
+    string executablePath = filesystem::canonical("/proc/self/exe").parent_path().string();
+    
+    // Check if we're in a build directory and need to go up one level
+    if (currentDir.find("build") != string::npos || 
+        currentDir.find("Debug") != string::npos || 
+        currentDir.find("Release") != string::npos) {
+        
+        // Try to find the project root by looking for CMakeLists.txt or data/ directory
+        filesystem::path testPath = filesystem::current_path();
+        bool foundProjectRoot = false;
+        
+        // Go up directories until we find project root indicators
+        for (int i = 0; i < 3; ++i) {
+            if (filesystem::exists(testPath / "CMakeLists.txt") && 
+                filesystem::exists(testPath / "data") && 
+                filesystem::exists(testPath / "src")) {
+                
+                filesystem::current_path(testPath);
+                cout << "📂 Auto-corrected working directory to: " << testPath << endl;
+                foundProjectRoot = true;
+                break;
+            }
+            testPath = testPath.parent_path();
+        }
+        
+        if (!foundProjectRoot) {
+            cerr << "❌ ERROR: Could not locate project root directory!" << endl;
+            cerr << "   Current directory: " << currentDir << endl;
+            cerr << "   Please run from project root directory containing:" << endl;
+            cerr << "   - CMakeLists.txt" << endl;
+            cerr << "   - data/ directory" << endl;
+            cerr << "   - src/ directory" << endl;
+            return false;
+        }
+    }
+    
+    // Final validation - ensure required directories exist
+    if (!filesystem::exists("data") || !filesystem::exists("src")) {
+        cerr << "❌ ERROR: Required directories not found!" << endl;
+        cerr << "   Current directory: " << filesystem::current_path() << endl;
+        cerr << "   Missing: " << (!filesystem::exists("data") ? "data/ " : "") 
+             << (!filesystem::exists("src") ? "src/ " : "") << endl;
+        return false;
+    }
+    
+    return true;
+}
+
+// Function to validate database integrity
+bool validateDatabaseIntegrity(sqlite3* db) {
+    // Check if database file is not empty (size > 0)
+    string dbPath = DatabaseConfig::MAIN_DATABASE_PATH;
+    if (filesystem::file_size(dbPath) == 0) {
+        logMessage("WARNING", "Database file is empty, will initialize with new tables");
+        return true; // Empty DB is OK, we'll create tables
+    }
+    
+    // Test basic database connectivity
+    char* errorMessage = nullptr;
+    int result = sqlite3_exec(db, "SELECT name FROM sqlite_master WHERE type='table' LIMIT 1;", 
+                             nullptr, nullptr, &errorMessage);
+    
+    if (result != SQLITE_OK) {
+        cerr << "❌ Database integrity check failed: " << errorMessage << endl;
+        sqlite3_free(errorMessage);
+        return false;
+    }
+    
+    logMessage("INFO", "Database integrity validated successfully");
+    return true;
+}
 
 // Function to execute SQL and check errors
 bool executeSQLCommand(sqlite3* db, const string& sql, const string& description) {
@@ -338,6 +416,23 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
+    // Activities of Daily Living form table
+    string createActivitiesOfDailyLivingTable = R"(
+        CREATE TABLE IF NOT EXISTS activities_of_daily_living(
+            id INTEGER PRIMARY KEY,
+            case_profile_id INTEGER NOT NULL,
+            type TEXT NOT NULL DEFAULT 'ADL',
+            activities_data_json TEXT NOT NULL DEFAULT '{}',
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
+            FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)
+        )
+    )";
+    
+    if (!executeSQLCommand(db, createActivitiesOfDailyLivingTable, "ActivitiesOfDailyLiving table creation")) {
+        return false;
+    }
+    
     logMessage("INFO", "All database tables created successfully");
     return true;
 }
@@ -415,6 +510,13 @@ int main() {
     cout << "Welcome to the Silver Clinic Management System!" << endl;
     cout << "This system helps manage clinical assessments and client data." << endl;
     
+    // CRITICAL: Ensure we're running from the correct directory
+    if (!ensureCorrectWorkingDirectory()) {
+        cerr << "❌ FATAL ERROR: Application must be run from project root directory!" << endl;
+        cerr << "   Please navigate to the project root and try again." << endl;
+        return 1;
+    }
+    
     try {
         // Ensure data directories exist
         DatabaseConfig::ensureDirectoriesExist();
@@ -424,11 +526,18 @@ int main() {
         int result = sqlite3_open(DatabaseConfig::MAIN_DATABASE_PATH.c_str(), &db);
         
         if (result != SQLITE_OK) {
-            cerr << "Error opening database: " << sqlite3_errmsg(db) << endl;
+            cerr << "❌ Error opening database: " << sqlite3_errmsg(db) << endl;
             return 1;
         }
         
-        logMessage("INFO", "Database opened successfully: clinic.db");
+        logMessage("INFO", "Database opened successfully: " + DatabaseConfig::MAIN_DATABASE_PATH);
+        
+        // Validate database integrity
+        if (!validateDatabaseIntegrity(db)) {
+            cerr << "❌ Database integrity validation failed!" << endl;
+            sqlite3_close(db);
+            return 1;
+        }
         
         // Create database tables
         if (!createDatabaseTables(db)) {
@@ -519,6 +628,15 @@ int main() {
             if (sqlite3_step(stmt) == SQLITE_ROW) {
                 int count = sqlite3_column_int(stmt, 0);
                 cout << "PBM Forms in database: " << count << endl;
+            }
+            sqlite3_finalize(stmt);
+        }
+        
+        // Count activities of daily living forms
+        if (sqlite3_prepare_v2(db, "SELECT COUNT(*) FROM activities_of_daily_living", -1, &stmt, nullptr) == SQLITE_OK) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                int count = sqlite3_column_int(stmt, 0);
+                cout << "ADL Forms in database: " << count << endl;
             }
             sqlite3_finalize(stmt);
         }
