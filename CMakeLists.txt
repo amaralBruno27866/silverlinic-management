@@ -151,6 +151,9 @@ target_link_libraries(test_pain_body_map ${PROJECT_NAME}_lib)
 add_executable(test_activities_of_daily_living tests/forms/test_ActivitiesOfDailyLiving.cpp)
 target_link_libraries(test_activities_of_daily_living ${PROJECT_NAME}_lib)
 
+add_executable(test_scl90r tests/forms/test_SCL90R.cpp)
+target_link_libraries(test_scl90r ${PROJECT_NAME}_lib)
+
 # Example executables
 add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
 target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
@@ -170,7 +173,8 @@ foreach(test_target
     test_core_classes test_family_physician test_database test_datetime test_address 
     test_assessor test_utils test_emergency_contact test_legal_representative 
     test_insurance_company test_assessor_manager test_client_manager 
-    test_automobile_anxiety_inventory test_beck_depression_inventory test_beck_anxiety_inventory test_pain_body_map)
+    test_automobile_anxiety_inventory test_beck_depression_inventory test_beck_anxiety_inventory 
+    test_pain_body_map test_activities_of_daily_living test_scl90r)
     target_link_libraries(${test_target} ${PROJECT_NAME}_lib)
 endforeach()
 
