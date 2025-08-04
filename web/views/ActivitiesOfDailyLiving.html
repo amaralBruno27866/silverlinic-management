@@ -508,7 +508,7 @@
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="functional-walking" name="functional-walking" data-category="functional_tasks" data-activity="walking_long_periods">
+                <input type="checkbox" id="functional-walking" name="functional-walking" data-category="functional_tasks" data-activity="walking_t">
                 <label for="functional-walking">Has Difficulty</label>
               </div>
             </div>
@@ -558,7 +558,7 @@
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="household-bathtub" name="household-bathtub" data-category="household_chores" data-activity="cleaning_bathtub">
+                <input type="checkbox" id="household-bathtub" name="household-bathtub" data-category="household_chores" data-activity="bathtub">
                 <label for="household-bathtub">Has Difficulty</label>
               </div>
             </div>
@@ -593,11 +593,11 @@
 
         <!-- Cleaning floors -->
         <div class="activity-item">
-          <div class="activity-text">Cleaning floors</div>
+          <div class="activity-text">Sweeping floors</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="household-floors" name="household-floors" data-category="household_chores" data-activity="cleaning_floors">
+                <input type="checkbox" id="household-floors" name="household-floors" data-category="household_chores" data-activity="sweeping">
                 <label for="household-floors">Has Difficulty</label>
               </div>
             </div>
@@ -636,7 +636,7 @@
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="household-beds" name="household-beds" data-category="household_chores" data-activity="making_beds">
+                <input type="checkbox" id="household-beds" name="household-beds" data-category="household_chores" data-activity="m_bed">
                 <label for="household-beds">Has Difficulty</label>
               </div>
             </div>
@@ -644,19 +644,70 @@
         </div>
 
         <!-- Washing dishes -->
+        <!-- Washing dishes -->
         <div class="activity-item">
           <div class="activity-text">Washing dishes</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="household-dishes" name="household-dishes" data-category="household_chores" data-activity="washing_dishes">
-                <label for="household-dishes">Has Difficulty</label>
+                <input type="checkbox" id="household-dishes" name="household-dishes" data-category="household_chores" data-activity="w_dishes">
+                <label for="household-dishes">Has difficulty</label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Comments section for Household Chores -->
+        <!-- Changing bed sheets -->
+        <div class="activity-item">
+          <div class="activity-text">Changing bed sheets</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-sheets" name="household-sheets" data-category="household_chores" data-activity="b_sheets">
+                <label for="household-sheets">Has difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading/unloading dishes -->
+        <div class="activity-item">
+          <div class="activity-text">Loading/unloading dishes from dishwasher</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-load-dishes" name="household-load-dishes" data-category="household_chores" data-activity="l_u_dishes">
+                <label for="household-load-dishes">Has difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taking out garbage -->
+        <div class="activity-item">
+          <div class="activity-text">Taking out garbage</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-garbage" name="household-garbage" data-category="household_chores" data-activity="t_garbage">
+                <label for="household-garbage">Has difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grocery shopping -->
+        <div class="activity-item">
+          <div class="activity-text">Grocery shopping</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-grocery" name="household-grocery" data-category="household_chores" data-activity="grocery">
+                <label for="household-grocery">Has difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>        <!-- Comments section for Household Chores -->
         <div class="comments-section">
           <label for="household-comments">Additional Comments:</label>
           <textarea id="household-comments" name="household-comments" data-category="household_chores" placeholder="Please provide any additional details about difficulties with household chores..."></textarea>
@@ -686,7 +737,7 @@
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="outdoor-mowing" name="outdoor-mowing" data-category="outdoor_chores" data-activity="lawn_mowing">
+                <input type="checkbox" id="outdoor-mowing" name="outdoor-mowing" data-category="outdoor_chores" data-activity="mowing_lawn">
                 <label for="outdoor-mowing">Has Difficulty</label>
               </div>
             </div>
@@ -695,25 +746,12 @@
 
         <!-- Snow shoveling -->
         <div class="activity-item">
-          <div class="activity-text">Snow shoveling</div>
+          <div class="activity-text">Snow removal</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="outdoor-snow" name="outdoor-snow" data-category="outdoor_chores" data-activity="snow_shoveling">
+                <input type="checkbox" id="outdoor-snow" name="outdoor-snow" data-category="outdoor_chores" data-activity="snow_removal">
                 <label for="outdoor-snow">Has Difficulty</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Raking leaves -->
-        <div class="activity-item">
-          <div class="activity-text">Raking leaves</div>
-          <div class="activity-options">
-            <div class="checkbox-group">
-              <div class="checkbox-option">
-                <input type="checkbox" id="outdoor-raking" name="outdoor-raking" data-category="outdoor_chores" data-activity="raking_leaves">
-                <label for="outdoor-raking">Has Difficulty</label>
               </div>
             </div>
           </div>
@@ -758,11 +796,11 @@
 
         <!-- Grooming -->
         <div class="activity-item">
-          <div class="activity-text">Grooming</div>
+          <div class="activity-text">Combing hair</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="personal-grooming" name="personal-grooming" data-category="personal_care" data-activity="grooming">
+                <input type="checkbox" id="personal-grooming" name="personal-grooming" data-category="personal_care" data-activity="combing">
                 <label for="personal-grooming">Has Difficulty</label>
               </div>
             </div>
@@ -771,38 +809,51 @@
 
         <!-- Using toilet -->
         <div class="activity-item">
-          <div class="activity-text">Using toilet</div>
+          <div class="activity-text">Shaving</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="personal-toilet" name="personal-toilet" data-category="personal_care" data-activity="using_toilet">
-                <label for="personal-toilet">Has Difficulty</label>
+                <input type="checkbox" id="personal-shaving" name="personal-shaving" data-category="personal_care" data-activity="shaving">
+                <label for="personal-shaving">Has Difficulty</label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Eating -->
+        <!-- Nail care -->
         <div class="activity-item">
-          <div class="activity-text">Eating</div>
+          <div class="activity-text">Nail care</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="personal-eating" name="personal-eating" data-category="personal_care" data-activity="eating">
-                <label for="personal-eating">Has Difficulty</label>
+                <input type="checkbox" id="personal-nail" name="personal-nail" data-category="personal_care" data-activity="nail">
+                <label for="personal-nail">Has Difficulty</label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Taking medication -->
+        <!-- Applying cream/lotion -->
         <div class="activity-item">
-          <div class="activity-text">Taking medication</div>
+          <div class="activity-text">Applying cream/lotion</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="personal-medication" name="personal-medication" data-category="personal_care" data-activity="taking_medication">
-                <label for="personal-medication">Has Difficulty</label>
+                <input type="checkbox" id="personal-cream" name="personal-cream" data-category="personal_care" data-activity="cream">
+                <label for="personal-cream">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Putting on shoes -->
+        <div class="activity-item">
+          <div class="activity-text">Putting on shoes</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-shoes" name="personal-shoes" data-category="personal_care" data-activity="shoes">
+                <label for="personal-shoes">Has Difficulty</label>
               </div>
             </div>
           </div>
@@ -825,12 +876,12 @@
         
         <!-- Lifting children -->
         <div class="activity-item">
-          <div class="activity-text">Lifting children</div>
+          <div class="activity-text">Taking care of children</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="childcare-lifting" name="childcare-lifting" data-category="child_care" data-activity="lifting_children">
-                <label for="childcare-lifting">Has Difficulty</label>
+                <input type="checkbox" id="childcare-taking" name="childcare-taking" data-category="child_care" data-activity="tk_children">
+                <label for="childcare-taking">Has Difficulty</label>
               </div>
             </div>
           </div>
@@ -838,12 +889,12 @@
 
         <!-- Playing with children -->
         <div class="activity-item">
-          <div class="activity-text">Playing with children</div>
+          <div class="activity-text">Bathing children</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="childcare-playing" name="childcare-playing" data-category="child_care" data-activity="playing_with_children">
-                <label for="childcare-playing">Has Difficulty</label>
+                <input type="checkbox" id="childcare-bathing" name="childcare-bathing" data-category="child_care" data-activity="bt_children">
+                <label for="childcare-bathing">Has Difficulty</label>
               </div>
             </div>
           </div>
@@ -851,25 +902,12 @@
 
         <!-- Carrying children -->
         <div class="activity-item">
-          <div class="activity-text">Carrying children</div>
+          <div class="activity-text">Playing with children</div>
           <div class="activity-options">
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <input type="checkbox" id="childcare-carrying" name="childcare-carrying" data-category="child_care" data-activity="carrying_children">
-                <label for="childcare-carrying">Has Difficulty</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Helping children with daily tasks -->
-        <div class="activity-item">
-          <div class="activity-text">Helping children with daily tasks</div>
-          <div class="activity-options">
-            <div class="checkbox-group">
-              <div class="checkbox-option">
-                <input type="checkbox" id="childcare-helping" name="childcare-helping" data-category="child_care" data-activity="helping_daily_tasks">
-                <label for="childcare-helping">Has Difficulty</label>
+                <input type="checkbox" id="childcare-playing" name="childcare-playing" data-category="child_care" data-activity="pl_children">
+                <label for="childcare-playing">Has Difficulty</label>
               </div>
             </div>
           </div>
@@ -1044,31 +1082,38 @@
 
     // Generate CSV content
     function generateCSV(data) {
-      const headers = ['ADL_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name'];
+      // Create JSON structure that matches C++ expectations
+      const activitiesJson = {};
+      
+      // Build JSON structure for each category
+      const categories = ['functional_tasks', 'household_chores', 'outdoor_chores', 'personal_care', 'child_care'];
+      categories.forEach(category => {
+        if (data.activitiesData[category]) {
+          activitiesJson[category] = {
+            category_name: category,
+            activities: data.activitiesData[category].activities,
+            comments: data.activitiesData[category].comments
+          };
+        }
+      });
+
+      const headers = [
+        'ADL_ID', 
+        'Case_Profile_ID', 
+        'Activities_Data_JSON', 
+        'Created_At', 
+        'Updated_At'
+      ];
+      
+      const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+      
       const values = [
         data.adlId,
         data.caseProfileId,
-        data.createdAt,
-        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
-        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+        `"${JSON.stringify(activitiesJson).replace(/"/g, '""')}"`, // Escape JSON for CSV
+        `"${data.createdAt}"`,
+        `"${now}"`
       ];
-
-      // Add activity headers and values
-      const categories = ['functional_tasks', 'household_chores', 'outdoor_chores', 'personal_care', 'child_care'];
-      
-      categories.forEach(category => {
-        const categoryData = data.activitiesData[category];
-        
-        // Add activity columns
-        Object.keys(categoryData.activities).forEach(activity => {
-          headers.push(`${category}_${activity}`);
-          values.push(categoryData.activities[activity] ? '1' : '0');
-        });
-        
-        // Add comments column
-        headers.push(`${category}_comments`);
-        values.push(`"${categoryData.comments.replace(/"/g, '""')}"`);
-      });
 
       return headers.join(',') + '\n' + values.join(',');
     }
