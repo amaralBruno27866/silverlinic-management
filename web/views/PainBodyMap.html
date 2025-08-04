@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>SLT - Pain Body Map</title>
+</head>
+
+<style>
+  /* ========================= */
+  /*       Global Styles       */
+  /* ========================= */
+
+  :root{
+    --primary-color: #00325c;
+    --secondary-color: #00335cb6;
+    --third-color: #00335c3b;
+    --success-color: #18c427;
+    --success-color-hover: #16a125;
+    --error-color: #ff4d4f;
+    --error-color-hover: #ff1a1a;
+    --warning-color: #ffcc00;
+    --warning-color-hover: #e6b800;
+    --info-color: #1890ff;
+    --info-color-hover: #007acc;
+    --background-color: #c4c4c4;
+    --background-form: #ffffff;
+    --text-color-1: #222222;
+    --text-color-2: #d3d3d3;
+
+    --font-family: 'Roboto', sans-serif;
+    --font-size: 1rem;
+    --font-weight: 400;
+  }
+
+  /* ========================= */
+  /*      General Body         */
+  /* ========================= */
+  body {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    margin: 1rem auto;
+    padding: 1rem;
+    background: var(--background-color);
+    max-width: 75rem;
+    max-height: 100vh;
+  }
+
+  form {
+    background: var(--background-form);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-header {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+  }
+
+  /* ========================= */
+  /*      Fieldset Styles      */
+  /* ========================= */
+  fieldset {
+    border: 1px solid var(--third-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #f9f9f9;
+  }
+
+  legend {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+    width: auto;
+    letter-spacing: 0.5px;
+  }
+
+  /* ========================= */
+  /*      Form Layout          */
+  /* ========================= */
+  .pbm-info,
+  .pbm-pain-map {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .body-part-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .body-part-name {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .body-part-controls {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .side-selection, .pain-level-selection {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .side-selection label, .pain-level-selection label {
+    font-weight: 500;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+  }
+
+  .checkbox-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .pain-scale-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    color: var(--primary-color);
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #bfc9d1;
+    border-radius: 0.35rem;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--text-color-1);
+    transition: border-color 0.2s;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="checkbox"],
+  input[type="number"] {
+    margin-right: 0.3rem;
+    transform: scale(1.1);
+  }
+
+  input[readonly] {
+    background: #f1f1f1;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    background: #f0f6fa;
+  }
+
+  textarea {
+    min-height: 3rem;
+    resize: vertical;
+  }
+
+  /* ========================= */
+  /*      Pain Scale Styles    */
+  /* ========================= */
+  .pain-scale-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+  }
+
+  .pain-scale-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #18c427 0%, #ffcc00 50%, #ff4d4f 100%);
+    outline: none;
+    transition: opacity 0.2s;
+  }
+
+  .pain-scale-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .pain-scale-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .pain-scale-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+
+  .pain-scale-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    min-width: 3rem;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+    background: #f0f6fa;
+    border-radius: 0.25rem;
+    border: 1px solid var(--primary-color);
+  }
+
+  .pain-scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+
+  .pain-scale-helper {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+    margin-top: 0.25rem;
+  }
+
+  /* Touch-friendly slider for mobile */
+  @media (max-width: 767px) {
+    .pain-scale-slider::-webkit-slider-thumb {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .pain-scale-slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .pain-scale-slider {
+      height: 8px;
+    }
+  }
+
+  /* ========================= */
+  /*      Comments Section     */
+  /* ========================= */
+  .comments-input {
+    width: 100%;
+    min-height: 2rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Footer já está estilizado */
+  .form-footer {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  /* ========================= */
+  /*      Button Styles        */
+  /* ========================= */
+  .button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .form-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 0.35rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px #00325c1a;
+  }
+
+  .form-action-btn:disabled {
+    background-color: #bfc9d1;
+    color: #eee;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+
+  .form-action-btn:hover:not(:disabled),
+  .form-action-btn:focus:not(:disabled) {
+    background-color: var(--secondary-color);
+    color: #fff;
+    outline: none;
+  }
+
+  @media (max-width: 767px) {
+    .button-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.2rem 0 0.5rem 0;
+    }
+    .form-action-btn {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      padding: 0.55rem 1rem;
+    }
+    .body-part-controls {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .side-selection, .pain-level-selection {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .pain-scale-container {
+      width: 100%;
+      min-width: unset;
+    }
+    .pain-scale-slider {
+      width: 100%;
+    }
+    .pain-scale-display {
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
+
+  /* ========================= */
+  /*      Responsividade       */
+  /* ========================= */
+
+  /* Laptops: 1920x1080 até 1280x720 */
+  @media (max-width: 1920px) and (min-width: 1280px) {
+    body {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Tablets: 1279px até 768px */
+  @media (max-width: 1279px) and (min-width: 768px) {
+    body {
+      font-size: 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  /* Smartphones: até 767px */
+  @media (max-width: 767px) {
+    body {
+      font-size: 0.95rem;
+      padding: 0 0.5rem;
+    }
+  }
+
+</style>
+
+<body>
+  <form>
+    <header>
+      <fieldset class="form-header">
+        <h1 style="margin: 0;">Silver Linings Therapy And Assessment Services</h1>
+        <h2 style="margin: 0.5rem 0;">Pain Body Map (PBM)</h2>
+        <p style="margin: 0;">2 Andres St, Niagara on the Lake, Ontario, L0S 1J0</p>
+        <p style="margin: 0;"><i class="bi bi-telephone"></i> +1 (416) 937 - 6902 | Fax: +1 (647) 793 - 4140</p>
+        <p style="margin: 0;"><i class="bi bi-envelope"></i> silverliningsassociates@gmail.com</p>
+      </fieldset>
+    </header>
+
+    <!-- Form Information -->
+    <fieldset class="pbm-info">
+      <legend>Form Information</legend>
+      <label for="pbm-id">PBM ID:</label>
+      <input type="text" id="pbm-id" name="pbm-id" value="{{PBM_ID}}" readonly>
+      
+      <label for="case-profile-id">Case Profile ID:</label>
+      <input type="text" id="case-profile-id" name="case-profile-id" value="{{CASE_PROFILE_ID}}" readonly>
+      
+      <label for="created-at">Created at:</label>
+      <input type="text" id="created-at" name="created-at" value="{{CREATED_AT}}" readonly>
+      
+      <label for="assessor-name">Assessor:</label>
+      <input type="text" id="assessor-name" name="assessor-name" value="{{ASSESSOR_FULL_NAME}}" readonly>
+      
+      <label for="client-name">Client:</label>
+      <input type="text" id="client-name" name="client-name" value="{{CLIENT_FULL_NAME}}" readonly>
+    </fieldset>
+
+    <!-- Pain Body Map -->
+    <fieldset class="pbm-pain-map">
+      <legend>Pain Body Map Assessment</legend>
+      
+      <!-- Instructions -->
+      <div class="body-part-item" style="background: #e8f4fd; border-color: var(--info-color);">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <i class="bi bi-info-circle" style="color: var(--info-color); font-size: 1.2rem;"></i>
+          <strong style="color: var(--info-color);">Instructions</strong>
+        </div>
+        
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--info-color);">
+          <p style="margin: 0;"><strong>Where do you experience pain now?</strong></p>
+          <p style="margin: 0.5rem 0 0 0;">For each body part where you experience pain, please:</p>
+          <ul style="margin: 0.5rem 0 0 1.5rem;">
+            <li>Select the affected side(s): Left, Right, or Both</li>
+            <li>Rate your pain level from 0 to 10 (0 = no pain, 10 = worst pain imaginable)</li>
+            <li>Add any comments about the pain (optional)</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--success-color);">
+          <p style="margin: 0; color: var(--success-color);"><strong>✓ The Save button will be enabled when you have marked at least one body part with pain OR provided additional comments.</strong></p>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--warning-color);">
+          <p style="margin: 0; color: var(--warning-color);"><strong>⚠ Please be as accurate as possible in describing your pain locations and levels.</strong></p>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--primary-color);">
+          <p style="margin: 0; color: var(--primary-color);"><strong>📝 Use the additional comments section at the bottom for any other pain not listed in the body parts.</strong></p>
+        </div>
+      </div>
+
+      <!-- Head -->
+      <div class="body-part-item">
+        <div class="body-part-name">Head</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="head-left" name="head-side" value="left">
+                <label for="head-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="head-right" name="head-side" value="right">
+                <label for="head-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="head-pain-level">Pain Level:</label>
+            <div class="pain-scale-container">
+              <div class="pain-scale-display">
+                <span>Pain Level:</span>
+                <span class="pain-scale-value" id="head-pain-value">0</span>
+              </div>
+              <input type="range" id="head-pain-level" name="head-pain-level" class="pain-scale-slider" 
+                     min="0" max="10" value="0" 
+                     oninput="updatePainValue('head', this.value)">
+              <div class="pain-scale-labels">
+                <span>0 - No pain</span>
+                <span>5 - Moderate</span>
+                <span>10 - Worst pain</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <textarea id="head-comments" name="head-comments" class="comments-input" placeholder="Comments about head pain (optional)"></textarea>
+      </div>
+
+      <!-- Headache -->
+      <div class="body-part-item">
+        <div class="body-part-name">Headache</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="headache-left" name="headache-side" value="left">
+                <label for="headache-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="headache-right" name="headache-side" value="right">
+                <label for="headache-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="headache-pain-level">Pain Level:</label>
+            <div class="pain-scale-container">
+              <div class="pain-scale-display">
+                <span>Pain Level:</span>
+                <span class="pain-scale-value" id="headache-pain-value">0</span>
+              </div>
+              <input type="range" id="headache-pain-level" name="headache-pain-level" class="pain-scale-slider" 
+                     min="0" max="10" value="0" 
+                     oninput="updatePainValue('headache', this.value)">
+              <div class="pain-scale-labels">
+                <span>0 - No pain</span>
+                <span>5 - Moderate</span>
+                <span>10 - Worst pain</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <textarea id="headache-comments" name="headache-comments" class="comments-input" placeholder="Comments about headache (optional)"></textarea>
+      </div>
+
+      <!-- Jaw -->
+      <div class="body-part-item">
+        <div class="body-part-name">Jaw</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="jaw-left" name="jaw-side" value="left">
+                <label for="jaw-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="jaw-right" name="jaw-side" value="right">
+                <label for="jaw-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="jaw-pain-level">Pain Level:</label>
+            <div class="pain-scale-container">
+              <div class="pain-scale-display">
+                <span>Pain Level:</span>
+                <span class="pain-scale-value" id="jaw-pain-value">0</span>
+              </div>
+              <input type="range" id="jaw-pain-level" name="jaw-pain-level" class="pain-scale-slider" 
+                     min="0" max="10" value="0" 
+                     oninput="updatePainValue('jaw', this.value)">
+              <div class="pain-scale-labels">
+                <span>0 - No pain</span>
+                <span>5 - Moderate</span>
+                <span>10 - Worst pain</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <textarea id="jaw-comments" name="jaw-comments" class="comments-input" placeholder="Comments about jaw pain (optional)"></textarea>
+      </div>
+
+      <!-- Shoulders -->
+      <div class="body-part-item">
+        <div class="body-part-name">Shoulders</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="shoulders-left" name="shoulders-side" value="left">
+                <label for="shoulders-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="shoulders-right" name="shoulders-side" value="right">
+                <label for="shoulders-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="shoulders-pain-level">Pain Level:</label>
+            <div class="pain-scale-container">
+              <div class="pain-scale-display">
+                <span>Pain Level:</span>
+                <span class="pain-scale-value" id="shoulders-pain-value">0</span>
+              </div>
+              <input type="range" id="shoulders-pain-level" name="shoulders-pain-level" class="pain-scale-slider" 
+                     min="0" max="10" value="0" 
+                     oninput="updatePainValue('shoulders', this.value)">
+              <div class="pain-scale-labels">
+                <span>0 - No pain</span>
+                <span>5 - Moderate</span>
+                <span>10 - Worst pain</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <textarea id="shoulders-comments" name="shoulders-comments" class="comments-input" placeholder="Comments about shoulder pain (optional)"></textarea>
+      </div>
+
+      <!-- Shoulder Blades -->
+      <div class="body-part-item">
+        <div class="body-part-name">Shoulder Blades</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="shoulder_blades-left" name="shoulder_blades-side" value="left">
+                <label for="shoulder_blades-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="shoulder_blades-right" name="shoulder_blades-side" value="right">
+                <label for="shoulder_blades-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="shoulder_blades-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="shoulder_blades-pain-level" name="shoulder_blades-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="shoulder_blades-comments" name="shoulder_blades-comments" class="comments-input" placeholder="Comments about shoulder blade pain (optional)"></textarea>
+      </div>
+
+      <!-- Arms -->
+      <div class="body-part-item">
+        <div class="body-part-name">Arms</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="arms-left" name="arms-side" value="left">
+                <label for="arms-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="arms-right" name="arms-side" value="right">
+                <label for="arms-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="arms-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="arms-pain-level" name="arms-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="arms-comments" name="arms-comments" class="comments-input" placeholder="Comments about arm pain (optional)"></textarea>
+      </div>
+
+      <!-- Elbows -->
+      <div class="body-part-item">
+        <div class="body-part-name">Elbows</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="elbows-left" name="elbows-side" value="left">
+                <label for="elbows-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="elbows-right" name="elbows-side" value="right">
+                <label for="elbows-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="elbows-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="elbows-pain-level" name="elbows-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="elbows-comments" name="elbows-comments" class="comments-input" placeholder="Comments about elbow pain (optional)"></textarea>
+      </div>
+
+      <!-- Wrists -->
+      <div class="body-part-item">
+        <div class="body-part-name">Wrists</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="wrists-left" name="wrists-side" value="left">
+                <label for="wrists-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="wrists-right" name="wrists-side" value="right">
+                <label for="wrists-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="wrists-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="wrists-pain-level" name="wrists-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="wrists-comments" name="wrists-comments" class="comments-input" placeholder="Comments about wrist pain (optional)"></textarea>
+      </div>
+
+      <!-- Hands -->
+      <div class="body-part-item">
+        <div class="body-part-name">Hands</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="hands-left" name="hands-side" value="left">
+                <label for="hands-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="hands-right" name="hands-side" value="right">
+                <label for="hands-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="hands-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="hands-pain-level" name="hands-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="hands-comments" name="hands-comments" class="comments-input" placeholder="Comments about hand pain (optional)"></textarea>
+      </div>
+
+      <!-- Chest -->
+      <div class="body-part-item">
+        <div class="body-part-name">Chest</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="chest-left" name="chest-side" value="left">
+                <label for="chest-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="chest-right" name="chest-side" value="right">
+                <label for="chest-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="chest-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="chest-pain-level" name="chest-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="chest-comments" name="chest-comments" class="comments-input" placeholder="Comments about chest pain (optional)"></textarea>
+      </div>
+
+      <!-- Abdomen -->
+      <div class="body-part-item">
+        <div class="body-part-name">Abdomen</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="abdomen-left" name="abdomen-side" value="left">
+                <label for="abdomen-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="abdomen-right" name="abdomen-side" value="right">
+                <label for="abdomen-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="abdomen-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="abdomen-pain-level" name="abdomen-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="abdomen-comments" name="abdomen-comments" class="comments-input" placeholder="Comments about abdominal pain (optional)"></textarea>
+      </div>
+
+      <!-- Buttocks -->
+      <div class="body-part-item">
+        <div class="body-part-name">Buttocks</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="buttocks-left" name="buttocks-side" value="left">
+                <label for="buttocks-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="buttocks-right" name="buttocks-side" value="right">
+                <label for="buttocks-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="buttocks-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="buttocks-pain-level" name="buttocks-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="buttocks-comments" name="buttocks-comments" class="comments-input" placeholder="Comments about buttocks pain (optional)"></textarea>
+      </div>
+
+      <!-- Groin -->
+      <div class="body-part-item">
+        <div class="body-part-name">Groin</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="groin-left" name="groin-side" value="left">
+                <label for="groin-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="groin-right" name="groin-side" value="right">
+                <label for="groin-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="groin-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="groin-pain-level" name="groin-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="groin-comments" name="groin-comments" class="comments-input" placeholder="Comments about groin pain (optional)"></textarea>
+      </div>
+
+      <!-- Hips -->
+      <div class="body-part-item">
+        <div class="body-part-name">Hips</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="hips-left" name="hips-side" value="left">
+                <label for="hips-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="hips-right" name="hips-side" value="right">
+                <label for="hips-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="hips-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="hips-pain-level" name="hips-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="hips-comments" name="hips-comments" class="comments-input" placeholder="Comments about hip pain (optional)"></textarea>
+      </div>
+
+      <!-- Upper Back -->
+      <div class="body-part-item">
+        <div class="body-part-name">Upper Back</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="upper_back-left" name="upper_back-side" value="left">
+                <label for="upper_back-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="upper_back-right" name="upper_back-side" value="right">
+                <label for="upper_back-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="upper_back-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="upper_back-pain-level" name="upper_back-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="upper_back-comments" name="upper_back-comments" class="comments-input" placeholder="Comments about upper back pain (optional)"></textarea>
+      </div>
+
+      <!-- Middle Back -->
+      <div class="body-part-item">
+        <div class="body-part-name">Middle Back</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="middle_back-left" name="middle_back-side" value="left">
+                <label for="middle_back-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="middle_back-right" name="middle_back-side" value="right">
+                <label for="middle_back-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="middle_back-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="middle_back-pain-level" name="middle_back-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="middle_back-comments" name="middle_back-comments" class="comments-input" placeholder="Comments about middle back pain (optional)"></textarea>
+      </div>
+
+      <!-- Low Back -->
+      <div class="body-part-item">
+        <div class="body-part-name">Low Back</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="low_back-left" name="low_back-side" value="left">
+                <label for="low_back-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="low_back-right" name="low_back-side" value="right">
+                <label for="low_back-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="low_back-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="low_back-pain-level" name="low_back-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="low_back-comments" name="low_back-comments" class="comments-input" placeholder="Comments about low back pain (optional)"></textarea>
+      </div>
+
+      <!-- Pain Radiates from Low Back -->
+      <div class="body-part-item">
+        <div class="body-part-name">Pain Radiates from Low Back</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="pain_radiates_from_low_back-left" name="pain_radiates_from_low_back-side" value="left">
+                <label for="pain_radiates_from_low_back-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="pain_radiates_from_low_back-right" name="pain_radiates_from_low_back-side" value="right">
+                <label for="pain_radiates_from_low_back-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="pain_radiates_from_low_back-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="pain_radiates_from_low_back-pain-level" name="pain_radiates_from_low_back-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="pain_radiates_from_low_back-comments" name="pain_radiates_from_low_back-comments" class="comments-input" placeholder="Comments about radiating pain from low back (optional)"></textarea>
+      </div>
+
+      <!-- Thighs -->
+      <div class="body-part-item">
+        <div class="body-part-name">Thighs</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="thighs-left" name="thighs-side" value="left">
+                <label for="thighs-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="thighs-right" name="thighs-side" value="right">
+                <label for="thighs-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="thighs-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="thighs-pain-level" name="thighs-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="thighs-comments" name="thighs-comments" class="comments-input" placeholder="Comments about thigh pain (optional)"></textarea>
+      </div>
+
+      <!-- Legs -->
+      <div class="body-part-item">
+        <div class="body-part-name">Legs</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="legs-left" name="legs-side" value="left">
+                <label for="legs-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="legs-right" name="legs-side" value="right">
+                <label for="legs-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="legs-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="legs-pain-level" name="legs-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="legs-comments" name="legs-comments" class="comments-input" placeholder="Comments about leg pain (optional)"></textarea>
+      </div>
+
+      <!-- Knees -->
+      <div class="body-part-item">
+        <div class="body-part-name">Knees</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="knees-left" name="knees-side" value="left">
+                <label for="knees-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="knees-right" name="knees-side" value="right">
+                <label for="knees-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="knees-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="knees-pain-level" name="knees-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="knees-comments" name="knees-comments" class="comments-input" placeholder="Comments about knee pain (optional)"></textarea>
+      </div>
+
+      <!-- Ankles -->
+      <div class="body-part-item">
+        <div class="body-part-name">Ankles</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="ankles-left" name="ankles-side" value="left">
+                <label for="ankles-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="ankles-right" name="ankles-side" value="right">
+                <label for="ankles-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="ankles-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="ankles-pain-level" name="ankles-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="ankles-comments" name="ankles-comments" class="comments-input" placeholder="Comments about ankle pain (optional)"></textarea>
+      </div>
+
+      <!-- Feet -->
+      <div class="body-part-item">
+        <div class="body-part-name">Feet</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="feet-left" name="feet-side" value="left">
+                <label for="feet-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="feet-right" name="feet-side" value="right">
+                <label for="feet-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="feet-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="feet-pain-level" name="feet-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="feet-comments" name="feet-comments" class="comments-input" placeholder="Comments about foot pain (optional)"></textarea>
+      </div>
+
+      <!-- Toes -->
+      <div class="body-part-item">
+        <div class="body-part-name">Toes</div>
+        <div class="body-part-controls">
+          <div class="side-selection">
+            <label>Side:</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="toes-left" name="toes-side" value="left">
+                <label for="toes-left">Left</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="toes-right" name="toes-side" value="right">
+                <label for="toes-right">Right</label>
+              </div>
+            </div>
+          </div>
+          <div class="pain-level-selection">
+            <label for="toes-pain-level">Pain Level (0-10):</label>
+            <input type="number" id="toes-pain-level" name="toes-pain-level" class="pain-scale-input" min="0" max="10" value="0">
+            <span class="pain-scale-helper">0=No pain, 10=Worst pain</span>
+          </div>
+        </div>
+        <textarea id="toes-comments" name="toes-comments" class="comments-input" placeholder="Comments about toe pain (optional)"></textarea>
+      </div>
+
+      <!-- Additional Comments Section -->
+      <div class="body-part-item" style="background: #f8f9fa; border-color: var(--primary-color);">
+        <div class="body-part-name" style="color: var(--primary-color);">Additional Pain Comments</div>
+        <div style="margin-bottom: 0.5rem;">
+          <label for="additional-comments" style="font-weight: normal; font-size: 0.95rem;">
+            What <strong>OTHER</strong> pain do you experience, and what is the pain rating for that pain?
+          </label>
+        </div>
+        <textarea id="additional-comments" name="additional-comments" class="comments-input" 
+                  style="min-height: 4rem;" 
+                  placeholder="Describe any other pain not listed above, including location, intensity (0-10), and characteristics..."></textarea>
+      </div>
+
+    </fieldset>
+
+    <!-- Buttons for saving the form -->
+    <div class="button-container">
+      <button type="button" id="save-btn" class="form-action-btn">
+        <i class="bi bi-download"></i> Save PBM Form
+      </button>
+    </div>
+
+    <footer class="form-footer">
+      <div class="footer-contact">
+        <p style="margin: 0;">© <span id="copyright-year">2025</span> Silver Linings Therapy And Assessment Services</p>
+      </div>
+      <div class="footer-info">
+        <p style="margin: 0;">All information provided is confidential and used for assessment purposes only.</p>
+      </div>
+    </footer>
+  </form>
+
+  <script>
+    // ========================= 
+    //    PBM Form JavaScript
+    // ========================= 
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Convert remaining number inputs to range sliders
+      convertPainInputsToSliders();
+      
+      // Setup form save functionality
+      setupFormSave();
+      
+      // Setup form validation and button state
+      setupFormValidation();
+      
+      // Update copyright year
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    });
+
+    // Convert all remaining number-based pain inputs to range sliders
+    function convertPainInputsToSliders() {
+      const numberInputs = document.querySelectorAll('input[type="number"][name$="-pain-level"]');
+      
+      numberInputs.forEach(input => {
+        const bodyPart = input.name.replace('-pain-level', '');
+        const container = input.parentElement;
+        
+        // Create new range slider container
+        const sliderContainer = document.createElement('div');
+        sliderContainer.className = 'pain-scale-container';
+        
+        sliderContainer.innerHTML = `
+          <div class="pain-scale-display">
+            <span>Pain Level:</span>
+            <span class="pain-scale-value" id="${bodyPart}-pain-value">0</span>
+          </div>
+          <input type="range" id="${bodyPart}-pain-level" name="${bodyPart}-pain-level" class="pain-scale-slider" 
+                 min="0" max="10" value="0" 
+                 oninput="updatePainValue('${bodyPart}', this.value)">
+          <div class="pain-scale-labels">
+            <span>0 - No pain</span>
+            <span>5 - Moderate</span>
+            <span>10 - Worst pain</span>
+          </div>
+        `;
+        
+        // Replace the old structure
+        const label = container.querySelector('label');
+        if (label) {
+          label.textContent = 'Pain Level:';
+        }
+        
+        // Remove the old number input and helper text
+        input.remove();
+        const helperText = container.querySelector('.pain-scale-helper');
+        if (helperText) {
+          helperText.remove();
+        }
+        
+        // Add the new slider container
+        container.appendChild(sliderContainer);
+      });
+    }
+
+    // Update pain value display when slider moves
+    function updatePainValue(bodyPart, value) {
+      const valueDisplay = document.getElementById(`${bodyPart}-pain-value`);
+      if (valueDisplay) {
+        valueDisplay.textContent = value;
+        
+        // Update color based on pain level
+        if (value == 0) {
+          valueDisplay.style.backgroundColor = '#e8f5e8';
+          valueDisplay.style.color = '#18c427';
+          valueDisplay.style.borderColor = '#18c427';
+        } else if (value <= 3) {
+          valueDisplay.style.backgroundColor = '#fff8e1';
+          valueDisplay.style.color = '#ff9800';
+          valueDisplay.style.borderColor = '#ff9800';
+        } else if (value <= 6) {
+          valueDisplay.style.backgroundColor = '#fff3e0';
+          valueDisplay.style.color = '#ffcc00';
+          valueDisplay.style.borderColor = '#ffcc00';
+        } else {
+          valueDisplay.style.backgroundColor = '#ffebee';
+          valueDisplay.style.color = '#ff4d4f';
+          valueDisplay.style.borderColor = '#ff4d4f';
+        }
+      }
+      
+      // Trigger validation update
+      updateSaveButtonState();
+    }
+
+    // Setup form validation and button state management
+    function setupFormValidation() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Initially disable the save button
+      saveBtn.disabled = true;
+      
+      // Get all relevant inputs (checkboxes, range sliders, and textareas)
+      const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+      const allRangeInputs = document.querySelectorAll('input[type="range"]');
+      const allTextareas = document.querySelectorAll('textarea');
+      
+      // Add event listeners to all relevant inputs
+      allCheckboxes.forEach(input => {
+        input.addEventListener('change', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      allRangeInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      allTextareas.forEach(input => {
+        input.addEventListener('input', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      // Initial check
+      updateSaveButtonState();
+    }
+
+    // Update save button state based on form completion
+    function updateSaveButtonState() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Check if form has meaningful content
+      const hasContent = validateForm();
+      
+      // Enable/disable save button based on content
+      saveBtn.disabled = !hasContent;
+    }
+
+    // Setup form save functionality
+    function setupFormSave() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      saveBtn.addEventListener('click', function() {
+        if (validateForm()) {
+          saveFormData();
+        } else {
+          alert('Please provide at least one pain entry or additional comments before saving.');
+        }
+      });
+    }
+
+    // Validate form has meaningful content
+    function validateForm() {
+      // Check if form information is populated (should be handled by FormManager)
+      const pbmId = document.getElementById('pbm-id').value.trim();
+      const caseProfileId = document.getElementById('case-profile-id').value.trim();
+      
+      if (!pbmId || !caseProfileId) {
+        return false;
+      }
+
+      // Check if at least one body part has meaningful data
+      const bodyParts = [
+        'head', 'headache', 'jaw', 'shoulders', 'shoulder_blades', 'arms', 'elbows', 
+        'wrists', 'hands', 'chest', 'abdomen', 'buttocks', 'groin', 'hips', 
+        'upper_back', 'middle_back', 'low_back', 'pain_radiates_from_low_back', 
+        'thighs', 'legs', 'knees', 'ankles', 'feet', 'toes'
+      ];
+      
+      let hasActivePain = false;
+      
+      for (let bodyPart of bodyParts) {
+        // Check if this body part has any side selected
+        const leftSide = document.getElementById(`${bodyPart}-left`);
+        const rightSide = document.getElementById(`${bodyPart}-right`);
+        const painLevel = document.getElementById(`${bodyPart}-pain-level`);
+        const comments = document.getElementById(`${bodyPart}-comments`);
+        
+        if (leftSide && rightSide && painLevel) {
+          const hasActiveSide = leftSide.checked || rightSide.checked;
+          const hasPainLevel = parseInt(painLevel.value) > 0;
+          const hasComments = comments && comments.value.trim().length > 0;
+          
+          // Consider it active if it has sides selected OR pain level > 0 OR comments
+          if (hasActiveSide || hasPainLevel || hasComments) {
+            hasActivePain = true;
+            break;
+          }
+        }
+      }
+      
+      // Also check additional comments
+      const additionalComments = document.getElementById('additional-comments');
+      const hasAdditionalComments = additionalComments && additionalComments.value.trim().length > 0;
+      
+      return hasActivePain || hasAdditionalComments;
+    }
+
+    // Save form data to CSV
+    function saveFormData() {
+      const formData = collectFormData();
+      const csvContent = generateCSV(formData);
+      downloadCSV(csvContent, `PBM_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+    }
+
+    // Collect all form data
+    function collectFormData() {
+      const data = {
+        pbmId: document.getElementById('pbm-id').value,
+        caseProfileId: document.getElementById('case-profile-id').value,
+        createdAt: document.getElementById('created-at').value,
+        assessorName: document.getElementById('assessor-name').value,
+        clientName: document.getElementById('client-name').value,
+        painData: {},
+        additionalComments: document.getElementById('additional-comments').value
+      };
+
+      // Collect pain data for each body part
+      const bodyParts = [
+        'head', 'headache', 'jaw', 'shoulders', 'shoulder_blades', 'arms', 'elbows', 
+        'wrists', 'hands', 'chest', 'abdomen', 'buttocks', 'groin', 'hips', 
+        'upper_back', 'middle_back', 'low_back', 'pain_radiates_from_low_back', 
+        'thighs', 'legs', 'knees', 'ankles', 'feet', 'toes'
+      ];
+
+      bodyParts.forEach(bodyPart => {
+        const leftSide = document.getElementById(`${bodyPart}-left`);
+        const rightSide = document.getElementById(`${bodyPart}-right`);
+        const painLevel = document.getElementById(`${bodyPart}-pain-level`);
+        const comments = document.getElementById(`${bodyPart}-comments`);
+
+        if (leftSide && rightSide && painLevel) {
+          data.painData[bodyPart] = {
+            leftSide: leftSide.checked,
+            rightSide: rightSide.checked,
+            painLevel: parseInt(painLevel.value) || 0,
+            comments: comments ? comments.value : ''
+          };
+        }
+      });
+
+      return data;
+    }
+
+    // Generate CSV content
+    function generateCSV(data) {
+      const headers = [
+        'PBM_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name'
+      ];
+
+      const values = [
+        data.pbmId,
+        data.caseProfileId,
+        data.createdAt,
+        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
+        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+      ];
+
+      // Add body part data to headers and values
+      const bodyParts = [
+        'head', 'headache', 'jaw', 'shoulders', 'shoulder_blades', 'arms', 'elbows', 
+        'wrists', 'hands', 'chest', 'abdomen', 'buttocks', 'groin', 'hips', 
+        'upper_back', 'middle_back', 'low_back', 'pain_radiates_from_low_back', 
+        'thighs', 'legs', 'knees', 'ankles', 'feet', 'toes'
+      ];
+
+      bodyParts.forEach(bodyPart => {
+        const painData = data.painData[bodyPart];
+        const bodyPartUpper = bodyPart.toUpperCase();
+        
+        headers.push(
+          `${bodyPartUpper}_LEFT`, 
+          `${bodyPartUpper}_RIGHT`, 
+          `${bodyPartUpper}_PAIN_LEVEL`, 
+          `${bodyPartUpper}_COMMENTS`
+        );
+        
+        values.push(
+          painData.leftSide ? 'YES' : 'NO',
+          painData.rightSide ? 'YES' : 'NO',
+          painData.painLevel,
+          `"${painData.comments.replace(/"/g, '""')}"`
+        );
+      });
+
+      // Add additional comments
+      headers.push('ADDITIONAL_COMMENTS');
+      values.push(`"${data.additionalComments.replace(/"/g, '""')}"`);
+
+      return headers.join(',') + '\n' + values.join(',');
+    }
+
+    // Download CSV file
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        alert(`PBM form saved as ${filename}`);
+      } else {
+        alert('File download not supported in this browser.');
+      }
+    }
+
+    // Update copyright year
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
