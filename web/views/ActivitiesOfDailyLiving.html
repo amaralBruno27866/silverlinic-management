@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>SLT - Activities of Daily Living</title>
+</head>
+
+<style>
+  /* ========================= */
+  /*       Global Styles       */
+  /* ========================= */
+
+  :root{
+    --primary-color: #00325c;
+    --secondary-color: #00335cb6;
+    --third-color: #00335c3b;
+    --success-color: #18c427;
+    --success-color-hover: #16a125;
+    --error-color: #ff4d4f;
+    --error-color-hover: #ff1a1a;
+    --warning-color: #ffcc00;
+    --warning-color-hover: #e6b800;
+    --info-color: #1890ff;
+    --info-color-hover: #007acc;
+    --background-color: #c4c4c4;
+    --background-form: #ffffff;
+    --text-color-1: #222222;
+    --text-color-2: #d3d3d3;
+
+    --font-family: 'Roboto', sans-serif;
+    --font-size: 1rem;
+    --font-weight: 400;
+  }
+
+  /* ========================= */
+  /*      General Body         */
+  /* ========================= */
+  body {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    margin: 1rem auto;
+    padding: 1rem;
+    background: var(--background-color);
+    max-width: 75rem;
+    max-height: 100vh;
+  }
+
+  form {
+    background: var(--background-form);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-header {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+  }
+
+  /* ========================= */
+  /*      Fieldset Styles      */
+  /* ========================= */
+  fieldset {
+    border: 1px solid var(--third-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #f9f9f9;
+  }
+
+  legend {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+    width: auto;
+    letter-spacing: 0.5px;
+  }
+
+  /* ========================= */
+  /*      Form Layout          */
+  /* ========================= */
+  .adl-info,
+  .adl-activities,
+  .activity-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .category-section {
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 0.35rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .category-header {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--third-color);
+  }
+
+  .activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .activity-text {
+    font-weight: 500;
+    color: var(--text-color-1);
+  }
+
+  .activity-options {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .comments-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    color: var(--primary-color);
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #bfc9d1;
+    border-radius: 0.35rem;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--text-color-1);
+    transition: border-color 0.2s;
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 0.3rem;
+    transform: scale(1.2);
+  }
+
+  input[readonly] {
+    background: #f1f1f1;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    background: #f0f6fa;
+  }
+
+  textarea {
+    min-height: 4rem;
+    resize: vertical;
+    width: 100%;
+  }
+
+  /* Footer styles */
+  .form-footer {
+    background-color: var(--primary-color);
+    color: var(--text-color-2);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  /* ========================= */
+  /*      Button Styles        */
+  /* ========================= */
+  .button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .form-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 0.35rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px #00325c1a;
+  }
+
+  .form-action-btn:disabled {
+    background-color: #bfc9d1;
+    color: #eee;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+
+  .form-action-btn:hover:not(:disabled),
+  .form-action-btn:focus:not(:disabled) {
+    background-color: var(--secondary-color);
+    color: #fff;
+    outline: none;
+  }
+
+  @media (max-width: 767px) {
+    .button-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.2rem 0 0.5rem 0;
+    }
+    .form-action-btn {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      padding: 0.55rem 1rem;
+    }
+    .activity-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .activity-options {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  /* ========================= */
+  /*      Responsividade       */
+  /* ========================= */
+
+  /* Laptops: 1920x1080 até 1280x720 */
+  @media (max-width: 1920px) and (min-width: 1280px) {
+    body {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Tablets: 1279px até 768px */
+  @media (max-width: 1279px) and (min-width: 768px) {
+    body {
+      font-size: 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  /* Smartphones: até 767px */
+  @media (max-width: 767px) {
+    body {
+      font-size: 0.95rem;
+      padding: 0 0.5rem;
+    }
+  }
+
+</style>
+
+<body>
+  <form>
+    <header>
+      <fieldset class="form-header">
+        <h1 style="margin: 0;">Silver Linings Therapy And Assessment Services</h1>
+        <h2 style="margin: 0.5rem 0;">Activities of Daily Living (ADL)</h2>
+        <p style="margin: 0;">2 Andres St, Niagara on the Lake, Ontario, L0S 1J0</p>
+        <p style="margin: 0;"><i class="bi bi-telephone"></i> +1 (416) 937 - 6902 | Fax: +1 (647) 793 - 4140</p>
+        <p style="margin: 0;"><i class="bi bi-envelope"></i> silverliningsassociates@gmail.com</p>
+      </fieldset>
+    </header>
+
+    <!-- Form Information -->
+    <fieldset class="adl-info">
+      <legend>Form Information</legend>
+      <label for="adl-id">ADL ID:</label>
+      <input type="text" id="adl-id" name="adl-id" value="{{ADL_ID}}" readonly>
+      
+      <label for="case-profile-id">Case Profile ID:</label>
+      <input type="text" id="case-profile-id" name="case-profile-id" value="{{CASE_PROFILE_ID}}" readonly>
+      
+      <label for="created-at">Created at:</label>
+      <input type="text" id="created-at" name="created-at" value="{{CREATED_AT}}" readonly>
+      
+      <label for="assessor-name">Assessor:</label>
+      <input type="text" id="assessor-name" name="assessor-name" value="{{ASSESSOR_FULL_NAME}}" readonly>
+      
+      <label for="client-name">Client:</label>
+      <input type="text" id="client-name" name="client-name" value="{{CLIENT_FULL_NAME}}" readonly>
+    </fieldset>
+
+    <!-- ADL Activities -->
+    <fieldset class="adl-activities">
+      <legend>Activities of Daily Living Assessment</legend>
+      
+      <!-- Instructions -->
+      <div class="category-section" style="background: #e8f4fd; border-color: var(--info-color);">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <i class="bi bi-info-circle" style="font-size: 1.25rem; color: var(--info-color);"></i>
+          <h3 style="margin: 0; color: var(--info-color); font-size: 1.1rem;">How to Complete This Form</h3>
+        </div>
+        
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--info-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-color); font-size: 1rem;">📋 Instructions:</h4>
+          <p style="margin: 0 0 0.5rem 0; line-height: 1.5;">Please mark the <strong>activities you have had difficulty performing in the past month</strong>. For activities that you have not had difficulty with, please leave the checkbox unchecked.</p>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--success-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--success-color); font-size: 1rem;">✅ How to Answer:</h4>
+          <ul style="margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+            <li style="margin-bottom: 0.25rem;"><strong>Checked:</strong> You have had difficulty with this activity</li>
+            <li style="margin-bottom: 0.25rem;"><strong>Unchecked:</strong> You have not had difficulty with this activity</li>
+            <li style="margin-bottom: 0.25rem;"><strong>Comments:</strong> Add any additional details about your difficulties in each category</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; margin-bottom: 1rem; border-left: 4px solid var(--warning-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--warning-color); font-size: 1rem;">⚠️ Important Notes:</h4>
+          <ul style="margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+            <li style="margin-bottom: 0.25rem;">Think about your abilities during the <strong>past month</strong></li>
+            <li style="margin-bottom: 0.25rem;">Your form information (ID, assessor, etc.) is pre-filled and cannot be changed</li>
+            <li style="margin-bottom: 0.25rem;">You can add comments to provide more detail about your difficulties</li>
+            <li style="margin-bottom: 0.25rem;">For Child Care: only complete if you have children requiring care</li>
+            <li style="margin-bottom: 0.25rem;">The <strong>Save button</strong> will be enabled when you mark at least one difficulty or add comments</li>
+          </ul>
+        </div>
+
+        <div style="background: #fff; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--primary-color);">
+          <h4 style="margin: 0 0 0.75rem 0; color: var(--primary-color); font-size: 1rem;">💾 Saving Your Responses:</h4>
+          <p style="margin: 0; line-height: 1.5;">Once you've completed the assessment, click the <strong>"Save ADL Form"</strong> button to download your responses as a CSV file. Attach this file to an email and send it to your assessor for review and processing.</p>
+        </div>
+      </div>
+
+      <!-- Functional Tasks Category -->
+      <div class="category-section">
+        <div class="category-header">Functional Tasks</div>
+        
+        <!-- Lifting -->
+        <div class="activity-item">
+          <div class="activity-text">Lifting</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-lifting" name="functional-lifting" data-category="functional_tasks" data-activity="lifting">
+                <label for="functional-lifting">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bending -->
+        <div class="activity-item">
+          <div class="activity-text">Bending</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-bending" name="functional-bending" data-category="functional_tasks" data-activity="bending">
+                <label for="functional-bending">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carrying -->
+        <div class="activity-item">
+          <div class="activity-text">Carrying</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-carrying" name="functional-carrying" data-category="functional_tasks" data-activity="carrying">
+                <label for="functional-carrying">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sitting -->
+        <div class="activity-item">
+          <div class="activity-text">Sitting</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-sitting" name="functional-sitting" data-category="functional_tasks" data-activity="sitting">
+                <label for="functional-sitting">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Standing -->
+        <div class="activity-item">
+          <div class="activity-text">Standing</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-standing" name="functional-standing" data-category="functional_tasks" data-activity="standing">
+                <label for="functional-standing">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kneeling -->
+        <div class="activity-item">
+          <div class="activity-text">Kneeling</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-kneeling" name="functional-kneeling" data-category="functional_tasks" data-activity="kneeling">
+                <label for="functional-kneeling">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Squatting -->
+        <div class="activity-item">
+          <div class="activity-text">Squatting</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-squatting" name="functional-squatting" data-category="functional_tasks" data-activity="squatting">
+                <label for="functional-squatting">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gripping -->
+        <div class="activity-item">
+          <div class="activity-text">Gripping</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-gripping" name="functional-gripping" data-category="functional_tasks" data-activity="gripping">
+                <label for="functional-gripping">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balancing -->
+        <div class="activity-item">
+          <div class="activity-text">Balancing</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-balancing" name="functional-balancing" data-category="functional_tasks" data-activity="balancing">
+                <label for="functional-balancing">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Walking for long periods of time -->
+        <div class="activity-item">
+          <div class="activity-text">Walking for long periods of time</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-walking" name="functional-walking" data-category="functional_tasks" data-activity="walking_long_periods">
+                <label for="functional-walking">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reaching overhead -->
+        <div class="activity-item">
+          <div class="activity-text">Reaching overhead</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-reaching" name="functional-reaching" data-category="functional_tasks" data-activity="reaching_overhead">
+                <label for="functional-reaching">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Climbing / descending stairs -->
+        <div class="activity-item">
+          <div class="activity-text">Climbing / descending stairs</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="functional-stairs" name="functional-stairs" data-category="functional_tasks" data-activity="stairs">
+                <label for="functional-stairs">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments section for Functional Tasks -->
+        <div class="comments-section">
+          <label for="functional-comments">Additional Comments:</label>
+          <textarea id="functional-comments" name="functional-comments" data-category="functional_tasks" placeholder="Please provide any additional details about difficulties with functional tasks..."></textarea>
+        </div>
+      </div>
+
+      <!-- Household Chores Category -->
+      <div class="category-section">
+        <div class="category-header">Household Chores</div>
+        
+        <!-- Cleaning bathtub -->
+        <div class="activity-item">
+          <div class="activity-text">Cleaning bathtub</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-bathtub" name="household-bathtub" data-category="household_chores" data-activity="cleaning_bathtub">
+                <label for="household-bathtub">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dusting -->
+        <div class="activity-item">
+          <div class="activity-text">Dusting</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-dusting" name="household-dusting" data-category="household_chores" data-activity="dusting">
+                <label for="household-dusting">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cooking -->
+        <div class="activity-item">
+          <div class="activity-text">Cooking</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-cooking" name="household-cooking" data-category="household_chores" data-activity="cooking">
+                <label for="household-cooking">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cleaning floors -->
+        <div class="activity-item">
+          <div class="activity-text">Cleaning floors</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-floors" name="household-floors" data-category="household_chores" data-activity="cleaning_floors">
+                <label for="household-floors">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Laundry -->
+        <div class="activity-item">
+          <div class="activity-text">Laundry</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-laundry" name="household-laundry" data-category="household_chores" data-activity="laundry">
+                <label for="household-laundry">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vacuuming -->
+        <div class="activity-item">
+          <div class="activity-text">Vacuuming</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-vacuuming" name="household-vacuuming" data-category="household_chores" data-activity="vacuuming">
+                <label for="household-vacuuming">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Making beds -->
+        <div class="activity-item">
+          <div class="activity-text">Making beds</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-beds" name="household-beds" data-category="household_chores" data-activity="making_beds">
+                <label for="household-beds">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Washing dishes -->
+        <div class="activity-item">
+          <div class="activity-text">Washing dishes</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="household-dishes" name="household-dishes" data-category="household_chores" data-activity="washing_dishes">
+                <label for="household-dishes">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments section for Household Chores -->
+        <div class="comments-section">
+          <label for="household-comments">Additional Comments:</label>
+          <textarea id="household-comments" name="household-comments" data-category="household_chores" placeholder="Please provide any additional details about difficulties with household chores..."></textarea>
+        </div>
+      </div>
+
+      <!-- Outdoor Chores Category -->
+      <div class="category-section">
+        <div class="category-header">Outdoor Chores</div>
+        
+        <!-- Gardening -->
+        <div class="activity-item">
+          <div class="activity-text">Gardening</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="outdoor-gardening" name="outdoor-gardening" data-category="outdoor_chores" data-activity="gardening">
+                <label for="outdoor-gardening">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lawn mowing -->
+        <div class="activity-item">
+          <div class="activity-text">Lawn mowing</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="outdoor-mowing" name="outdoor-mowing" data-category="outdoor_chores" data-activity="lawn_mowing">
+                <label for="outdoor-mowing">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Snow shoveling -->
+        <div class="activity-item">
+          <div class="activity-text">Snow shoveling</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="outdoor-snow" name="outdoor-snow" data-category="outdoor_chores" data-activity="snow_shoveling">
+                <label for="outdoor-snow">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raking leaves -->
+        <div class="activity-item">
+          <div class="activity-text">Raking leaves</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="outdoor-raking" name="outdoor-raking" data-category="outdoor_chores" data-activity="raking_leaves">
+                <label for="outdoor-raking">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments section for Outdoor Chores -->
+        <div class="comments-section">
+          <label for="outdoor-comments">Additional Comments:</label>
+          <textarea id="outdoor-comments" name="outdoor-comments" data-category="outdoor_chores" placeholder="Please provide any additional details about difficulties with outdoor chores..."></textarea>
+        </div>
+      </div>
+
+      <!-- Personal Care Activities Category -->
+      <div class="category-section">
+        <div class="category-header">Personal Care Activities</div>
+        
+        <!-- Bathing -->
+        <div class="activity-item">
+          <div class="activity-text">Bathing</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-bathing" name="personal-bathing" data-category="personal_care" data-activity="bathing">
+                <label for="personal-bathing">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dressing -->
+        <div class="activity-item">
+          <div class="activity-text">Dressing</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-dressing" name="personal-dressing" data-category="personal_care" data-activity="dressing">
+                <label for="personal-dressing">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grooming -->
+        <div class="activity-item">
+          <div class="activity-text">Grooming</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-grooming" name="personal-grooming" data-category="personal_care" data-activity="grooming">
+                <label for="personal-grooming">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Using toilet -->
+        <div class="activity-item">
+          <div class="activity-text">Using toilet</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-toilet" name="personal-toilet" data-category="personal_care" data-activity="using_toilet">
+                <label for="personal-toilet">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eating -->
+        <div class="activity-item">
+          <div class="activity-text">Eating</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-eating" name="personal-eating" data-category="personal_care" data-activity="eating">
+                <label for="personal-eating">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taking medication -->
+        <div class="activity-item">
+          <div class="activity-text">Taking medication</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="personal-medication" name="personal-medication" data-category="personal_care" data-activity="taking_medication">
+                <label for="personal-medication">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments section for Personal Care -->
+        <div class="comments-section">
+          <label for="personal-comments">Additional Comments:</label>
+          <textarea id="personal-comments" name="personal-comments" data-category="personal_care" placeholder="Please provide any additional details about difficulties with personal care activities..."></textarea>
+        </div>
+      </div>
+
+      <!-- Child Care Category -->
+      <div class="category-section">
+        <div class="category-header">Child Care</div>
+        <p style="font-style: italic; margin-bottom: 1rem; color: var(--warning-color);">
+          <i class="bi bi-info-circle"></i> Complete this section only if you have children that require care. 
+          Please indicate which children you are referring to in the comments section.
+        </p>
+        
+        <!-- Lifting children -->
+        <div class="activity-item">
+          <div class="activity-text">Lifting children</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="childcare-lifting" name="childcare-lifting" data-category="child_care" data-activity="lifting_children">
+                <label for="childcare-lifting">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Playing with children -->
+        <div class="activity-item">
+          <div class="activity-text">Playing with children</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="childcare-playing" name="childcare-playing" data-category="child_care" data-activity="playing_with_children">
+                <label for="childcare-playing">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carrying children -->
+        <div class="activity-item">
+          <div class="activity-text">Carrying children</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="childcare-carrying" name="childcare-carrying" data-category="child_care" data-activity="carrying_children">
+                <label for="childcare-carrying">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Helping children with daily tasks -->
+        <div class="activity-item">
+          <div class="activity-text">Helping children with daily tasks</div>
+          <div class="activity-options">
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="childcare-helping" name="childcare-helping" data-category="child_care" data-activity="helping_daily_tasks">
+                <label for="childcare-helping">Has Difficulty</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments section for Child Care -->
+        <div class="comments-section">
+          <label for="childcare-comments">Additional Comments (include which children you are referring to):</label>
+          <textarea id="childcare-comments" name="childcare-comments" data-category="child_care" placeholder="Please specify which children you are referring to and provide any additional details about difficulties with child care activities..."></textarea>
+        </div>
+      </div>
+
+    </fieldset>
+
+    <!-- Buttons for saving the form -->
+    <div class="button-container">
+      <button type="button" id="save-btn" class="form-action-btn">
+        <i class="bi bi-download"></i> Save ADL Form
+      </button>
+    </div>
+
+    <footer class="form-footer">
+      <div class="footer-contact">
+        <p style="margin: 0;">© <span id="copyright-year">2025</span> Silver Linings Therapy And Assessment Services</p>
+      </div>
+      <div class="footer-info">
+        <p style="margin: 0;">All information provided is confidential and used for assessment purposes only.</p>
+      </div>
+    </footer>
+  </form>
+
+  <script>
+    // ========================= 
+    //    ADL Form JavaScript
+    // ========================= 
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Setup form save functionality
+      setupFormSave();
+      
+      // Setup form validation and button state
+      setupFormValidation();
+      
+      // Update copyright year
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    });
+
+    // Setup form validation and button state management
+    function setupFormValidation() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Initially disable the save button
+      saveBtn.disabled = true;
+      
+      // Get all checkboxes and textareas
+      const allCheckboxes = document.querySelectorAll('input[type="checkbox"][data-category]');
+      const allTextareas = document.querySelectorAll('textarea[data-category]');
+      
+      // Add event listeners to all checkboxes
+      allCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      // Add event listeners to all textareas
+      allTextareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+          updateSaveButtonState();
+        });
+      });
+      
+      // Initial check
+      updateSaveButtonState();
+    }
+
+    // Update save button state based on form completion
+    function updateSaveButtonState() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Check if at least one checkbox is checked OR at least one textarea has content
+      const hasCheckedActivity = document.querySelector('input[type="checkbox"][data-category]:checked') !== null;
+      const hasComments = Array.from(document.querySelectorAll('textarea[data-category]'))
+        .some(textarea => textarea.value.trim().length > 0);
+      
+      // Enable button if there's at least one activity marked OR comments provided
+      const hasContent = hasCheckedActivity || hasComments;
+      
+      // Enable/disable save button based on content
+      saveBtn.disabled = !hasContent;
+    }
+
+    // Setup form save functionality
+    function setupFormSave() {
+      const saveBtn = document.getElementById('save-btn');
+      
+      saveBtn.addEventListener('click', function() {
+        if (validateForm()) {
+          saveFormData();
+        }
+      });
+    }
+
+    // Validate required fields
+    function validateForm() {
+      // Check if form information is populated (should be handled by FormManager)
+      const adlId = document.getElementById('adl-id').value.trim();
+      const caseProfileId = document.getElementById('case-profile-id').value.trim();
+      
+      if (!adlId || !caseProfileId) {
+        alert('Form information is incomplete. Please ensure this form was properly generated.');
+        return false;
+      }
+
+      // Check if there's any content (checkbox checked OR comments provided)
+      const hasCheckedActivity = document.querySelector('input[type="checkbox"][data-category]:checked') !== null;
+      const hasComments = Array.from(document.querySelectorAll('textarea[data-category]'))
+        .some(textarea => textarea.value.trim().length > 0);
+      
+      if (!hasCheckedActivity && !hasComments) {
+        alert('Please mark at least one activity difficulty or provide comments before saving the form.');
+        return false;
+      }
+
+      return true;
+    }
+
+    // Save form data to CSV
+    function saveFormData() {
+      const formData = collectFormData();
+      const csvContent = generateCSV(formData);
+      downloadCSV(csvContent, `ADL_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+    }
+
+    // Collect all form data
+    function collectFormData() {
+      const data = {
+        adlId: document.getElementById('adl-id').value,
+        caseProfileId: document.getElementById('case-profile-id').value,
+        createdAt: document.getElementById('created-at').value,
+        assessorName: document.getElementById('assessor-name').value,
+        clientName: document.getElementById('client-name').value,
+        activitiesData: {}
+      };
+
+      // Define all categories
+      const categories = ['functional_tasks', 'household_chores', 'outdoor_chores', 'personal_care', 'child_care'];
+      
+      // Collect activity data for each category
+      categories.forEach(category => {
+        data.activitiesData[category] = {
+          activities: {},
+          comments: ''
+        };
+        
+        // Get all checkboxes for this category
+        const categoryCheckboxes = document.querySelectorAll(`input[type="checkbox"][data-category="${category}"]`);
+        categoryCheckboxes.forEach(checkbox => {
+          const activityName = checkbox.getAttribute('data-activity');
+          data.activitiesData[category].activities[activityName] = checkbox.checked;
+        });
+        
+        // Get comments for this category
+        const commentsTextarea = document.querySelector(`textarea[data-category="${category}"]`);
+        if (commentsTextarea) {
+          data.activitiesData[category].comments = commentsTextarea.value;
+        }
+      });
+
+      return data;
+    }
+
+    // Generate CSV content
+    function generateCSV(data) {
+      const headers = ['ADL_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name'];
+      const values = [
+        data.adlId,
+        data.caseProfileId,
+        data.createdAt,
+        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
+        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+      ];
+
+      // Add activity headers and values
+      const categories = ['functional_tasks', 'household_chores', 'outdoor_chores', 'personal_care', 'child_care'];
+      
+      categories.forEach(category => {
+        const categoryData = data.activitiesData[category];
+        
+        // Add activity columns
+        Object.keys(categoryData.activities).forEach(activity => {
+          headers.push(`${category}_${activity}`);
+          values.push(categoryData.activities[activity] ? '1' : '0');
+        });
+        
+        // Add comments column
+        headers.push(`${category}_comments`);
+        values.push(`"${categoryData.comments.replace(/"/g, '""')}"`);
+      });
+
+      return headers.join(',') + '\n' + values.join(',');
+    }
+
+    // Download CSV file
+    function downloadCSV(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        alert(`ADL form saved as ${filename}`);
+      } else {
+        alert('Your browser does not support automatic file download. Please copy the CSV content manually.');
+      }
+    }
+
+    // Update copyright year
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
