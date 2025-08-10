@@ -626,7 +626,11 @@
         </div>
         <div id="q15b-container" class="conditional-field" style="display: none;">
           <label for="q15b">15b. If yes, who?</label>
-          <textarea id="q15b" name="question-15b" placeholder="Please specify who makes you more nervous..." data-question="15b"></textarea>
+          <textarea id="q15b" name="question-15b" placeholder="Please specify who makes you more nervous..." data-question="15b" maxlength="500"></textarea>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#555; margin-top:0.25rem;">
+            <span id="q15b-counter">0 / 500</span>
+            <span id="q15b-warning" style="color:var(--error-color); display:none;">Limite alcançado</span>
+          </div>
         </div>
       </div>
 
@@ -780,10 +784,10 @@
 
     </fieldset>
 
-    <!-- Buttons for saving the form -->
+    <!-- Single save button (schema-only CSV) -->
     <div class="button-container">
-      <button type="button" id="save-btn" class="form-action-btn">
-        <i class="bi bi-download"></i> Save AAI Form
+      <button type="button" id="save-btn" class="form-action-btn" title="Exportar CSV conforme schema do banco" disabled>
+        <i class="bi bi-download"></i> Save AAI
       </button>
     </div>
 
@@ -811,6 +815,8 @@
       
       // Setup form validation and button state
       setupFormValidation();
+      // Ensure timestamp has time component
+      ensureFullTimestamp();
       
       // Update copyright year
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
@@ -862,34 +868,28 @@
     // Setup form validation and button state management
     function setupFormValidation() {
       const saveBtn = document.getElementById('save-btn');
-      
-      // Initially disable the save button
       saveBtn.disabled = true;
-      
-      // Get all radio inputs for questions 1-23
+
       const allRadioInputs = document.querySelectorAll('input[type="radio"]');
-      
-      // Add event listeners to all radio inputs
       allRadioInputs.forEach(input => {
-        input.addEventListener('change', function() {
+        input.addEventListener('change', () => {
           updateSaveButtonState();
         });
       });
-      
-      // Also listen to textarea changes for Q15b
+
       const q15bTextarea = document.getElementById('q15b');
-      q15bTextarea.addEventListener('input', function() {
+      q15bTextarea.addEventListener('input', () => {
+        updateQ15bCounter();
         updateSaveButtonState();
       });
-      
-      // Initial check
+
+      updateQ15bCounter();
       updateSaveButtonState();
     }
 
     // Update save button state based on form completion
     function updateSaveButtonState() {
       const saveBtn = document.getElementById('save-btn');
-      
       // Check if all required questions are answered
       const requiredQuestions = [
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
@@ -939,19 +939,13 @@
         }
       }
       
-      // Enable/disable save button based on completion
-      saveBtn.disabled = !allAnswered;
+  saveBtn.disabled = !allAnswered;
     }
 
     // Setup form save functionality
     function setupFormSave() {
       const saveBtn = document.getElementById('save-btn');
-      
-      saveBtn.addEventListener('click', function() {
-        if (validateForm()) {
-          saveFormData();
-        }
-      });
+      saveBtn.addEventListener('click', () => { if (validateForm()) saveFormData(); });
     }
 
     // Validate required fields
@@ -973,7 +967,8 @@
     function saveFormData() {
       const formData = collectFormData();
       const csvContent = generateCSV(formData);
-      downloadCSV(csvContent, `AAI_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+      const stamp = new Date().toISOString().split('T')[0];
+      downloadCSV(csvContent, `AAI_${formData.caseProfileId}_${stamp}.csv`);
     }
 
     // Collect all form data
@@ -982,48 +977,74 @@
         aaiId: document.getElementById('aai-id').value,
         caseProfileId: document.getElementById('case-profile-id').value,
         createdAt: document.getElementById('created-at').value,
-        assessorName: document.getElementById('assessor-name').value,
-        clientName: document.getElementById('client-name').value,
+        // modified_at espelha created_at na captura inicial; backend pode atualizar.
+        modifiedAt: document.getElementById('created-at').value,
         answers: {}
       };
 
-      // Collect all question answers
-      for (let i = 1; i <= 23; i++) {
-        const questionInput = document.querySelector(`input[name="question-${i}"]:checked`);
-        data.answers[`question_${i}`] = questionInput ? questionInput.value : '';
+      // Helper to convert radio value ('true'/'false') to numeric string expected by DB (1/0)
+      const boolToNum = (val) => val === 'true' ? '1' : '0';
+
+      // Collect simple yes/no questions (1-13)
+      for (let i = 1; i <= 13; i++) {
+        const inp = document.querySelector(`input[name="question-${i}"]:checked`);
+        data.answers[`question_${i}`] = inp ? boolToNum(inp.value) : '';
       }
 
-      // Special handling for Q14 (multiple choice)
-      const q14Input = document.querySelector('input[name="question-14"]:checked');
-      data.answers.question_14 = q14Input ? q14Input.value : '';
+      // Question 14 (mutually exclusive) -> three boolean columns
+      const q14Selected = document.querySelector('input[name="question-14"]:checked');
+      const q14Val = q14Selected ? q14Selected.value : '';
+      data.answers.question_14_driver = (q14Val === 'driver') ? '1' : '0';
+      data.answers.question_14_passenger = (q14Val === 'passenger') ? '1' : '0';
+      data.answers.question_14_no_difference = (q14Val === 'no-difference') ? '1' : '0';
 
-      // Special handling for Q15a and Q15b
-      const q15aInput = document.querySelector('input[name="question-15a"]:checked');
-      data.answers.question_15a = q15aInput ? q15aInput.value : '';
-      data.answers.question_15b = document.getElementById('q15b').value;
+      // Question 15a (yes/no) and 15b (text)
+      const q15aSel = document.querySelector('input[name="question-15a"]:checked');
+      data.answers.question_15_a = q15aSel ? boolToNum(q15aSel.value) : '';
+      data.answers.question_15_b = document.getElementById('q15b').value.trim();
 
-      // Special handling for Q19 location
-      const q19LocationInput = document.querySelector('input[name="question-19-location"]:checked');
-      data.answers.question_19_location = q19LocationInput ? q19LocationInput.value : '';
+      // Questions 16-18 (yes/no)
+      for (let i = 16; i <= 18; i++) {
+        const inp = document.querySelector(`input[name="question-${i}"]:checked`);
+        data.answers[`question_${i}`] = inp ? boolToNum(inp.value) : '';
+      }
+
+      // Question 19 main yes/no
+      const q19Main = document.querySelector('input[name="question-19"]:checked');
+      const q19Yes = q19Main && q19Main.value === 'true';
+      data.answers.question_19 = q19Main ? boolToNum(q19Main.value) : '';
+      // Sub-location (radio) mapped to three boolean columns (only one can be 1 if q19Yes)
+      const q19Loc = document.querySelector('input[name="question-19-location"]:checked');
+      const q19LocVal = q19Yes && q19Loc ? q19Loc.value : '';
+      data.answers.question_19_sidewalks = (q19LocVal === 'sidewalks') ? '1' : '0';
+      data.answers.question_19_crossing = (q19LocVal === 'crossing') ? '1' : '0';
+      data.answers.question_19_both = (q19LocVal === 'both') ? '1' : '0';
+
+      // Questions 20-23
+      for (let i = 20; i <= 23; i++) {
+        const inp = document.querySelector(`input[name="question-${i}"]:checked`);
+        data.answers[`question_${i}`] = inp ? boolToNum(inp.value) : '';
+      }
 
       return data;
     }
-
-    // Generate CSV content
-    function generateCSV(data) {
+    // CSV: somente colunas do schema do banco
+  function generateCSV(data) {
       const headers = [
-        'AAI_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
-        'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
-        'Q11', 'Q12', 'Q13', 'Q14', 'Q15a', 'Q15b', 'Q16', 'Q17', 'Q18',
-        'Q19', 'Q19_Location', 'Q20', 'Q21', 'Q22', 'Q23'
+        'id','case_profile_id','type',
+        'question_1','question_2','question_3','question_4','question_5','question_6','question_7','question_8','question_9','question_10',
+        'question_11','question_12','question_13',
+        'question_14_driver','question_14_passenger','question_14_no_difference',
+        'question_15_a','question_15_b',
+        'question_16','question_17','question_18',
+        'question_19','question_19_sidewalks','question_19_crossing','question_19_both',
+        'question_20','question_21','question_22','question_23',
+        'created_at','modified_at'
       ];
-
       const values = [
         data.aaiId,
         data.caseProfileId,
-        data.createdAt,
-        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
-        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+        '"AAI"',
         data.answers.question_1,
         data.answers.question_2,
         data.answers.question_3,
@@ -1037,21 +1058,48 @@
         data.answers.question_11,
         data.answers.question_12,
         data.answers.question_13,
-        data.answers.question_14,
-        data.answers.question_15a,
-        `"${data.answers.question_15b.replace(/"/g, '""')}"`, // Escape quotes in textarea
+        data.answers.question_14_driver,
+        data.answers.question_14_passenger,
+        data.answers.question_14_no_difference,
+        data.answers.question_15_a,
+        `"${data.answers.question_15_b.replace(/"/g, '""')}"`,
         data.answers.question_16,
         data.answers.question_17,
         data.answers.question_18,
         data.answers.question_19,
-        data.answers.question_19_location,
+        data.answers.question_19_sidewalks,
+        data.answers.question_19_crossing,
+        data.answers.question_19_both,
         data.answers.question_20,
         data.answers.question_21,
         data.answers.question_22,
-        data.answers.question_23
+        data.answers.question_23,
+        data.createdAt,
+        data.modifiedAt
       ];
-
       return headers.join(',') + '\n' + values.join(',');
+    }
+    // Garantir timestamp completo se vier apenas a data (YYYY-MM-DD)
+    function ensureFullTimestamp() {
+      const input = document.getElementById('created-at');
+      if (!input) return;
+      const val = input.value.trim();
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(val)) return; // already full
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const now = new Date();
+        const pad = n => n.toString().padStart(2,'0');
+        input.value = `${val} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      }
+    }
+    // Contador de caracteres Q15b
+    function updateQ15bCounter() {
+      const txt = document.getElementById('q15b');
+      if (!txt) return;
+      const counter = document.getElementById('q15b-counter');
+      const warn = document.getElementById('q15b-warning');
+      const len = txt.value.length;
+      if (counter) counter.textContent = `${len} / 500`;
+      if (warn) warn.style.display = len >= 500 ? 'inline' : 'none';
     }
 
     // Download CSV file

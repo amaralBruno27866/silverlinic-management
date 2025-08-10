@@ -310,39 +310,39 @@ namespace SilverClinic {
 
         bool BeckAnxietyInventory::hasMinimalAnxiety() const {
             int score = getTotalScore();
-            return score >= 0 && score <= 13;
+            return score >= 0 && score <= 7;
         }
 
         bool BeckAnxietyInventory::hasMildAnxiety() const {
             int score = getTotalScore();
-            return score >= 14 && score <= 19;
+            return score >= 8 && score <= 15;
         }
 
         bool BeckAnxietyInventory::hasModerateAnxiety() const {
             int score = getTotalScore();
-            return score >= 20 && score <= 28;
+            return score >= 16 && score <= 25;
         }
 
         bool BeckAnxietyInventory::hasSevereAnxiety() const {
             int score = getTotalScore();
-            return score >= 29 && score <= 63;
+            return score >= 26 && score <= 63;
         }
 
         // Question category analysis (adapted for anxiety symptoms)
         int BeckAnxietyInventory::getCognitiveScore() const {
-            // Cognitive symptoms: Questions 2, 3, 7, 8, 9, 13, 14
+            // Cognitive symptoms (legacy grouping retained for backward compatibility): 2,3,7,8,9,13,14
             return m_question_2 + m_question_3 + m_question_7 + m_question_8 + 
                    m_question_9 + m_question_13 + m_question_14;
         }
 
         int BeckAnxietyInventory::getAffectiveScore() const {
-            // Affective symptoms: Questions 1, 4, 5, 6, 10, 12, 17
+            // Affective symptoms (legacy grouping retained): 1,4,5,6,10,12,17
             return m_question_1 + m_question_4 + m_question_5 + m_question_6 + 
                    m_question_10 + m_question_12 + m_question_17;
         }
 
         int BeckAnxietyInventory::getSomaticScore() const {
-            // Somatic symptoms: Questions 11, 15, 16, 18, 19, 20, 21
+            // Somatic symptoms (legacy grouping retained): 11,15,16,18,19,20,21
             return m_question_11 + m_question_15 + m_question_16 + m_question_18 + 
                    m_question_19 + m_question_20 + m_question_21;
         }
@@ -368,27 +368,27 @@ namespace SilverClinic {
 
         void BeckAnxietyInventory::displayAllResponses() const {
             cout << "\n=== All BAI Responses ===" << endl;
-            cout << "Q1 (Sadness): " << m_question_1 << endl;
-            cout << "Q2 (Pessimism): " << m_question_2 << endl;
-            cout << "Q3 (Past Failure): " << m_question_3 << endl;
-            cout << "Q4 (Loss of Pleasure): " << m_question_4 << endl;
-            cout << "Q5 (Guilty Feelings): " << m_question_5 << endl;
-            cout << "Q6 (Punishment Feelings): " << m_question_6 << endl;
-            cout << "Q7 (Self-Dislike): " << m_question_7 << endl;
-            cout << "Q8 (Self-Criticalness): " << m_question_8 << endl;
-            cout << "Q9 (Suicidal Thoughts): " << m_question_9 << endl;
-            cout << "Q10 (Crying): " << m_question_10 << endl;
-            cout << "Q11 (Agitation): " << m_question_11 << endl;
-            cout << "Q12 (Loss of Interest): " << m_question_12 << endl;
-            cout << "Q13 (Indecisiveness): " << m_question_13 << endl;
-            cout << "Q14 (Worthlessness): " << m_question_14 << endl;
-            cout << "Q15 (Loss of Energy): " << m_question_15 << endl;
-            cout << "Q16 (Changes in Sleeping): " << m_question_16 << endl;
-            cout << "Q17 (Irritability): " << m_question_17 << endl;
-            cout << "Q18 (Changes in Appetite): " << m_question_18 << endl;
-            cout << "Q19 (Concentration Difficulty): " << m_question_19 << endl;
-            cout << "Q20 (Tiredness or Fatigue): " << m_question_20 << endl;
-            cout << "Q21 (Loss of Interest in Sex): " << m_question_21 << endl;
+            cout << "Q1 (Numbness or tingling): " << m_question_1 << endl;
+            cout << "Q2 (Feeling hot): " << m_question_2 << endl;
+            cout << "Q3 (Wobbliness in legs): " << m_question_3 << endl;
+            cout << "Q4 (Unable to relax): " << m_question_4 << endl;
+            cout << "Q5 (Fear of worst happening): " << m_question_5 << endl;
+            cout << "Q6 (Dizzy or lightheaded): " << m_question_6 << endl;
+            cout << "Q7 (Heart pounding/racing): " << m_question_7 << endl;
+            cout << "Q8 (Unsteady): " << m_question_8 << endl;
+            cout << "Q9 (Terrified or afraid): " << m_question_9 << endl;
+            cout << "Q10 (Nervous): " << m_question_10 << endl;
+            cout << "Q11 (Feeling of choking): " << m_question_11 << endl;
+            cout << "Q12 (Hands trembling): " << m_question_12 << endl;
+            cout << "Q13 (Shaky / unsteady): " << m_question_13 << endl;
+            cout << "Q14 (Fear of losing control): " << m_question_14 << endl;
+            cout << "Q15 (Difficulty in breathing): " << m_question_15 << endl;
+            cout << "Q16 (Fear of dying): " << m_question_16 << endl;
+            cout << "Q17 (Scared): " << m_question_17 << endl;
+            cout << "Q18 (Indigestion): " << m_question_18 << endl;
+            cout << "Q19 (Faint/lightheaded): " << m_question_19 << endl;
+            cout << "Q20 (Face flushed): " << m_question_20 << endl;
+            cout << "Q21 (Hot/cold sweats): " << m_question_21 << endl;
         }
 
         void BeckAnxietyInventory::displayScoreAnalysis() const {
@@ -419,13 +419,13 @@ namespace SilverClinic {
         }
 
         string BeckAnxietyInventory::interpretScore(int total_score) {
-            if (total_score >= 0 && total_score <= 13) {
+            if (total_score >= 0 && total_score <= 7) {
                 return "Minimal";
-            } else if (total_score >= 14 && total_score <= 19) {
+            } else if (total_score >= 8 && total_score <= 15) {
                 return "Mild";
-            } else if (total_score >= 20 && total_score <= 28) {
+            } else if (total_score >= 16 && total_score <= 25) {
                 return "Moderate";
-            } else if (total_score >= 29 && total_score <= 63) {
+            } else if (total_score >= 26 && total_score <= 63) {
                 return "Severe";
             } else {
                 return "Invalid";
@@ -433,7 +433,7 @@ namespace SilverClinic {
         }
 
         bool BeckAnxietyInventory::isHighRiskScore(int total_score) {
-            return total_score >= 20; // Moderate or Severe anxiety
+            return total_score >= 16; // Moderate or Severe anxiety (clinical attention)
         }
 
         // Stream operators

@@ -49,11 +49,13 @@ namespace SilverClinic {
             bool m_question_17;                // More nervous hearing car horn/brakes?
             bool m_question_18;                // More nervous passing accident scene?
             
-            // Question 19 (yes/no + checkboxes)
+            // Question 19 (yes/no + single option selection in UI)
+            // Front-end usa radios: apenas uma destas três colunas deverá ser 1 quando m_question_19 == true.
+            // A opção "both" representa simultaneamente sidewalks e crossing, sem marcar individualmente as outras.
             bool m_question_19;                // More nervous as pedestrian?
-            bool m_question_19_sidewalks;      // More nervous on sidewalks
-            bool m_question_19_crossing;       // More nervous crossing streets
-            bool m_question_19_both;           // More nervous on both
+            bool m_question_19_sidewalks;      // Selected option == sidewalks
+            bool m_question_19_crossing;       // Selected option == crossing
+            bool m_question_19_both;           // Selected option == both (ambos)
             
             // Questions 20-23 (simple yes/no)
             bool m_question_20;                // Keep thinking about accident in car?

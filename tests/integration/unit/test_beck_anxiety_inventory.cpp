@@ -219,48 +219,56 @@ void testSeverityLevels() {
     
     BeckAnxietyInventory bai;
     
-    // Test Minimal (0-13)
+    // Test Minimal (0-7)
     runTest("Score 0 is Minimal", bai.getSeverityLevel() == "Minimal" && bai.hasMinimalAnxiety());
-    
-    // Set score to 13 (still minimal)
+    // Build score to 7
     bai.setQuestion1(3);
-    bai.setQuestion2(3);
-    bai.setQuestion3(3);
-    bai.setQuestion4(3);
-    bai.setQuestion5(1);
-    runTest("Score 13 is Minimal", bai.getTotalScore() == 13 && bai.getSeverityLevel() == "Minimal");
-    
-    // Test Mild (14-19)
-    bai.setQuestion6(1);
-    runTest("Score 14 is Mild", bai.getTotalScore() == 14 && bai.getSeverityLevel() == "Mild" && bai.hasMildAnxiety());
-    
-    // Test Moderate (20-28)
-    bai.setQuestion7(3);
-    bai.setQuestion8(3);
-    runTest("Score 20 is Moderate", bai.getTotalScore() == 20 && bai.getSeverityLevel() == "Moderate" && bai.hasModerateAnxiety());
-    
-    // Test Severe (29-63)
-    bai.setQuestion9(3);
-    bai.setQuestion10(3);
-    bai.setQuestion11(3);
-    runTest("Score 29 is Severe", bai.getTotalScore() == 29 && bai.getSeverityLevel() == "Severe" && bai.hasSevereAnxiety());
+    bai.setQuestion2(2);
+    bai.setQuestion3(2); // total 7
+    runTest("Score 7 is Minimal", bai.getTotalScore() == 7 && bai.getSeverityLevel() == "Minimal" && bai.hasMinimalAnxiety());
+
+    // Test Mild (8-15)
+    bai.setQuestion4(1); // total 8
+    runTest("Score 8 is Mild", bai.getTotalScore() == 8 && bai.getSeverityLevel() == "Mild" && bai.hasMildAnxiety());
+    // Raise to 15
+    bai.setQuestion5(2); // 10
+    bai.setQuestion6(2); // 12
+    bai.setQuestion7(3); // 15
+    runTest("Score 15 is Mild", bai.getTotalScore() == 15 && bai.getSeverityLevel() == "Mild" && bai.hasMildAnxiety());
+
+    // Test Moderate (16-25)
+    bai.setQuestion8(1); // 16
+    runTest("Score 16 is Moderate", bai.getTotalScore() == 16 && bai.getSeverityLevel() == "Moderate" && bai.hasModerateAnxiety());
+    // Raise to 25
+    bai.setQuestion9(2); // 18
+    bai.setQuestion10(2); // 20
+    bai.setQuestion11(1); // 21
+    bai.setQuestion12(1); // 22
+    bai.setQuestion13(1); // 23
+    bai.setQuestion14(1); // 24
+    bai.setQuestion15(1); // 25
+    runTest("Score 25 is Moderate", bai.getTotalScore() == 25 && bai.getSeverityLevel() == "Moderate" && bai.hasModerateAnxiety());
+
+    // Test Severe (26-63)
+    bai.setQuestion16(1); // 26
+    runTest("Score 26 is Severe", bai.getTotalScore() == 26 && bai.getSeverityLevel() == "Severe" && bai.hasSevereAnxiety());
 }
 
 void testStaticMethods() {
     cout << "\n=== Testing Static Methods ===" << endl;
     
     runTest("interpretScore(0) returns Minimal", BeckAnxietyInventory::interpretScore(0) == "Minimal");
-    runTest("interpretScore(13) returns Minimal", BeckAnxietyInventory::interpretScore(13) == "Minimal");
-    runTest("interpretScore(14) returns Mild", BeckAnxietyInventory::interpretScore(14) == "Mild");
-    runTest("interpretScore(19) returns Mild", BeckAnxietyInventory::interpretScore(19) == "Mild");
-    runTest("interpretScore(20) returns Moderate", BeckAnxietyInventory::interpretScore(20) == "Moderate");
-    runTest("interpretScore(28) returns Moderate", BeckAnxietyInventory::interpretScore(28) == "Moderate");
-    runTest("interpretScore(29) returns Severe", BeckAnxietyInventory::interpretScore(29) == "Severe");
+    runTest("interpretScore(7) returns Minimal", BeckAnxietyInventory::interpretScore(7) == "Minimal");
+    runTest("interpretScore(8) returns Mild", BeckAnxietyInventory::interpretScore(8) == "Mild");
+    runTest("interpretScore(15) returns Mild", BeckAnxietyInventory::interpretScore(15) == "Mild");
+    runTest("interpretScore(16) returns Moderate", BeckAnxietyInventory::interpretScore(16) == "Moderate");
+    runTest("interpretScore(25) returns Moderate", BeckAnxietyInventory::interpretScore(25) == "Moderate");
+    runTest("interpretScore(26) returns Severe", BeckAnxietyInventory::interpretScore(26) == "Severe");
     runTest("interpretScore(63) returns Severe", BeckAnxietyInventory::interpretScore(63) == "Severe");
     runTest("interpretScore(100) returns Invalid", BeckAnxietyInventory::interpretScore(100) == "Invalid");
     
-    runTest("isHighRiskScore(19) returns false", !BeckAnxietyInventory::isHighRiskScore(19));
-    runTest("isHighRiskScore(20) returns true", BeckAnxietyInventory::isHighRiskScore(20));
+    runTest("isHighRiskScore(15) returns false", !BeckAnxietyInventory::isHighRiskScore(15));
+    runTest("isHighRiskScore(16) returns true", BeckAnxietyInventory::isHighRiskScore(16));
     runTest("isHighRiskScore(50) returns true", BeckAnxietyInventory::isHighRiskScore(50));
 }
 

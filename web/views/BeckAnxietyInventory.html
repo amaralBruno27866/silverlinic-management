@@ -1018,20 +1018,34 @@
       return data;
     }
 
-    // Generate CSV content
+    // Generate CSV content (including total score and severity)
     function generateCSV(data) {
       const headers = [
         'BAI_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
         'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
-        'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21'
+        'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21',
+        'Total_Score', 'Severity_Level'
       ];
+
+      // Compute total
+      let total = 0;
+      for (let i = 1; i <= 21; i++) {
+        total += parseInt(data.answers[`question_${i}`], 10) || 0;
+      }
+
+      // Severity thresholds (BAI standard)
+      let severity = '';
+      if (total <= 7) severity = 'Minimal';
+      else if (total <= 15) severity = 'Mild';
+      else if (total <= 25) severity = 'Moderate';
+      else severity = 'Severe';
 
       const values = [
         data.baiId,
         data.caseProfileId,
         data.createdAt,
-        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
-        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+        `"${data.assessorName.replace(/"/g, '""')}"`,
+        `"${data.clientName.replace(/"/g, '""')}"`,
         data.answers.question_1,
         data.answers.question_2,
         data.answers.question_3,
@@ -1052,7 +1066,9 @@
         data.answers.question_18,
         data.answers.question_19,
         data.answers.question_20,
-        data.answers.question_21
+        data.answers.question_21,
+        total,
+        severity
       ];
 
       return headers.join(',') + '\n' + values.join(',');

@@ -98,61 +98,46 @@ target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
-# Test executables
-add_executable(test_core_classes tests/unit/test_core_classes.cpp)
-target_link_libraries(test_core_classes ${PROJECT_NAME}_lib)
+# Optional test build toggle
+option(BUILD_TESTING "Build test executables" ON)
 
-add_executable(test_family_physician tests/unit/test_family_physician.cpp)
-target_link_libraries(test_family_physician ${PROJECT_NAME}_lib)
+if(BUILD_TESTING)
+    # Collect unit test sources under tests/integration/unit
+    file(GLOB UNIT_TEST_SOURCES tests/integration/unit/*.cpp)
+    foreach(test_src ${UNIT_TEST_SOURCES})
+        get_filename_component(test_name ${test_src} NAME_WE)
+        add_executable(${test_name} ${test_src})
+        target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+    endforeach()
 
-add_executable(test_database tests/integration/test_database.cpp)
-target_link_libraries(test_database ${PROJECT_NAME}_lib)
+    # Form tests (explicit list to ensure inclusion)
+    set(FORMS_TEST_SOURCES
+        tests/forms/test_PainBodyMap.cpp
+        tests/forms/test_ActivitiesOfDailyLiving.cpp
+        tests/forms/test_SCL90R.cpp
+    )
+    foreach(test_src ${FORMS_TEST_SOURCES})
+        if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
+            get_filename_component(test_name ${test_src} NAME_WE)
+            add_executable(${test_name} ${test_src})
+            target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+        endif()
+    endforeach()
 
-# Individual unit tests
-add_executable(test_datetime tests/unit/test_datetime.cpp)
-target_link_libraries(test_datetime ${PROJECT_NAME}_lib)
-
-add_executable(test_address tests/unit/test_address.cpp)
-target_link_libraries(test_address ${PROJECT_NAME}_lib)
-
-add_executable(test_assessor tests/unit/test_assessor.cpp)
-target_link_libraries(test_assessor ${PROJECT_NAME}_lib)
-
-add_executable(test_utils tests/unit/test_utils.cpp)
-target_link_libraries(test_utils ${PROJECT_NAME}_lib)
-
-add_executable(test_emergency_contact tests/unit/test_emergency_contact.cpp)
-target_link_libraries(test_emergency_contact ${PROJECT_NAME}_lib)
-
-add_executable(test_legal_representative tests/unit/test_legal_representative.cpp)
-target_link_libraries(test_legal_representative ${PROJECT_NAME}_lib)
-
-add_executable(test_insurance_company tests/unit/test_insurance_company.cpp)
-target_link_libraries(test_insurance_company ${PROJECT_NAME}_lib)
-
-add_executable(test_assessor_manager tests/unit/test_assessor_manager.cpp)
-target_link_libraries(test_assessor_manager ${PROJECT_NAME}_lib)
-
-add_executable(test_client_manager tests/unit/test_client_manager.cpp)
-target_link_libraries(test_client_manager ${PROJECT_NAME}_lib)
-
-add_executable(test_automobile_anxiety_inventory tests/unit/test_automobile_anxiety_inventory.cpp)
-target_link_libraries(test_automobile_anxiety_inventory ${PROJECT_NAME}_lib)
-
-add_executable(test_beck_depression_inventory tests/unit/test_beck_depression_inventory.cpp)
-target_link_libraries(test_beck_depression_inventory ${PROJECT_NAME}_lib)
-
-add_executable(test_beck_anxiety_inventory tests/unit/test_beck_anxiety_inventory.cpp)
-target_link_libraries(test_beck_anxiety_inventory ${PROJECT_NAME}_lib)
-
-add_executable(test_pain_body_map tests/forms/test_PainBodyMap.cpp)
-target_link_libraries(test_pain_body_map ${PROJECT_NAME}_lib)
-
-add_executable(test_activities_of_daily_living tests/forms/test_ActivitiesOfDailyLiving.cpp)
-target_link_libraries(test_activities_of_daily_living ${PROJECT_NAME}_lib)
-
-add_executable(test_scl90r tests/forms/test_SCL90R.cpp)
-target_link_libraries(test_scl90r ${PROJECT_NAME}_lib)
+    # Higher-level / integration tests
+    set(INTEGRATION_TEST_SOURCES
+        tests/integration/test_pdf.cpp
+        tests/integration/test_database.cpp
+        tests/integration/test_datetime_integration.cpp
+    )
+    foreach(test_src ${INTEGRATION_TEST_SOURCES})
+        if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
+            get_filename_component(test_name ${test_src} NAME_WE)
+            add_executable(${test_name} ${test_src})
+            target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+        endif()
+    endforeach()
+endif()
 
 # Example executables
 add_executable(assessor_manager_demo examples/assessor_manager_demo.cpp)
@@ -168,21 +153,4 @@ target_link_libraries(pain_body_map_demo ${PROJECT_NAME}_lib)
 target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
-# Link to all test executables
-foreach(test_target 
-    test_core_classes test_family_physician test_database test_datetime test_address 
-    test_assessor test_utils test_emergency_contact test_legal_representative 
-    test_insurance_company test_assessor_manager test_client_manager 
-    test_automobile_anxiety_inventory test_beck_depression_inventory test_beck_anxiety_inventory 
-    test_pain_body_map test_activities_of_daily_living test_scl90r)
-    target_link_libraries(${test_target} ${PROJECT_NAME}_lib)
-endforeach()
-
-# Link to example executables
-target_link_libraries(assessor_manager_demo ${PROJECT_NAME}_lib)
-target_link_libraries(beck_anxiety_inventory_demo ${PROJECT_NAME}_lib)
-target_link_libraries(pain_body_map_demo ${PROJECT_NAME}_lib)
-
-# PDF Test executable
-add_executable(test_pdf tests/integration/test_pdf.cpp)
-target_link_libraries(test_pdf ${PROJECT_NAME}_lib)
+# Link to example executables (already linked individually above for clarity)

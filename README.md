@@ -103,6 +103,24 @@ The system includes comprehensive tests for:
 - Form data validation and character limits
 - Database integrity and relationships
 
+## 🧪 Clinical Instruments (Excerpt)
+
+### Beck Anxiety Inventory (BAI)
+Updated interpretation thresholds (August 2025 refactor):
+- Minimal: 0–7
+- Mild: 8–15
+- Moderate: 16–25
+- Severe: 26–63
+
+High-risk operational flag (system logic): total score >= 16 (moderate or higher).
+
+CSV export (frontend) columns now include: Total_Score, Severity_Level.
+
+Notes:
+- Item labels in C++ class and HTML are synchronized.
+- Legacy depression-oriented comments were removed.
+- Sub-score grouping (cognitive/affective/somatic) in code remains legacy for backward compatibility; may be clinically refined later.
+
 ## 📝 Usage Examples
 
 ### Creating a Client
