@@ -1,7 +1,9 @@
 #include "managers/AssessorManager.h"
 #include "core/Utils.h"
+#include "utils/CSVUtils.h"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 using namespace SilverClinic;
@@ -482,4 +484,60 @@ Address AssessorManager::createAddressFromRow(sqlite3_stmt* stmt, int startColum
 void AssessorManager::logDatabaseError(const string& operation) const {
     string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
     utils::logMessage("ERROR", errorMsg);
+}
+
+int AssessorManager::importFromCSV(const string& filePath) {
+    int success = 0;
+    try {
+        auto table = csv::CSVReader::readFile(filePath);
+        // Basic required headers
+        const vector<string> required = {"firstname","lastname","phone","email","created_at"};
+        for (const auto &h : required) {
+            if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
+                utils::logMessage("ERROR", "AssessorManager::importFromCSV - Missing required header: " + h);
+                return 0;
+            }
+        }
+        for (const auto &row : table.rows) {
+            try {
+                string firstName = utils::normalizeName(csv::safeGet(row, "firstname"));
+                string lastName  = utils::normalizeName(csv::safeGet(row, "lastname"));
+                string phone     = utils::normalizePhoneNumber(csv::safeGet(row, "phone"));
+                string email     = utils::normalizeForDatabase(csv::safeGet(row, "email"));
+                string createdAtRaw = csv::safeGet(row, "created_at");
+                string createdAtNorm = csv::normalizeTimestampForDateTime(createdAtRaw);
+                DateTime createdAt = createdAtRaw.empty() ? DateTime::now() : DateTime::fromString(createdAtNorm);
+                DateTime modifiedAt = createdAt; // initial
+
+                // Address (optional)
+                Address address;
+                string street = csv::safeGet(row, "street");
+                if (!street.empty()) {
+                    address.setStreet(street);
+                    address.setCity(csv::safeGet(row, "city"));
+                    address.setProvince(csv::safeGet(row, "province"));
+                    address.setPostalCode(csv::safeGet(row, "postal_code"));
+                    string addrCreatedRaw = csv::safeGet(row, "address_created_at");
+                    string addrCreatedNorm = csv::normalizeTimestampForDateTime(addrCreatedRaw);
+                    DateTime addrCreated = addrCreatedRaw.empty() ? createdAt : DateTime::fromString(addrCreatedNorm);
+                    address.setCreatedAt(addrCreated);
+                    address.setUpdatedAt(addrCreated);
+                }
+
+                int id = Assessor::getNextAssessorId();
+                Assessor assessor(id, firstName, lastName, email, phone, address, createdAt, modifiedAt);
+                if (!create(assessor)) {
+                    utils::logMessage("ERROR", "Failed to insert assessor from CSV row (email: " + email + ")");
+                    continue;
+                }
+                success++;
+            } catch (const exception &e) {
+                utils::logMessage("ERROR", string("AssessorManager::importFromCSV row error: ")+ e.what());
+            }
+        }
+    } catch (const exception &e) {
+        utils::logMessage("ERROR", string("AssessorManager::importFromCSV file error: ")+ e.what());
+    }
+    utils::logMessage("INFO", "AssessorManager::importFromCSV imported " + to_string(success) + " rows");
+    return success;
 }

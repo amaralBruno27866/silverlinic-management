@@ -280,8 +280,20 @@
       <input type="text" id="created-at" name="created-at" readonly>
       
       <div style="background: #e8f4fd; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--info-color); margin-top: 1rem;">
-        <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Important:</strong></p>
-        <p style="margin: 0.5rem 0 0 0;">This form collects information to register a new assessor in the system. All required fields must be completed.</p>
+        <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Completion & Export Instructions</strong></p>
+        <p style="margin: 0.6rem 0 0 0;">This form registers a new <strong>Assessor</strong> and generates two CSV files aligned with the database schema.</p>
+        <ul style="margin:0.6rem 0 0 1.1rem; padding:0; font-size:0.92rem; line-height:1.25rem;">
+          <li><strong>Required fields</strong>: First Name, Last Name, Email, Phone, Address, City, Province, Postal Code, Country.</li>
+          <li><strong>created_at</strong> is generated automatically; <code>id</code> and <code>modified_at</code> are assigned by the backend.</li>
+          <li>Clicking "Save Assessor Data" generates: <code>assessor_*.csv</code> and <code>address_assessor_*.csv</li>
+          <li>The assessor file columns: firstname, lastname, phone, email, created_at.</li>
+          <li>The address file columns: street, city, province, postal_code, created_at (linked later via generated ID).</li>
+          <li>Email is normalized to lowercase; names and city are capitalized.</li>
+          <li>Phone is formatted if 10 digits (pattern: (XXX) XXX-XXXX).</li>
+          <li>Validate the postal code in Canadian format (A1A 1A1).</li>
+          <li>Re‑export overwrites existing files (same name). Keep in a dedicated import staging folder.</li>
+          <li>Do not edit CSV headers to avoid import failure.</li>
+        </ul>
       </div>
     </fieldset>
 

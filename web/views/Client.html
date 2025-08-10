@@ -280,8 +280,20 @@
       <input type="text" id="created-at" name="created-at" readonly>
       
       <div style="background: #e8f4fd; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--info-color); margin-top: 1rem;">
-        <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Important:</strong></p>
-        <p style="margin: 0.5rem 0 0 0;">This form collects information to register a new client in the system. All required fields must be completed.</p>
+        <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Completion & Export Instructions</strong></p>
+        <p style="margin: 0.6rem 0 0 0;">This form registers a new <strong>Client</strong> and generates two CSV files aligned with the database schema.</p>
+        <ul style="margin:0.6rem 0 0 1.1rem; padding:0; font-size:0.92rem; line-height:1.25rem;">
+          <li><strong>Required fields</strong>: First Name, Last Name, Date of Birth, Email, Phone, Street, City, Province, Postal Code, Country.</li>
+          <li><strong>created_at</strong> is generated automatically; <code>id</code> and <code>modified_at</code> will be assigned after import.</li>
+          <li>On save it generates: <code>client_*.csv</code> and <code>address_client_*.csv</code>.</li>
+          <li>Client file columns: firstname, lastname, phone, email, date_of_birth, created_at.</li>
+          <li>Address file columns: street, city, province, postal_code, created_at.</li>
+          <li>Age is calculated automatically (not exported).</li>
+          <li>Email normalized to lowercase, names and city capitalized, phone formatted if possible.</li>
+          <li>Postal Code must follow Canadian format (A1A 1A1).</li>
+          <li>Re‑export overwrites existing files; keep them in a staging folder before upload.</li>
+          <li>Do not change CSV headers after generation.</li>
+        </ul>
       </div>
     </fieldset>
 

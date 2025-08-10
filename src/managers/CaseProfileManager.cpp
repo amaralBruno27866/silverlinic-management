@@ -2,9 +2,11 @@
 #include "core/Utils.h"
 #include "core/DateTime.h"
 #include "utils/PDFConfig.h"
+#include "utils/CSVUtils.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 #include <hpdf.h>
 
 using namespace std;
@@ -788,6 +790,62 @@ string CaseProfileManager::getStatusIcon(const string& status) const {
     auto icons = PDFConfig::getStatusIcons();
     auto it = icons.find(status);
     return (it != icons.end()) ? it->second : "●";
+}
+
+int CaseProfileManager::importFromCSV(const string& filePath) {
+    int success = 0;
+    try {
+        auto table = csv::CSVReader::readFile(filePath);
+        const vector<string> required = {"client_id","assessor_id","status","notes","created_at"};
+        for (const auto &h : required) {
+            if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
+                logMessage("ERROR", "CaseProfileManager::importFromCSV - Missing required header: " + h);
+                return 0;
+            }
+        }
+        for (const auto &row : table.rows) {
+            try {
+                int clientId = stoi(csv::safeGet(row, "client_id"));
+                int assessorId = stoi(csv::safeGet(row, "assessor_id"));
+                string status = csv::safeGet(row, "status");
+                string notes = csv::safeGet(row, "notes");
+                string createdAtRaw = csv::safeGet(row, "created_at");
+                string createdAtNorm = csv::normalizeTimestampForDateTime(createdAtRaw);
+                DateTime createdAt = createdAtRaw.empty() ? DateTime::now() : DateTime::fromString(createdAtNorm);
+                string closedAtRaw = csv::safeGet(row, "closed_at");
+                DateTime closedAt; if (!closedAtRaw.empty()) closedAt = DateTime::fromString(csv::normalizeTimestampForDateTime(closedAtRaw));
+                DateTime modifiedAt = createdAt;
+
+                int id = CaseProfile::getNextCaseProfileId();
+                CaseProfile cp(id, clientId, assessorId, status, notes, createdAt, closedAt, modifiedAt);
+                if (!create(cp)) {
+                    logMessage("ERROR", "Failed to insert case profile from CSV row (id attempt: " + toString(id) + ")");
+                    continue;
+                }
+
+                // If closedAt was provided but schema create() insert omits closed_at, perform update now
+                if (!closedAtRaw.empty()) {
+                    const string upd = "UPDATE case_profile SET closed_at = ? WHERE id = ?";
+                    sqlite3_stmt* stmt;
+                    if (sqlite3_prepare_v2(m_db, upd.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+                        sqlite3_bind_text(stmt, 1, closedAt.toString().c_str(), -1, SQLITE_TRANSIENT);
+                        sqlite3_bind_int(stmt, 2, id);
+                        if (sqlite3_step(stmt) != SQLITE_DONE) {
+                            logMessage("ERROR", "Failed to update closed_at for imported case profile id: " + toString(id));
+                        }
+                        sqlite3_finalize(stmt);
+                    }
+                }
+                success++;
+            } catch (const exception &e) {
+                logMessage("ERROR", string("CaseProfileManager::importFromCSV row error: ")+ e.what());
+            }
+        }
+    } catch (const exception &e) {
+        logMessage("ERROR", string("CaseProfileManager::importFromCSV file error: ")+ e.what());
+    }
+    logMessage("INFO", "CaseProfileManager::importFromCSV imported " + toString(success) + " rows");
+    return success;
 }
 
 } // namespace SilverClinic

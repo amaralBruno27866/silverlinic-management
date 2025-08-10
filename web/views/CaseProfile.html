@@ -285,13 +285,73 @@
     <!-- Form Information -->
     <fieldset class="case-info">
       <legend>Form Information</legend>
-      
-      <label for="form-created-at">Created at:</label>
-      <input type="text" id="form-created-at" name="form-created-at" readonly>
-      
+      <div class="form-row">
+        <div>
+          <label for="client-id" class="required">Client ID</label>
+          <input type="text" id="client-id" name="client-id" pattern="^\\d*$" placeholder="Numbers only" required>
+        </div>
+        <div>
+          <label for="assessor-id" class="required">Assessor ID</label>
+          <input type="text" id="assessor-id" name="assessor-id" pattern="^\\d*$" placeholder="Numbers only" required>
+        </div>
+        <div>
+          <label for="form-created-at">Created at:</label>
+          <input type="text" id="form-created-at" name="form-created-at" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label for="client-first-name" class="optional">Client First Name</label>
+          <input type="text" id="client-first-name" maxlength="60">
+        </div>
+        <div>
+          <label for="assessor-first-name" class="optional">Assessor First Name</label>
+          <input type="text" id="assessor-first-name" maxlength="60">
+        </div>
+      </div>
       <div style="background: #e8f4fd; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--info-color); margin-top: 1rem;">
-        <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Important:</strong></p>
-        <p style="margin: 0.5rem 0 0 0;">This form collects information needed to create a complete Case Profile. The Client and Assessor will be assigned later during the case creation process.</p>
+        <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Completion & Export Instructions</strong></p>
+        <p style="margin: 0.5rem 0 0 0;">
+          This form gathers data to create a <strong>Case Profile</strong> and its associated contacts (Family Physician, Emergency Contact, Legal Representative, and Insurance Company).
+        </p>
+        <ul style="margin:0.6rem 0 0 1.1rem; padding:0; font-size:0.92rem; line-height:1.25rem;">
+          <li><strong>Client ID</strong> and <strong>Assessor ID</strong> are required and must already exist (digits only).</li>
+          <li>The first names displayed (Client / Assessor First Name) are for visual reference only and <strong>are not exported</strong>.</li>
+          <li>Use the buttons (CASE, FPH, ECT, LRT, ICO) to generate separate CSVs for each database table.</li>
+          <li><strong>Export All CSVs</strong> attempts to generate every file (only those with valid data are created).</li>
+          <li>The file <code>case_profile.csv</code> includes: client_id, assessor_id, status, notes, created_at, closed_at (no id / modified_at).</li>
+          <li>Columns <code>id</code>, <code>modified_at</code> and extra foreign keys are assigned by the backend after import.</li>
+          <li><strong>Status</strong>: keep "Pending" until the case is actually opened. If you set "Closed", provide a Closed At date.</li>
+          <li><strong>Notes</strong> (optional) max 1500 characters — review before exporting.</li>
+          <li>Re‑exporting overwrites the previous file (same name). Organize downloads in a dedicated folder.</li>
+          <li>Validate phone numbers / emails before exporting; basic formatting adjustments are applied automatically.</li>
+        </ul>
+      </div>
+    </fieldset>
+
+    <!-- Case Profile Meta (status & notes) -->
+    <fieldset class="case-profile-meta">
+      <legend>Case Profile Meta</legend>
+      <div class="form-row">
+        <div>
+          <label for="cp-status" class="required">Status</label>
+          <select id="cp-status" required>
+            <option value="Pending" selected>Pending</option>
+            <option value="Open">Open</option>
+            <option value="Closed">Closed</option>
+            <option value="On Hold">On Hold</option>
+          </select>
+        </div>
+        <div>
+          <label for="cp-closed-at" class="optional">Closed At (if applicable)</label>
+          <input type="date" id="cp-closed-at">
+        </div>
+      </div>
+      <div class="form-row">
+        <div style="flex:1;">
+          <label for="cp-notes" class="optional">Notes (max 1500 chars)</label>
+          <textarea id="cp-notes" maxlength="1500" placeholder="Internal case notes (stored in case_profile.notes)"></textarea>
+        </div>
       </div>
     </fieldset>
 
@@ -477,25 +537,15 @@
       </div>
     </fieldset>
 
-    <!-- Case Notes -->
-    <fieldset class="case-notes-info">
-      <legend>Case Notes</legend>
-      
-      <label for="case-notes" class="optional">Additional Notes</label>
-      <textarea id="case-notes" name="case-notes" 
-                placeholder="Enter any additional notes or relevant information about this case..."></textarea>
-      
-      <div style="background: #fff8e1; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--warning-color); margin-top: 1rem;">
-        <p style="margin: 0; color: var(--warning-color);"><strong><i class="bi bi-exclamation-triangle"></i> Note:</strong></p>
-        <p style="margin: 0.5rem 0 0 0;">Maximum 1500 characters for case notes. This information will be attached to the case profile.</p>
-      </div>
-    </fieldset>
-
-    <!-- Buttons for saving the form -->
+    <!-- Buttons for exporting CSVs -->
     <div class="button-container">
-      <button type="button" id="save-btn" class="form-action-btn">
-        <i class="bi bi-download"></i> Save Case Profile Data
-      </button>
+  <button type="button" id="export-all-btn" class="form-action-btn"><i class="bi bi-download"></i> Export All CSVs</button>
+      <button type="button" id="export-cp-btn" class="form-action-btn" style="background:#0aa"><i class="bi bi-clipboard-data"></i> CASE</button>
+      <button type="button" id="export-fp-btn" class="form-action-btn" style="background:#0d6efd"><i class="bi bi-file-earmark-medical"></i> FPH</button>
+      <button type="button" id="export-ec-btn" class="form-action-btn" style="background:#198754"><i class="bi bi-telephone"></i> ECT</button>
+      <button type="button" id="export-lr-btn" class="form-action-btn" style="background:#6f42c1"><i class="bi bi-bank"></i> LRT</button>
+      <button type="button" id="export-ic-btn" class="form-action-btn" style="background:#fd7e14"><i class="bi bi-shield-check"></i> ICO</button>
+      <button type="reset" id="reset-btn" class="form-action-btn" style="background:#6c757d"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
     </div>
 
     <footer class="form-footer">
@@ -509,276 +559,155 @@
   </form>
 
   <script>
-    // ========================= 
-    //    Case Profile Form JavaScript
-    // ========================= 
+    // ========================= NEW MULTI-CSV EXPORT LOGIC =========================
+    (function(){
+      const createdAtInput = document.getElementById('form-created-at');
+      function setCreatedAt(){
+        const now = new Date().toISOString();
+        createdAtInput.value = now;
+      }
+      setCreatedAt();
+      document.getElementById('reset-btn').addEventListener('click', ()=> setTimeout(setCreatedAt,50));
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Set current timestamp
-      setFormTimestamp();
-      
-      // Setup form save functionality
-      setupFormSave();
-      
-      // Setup form validation and button state
-      setupFormValidation();
-      
-      // Setup input formatting
-      setupInputFormatting();
-      
-      // Update copyright year
+      // Formatting helpers reused
+      function normalize(str){ return (str||'').trim().replace(/\s+/g,' '); }
+      function onlyDigits(str){ return (str||'').replace(/\D/g,''); }
+      function formatPhone(val){
+        const d = onlyDigits(val);
+        if(d.length===10) return `(${d.substring(0,3)}) ${d.substring(3,6)}-${d.substring(6)}`;
+        return val.trim();
+      }
+      document.querySelectorAll('input[type="tel"]').forEach(inp=>{
+        inp.addEventListener('blur',()=>{ inp.value = formatPhone(inp.value); });
+      });
+      document.getElementById('fp-postal-code').addEventListener('blur', e=>{
+        let v = e.target.value.replace(/\s/g,'').toUpperCase();
+        if(v.length===6) v = v.substring(0,3)+' '+v.substring(3);
+        e.target.value = v;
+      });
+
+      function downloadCSV(filename, headers, row){
+        const line = row.map(v=>{
+          if(v===undefined||v===null) return '';
+            const s = String(v).replace(/"/g,'""');
+            return /[",\n]/.test(s)?`"${s}`+`"`:s;
+        }).join(',');
+        const csv = headers.join(',')+'\n'+line+'\n';
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }
+
+      function getShared(){
+        const clientIdRaw = normalize(document.getElementById('client-id').value);
+        const assessorIdRaw = normalize(document.getElementById('assessor-id').value);
+  if(!clientIdRaw || !assessorIdRaw){ alert('Client ID and Assessor ID are required.'); return null; }
+  if(!/^\d+$/.test(clientIdRaw)){ alert('Client ID must contain digits only.'); return null; }
+  if(!/^\d+$/.test(assessorIdRaw)){ alert('Assessor ID must contain digits only.'); return null; }
+        return { client_id: clientIdRaw, assessor_id: assessorIdRaw, created_at: createdAtInput.value };
+      }
+
+      // Case Profile export (case_profile table)
+      function exportCaseProfile(){
+        const shared = getShared(); if(!shared) return false;
+        const status = document.getElementById('cp-status').value || 'Pending';
+        const notes = normalize(document.getElementById('cp-notes').value);
+        const closedAt = document.getElementById('cp-closed-at').value; // optional
+  if(notes.length > 1500){ alert('Notes exceed 1500 characters (limit 1500).'); return false; }
+        // DB columns (excluding id, modified_at): client_id, assessor_id, status, notes, created_at, closed_at
+        const headers = ['client_id','assessor_id','status','notes','created_at','closed_at'];
+        const row = [shared.client_id, shared.assessor_id, status, notes, shared.created_at, closedAt];
+        downloadCSV('case_profile.csv', headers, row);
+        return true;
+      }
+
+      // Family Physician
+      function exportFP(){
+        const fullName = normalize(document.getElementById('fp-full-name').value);
+  if(!fullName) { alert('Family Physician Name is required to export FPH.'); return false; }
+        const phone = normalize(document.getElementById('fp-phone').value);
+        const email = normalize(document.getElementById('fp-email').value);
+        const shared = getShared(); if(!shared) return false;
+        const headers = ['type','client_id','full_name','phone','email','created_at'];
+        const row = ['FPH', shared.client_id, fullName, phone, email, shared.created_at];
+        downloadCSV('family_physician.csv', headers, row);
+        // Export address separately if any field present (aligns with address table to be linked later by backend)
+        const street = normalize(document.getElementById('fp-address').value);
+        const city = normalize(document.getElementById('fp-city').value);
+        const province = normalize(document.getElementById('fp-province').value);
+        const postal = normalize(document.getElementById('fp-postal-code').value);
+        if(street || city || province || postal){
+          const addrHeaders = ['street','city','province','postal_code','created_at'];
+          const addrRow = [street, city, province, postal, shared.created_at];
+          downloadCSV('family_physician_address.csv', addrHeaders, addrRow);
+        }
+        return true;
+      }
+
+      // Emergency Contact
+      function exportEC(){
+        const full = normalize(document.getElementById('ec-full-name').value);
+        const rel = normalize(document.getElementById('ec-relationship').value);
+        const phone = normalize(document.getElementById('ec-phone').value);
+  if(!full && !rel && !phone) { alert('Enter at least Name, Relationship and Phone to export ECT.'); return false; }
+  if(!(full && rel && phone)) { alert('Required ECT fields are missing.'); return false; }
+        const alt = normalize(document.getElementById('ec-alt-phone').value);
+        const shared = getShared(); if(!shared) return false;
+        const headers = ['type','client_id','full_name','relationship','phone','alt_phone','created_at'];
+        const row = ['ECT', shared.client_id, full, rel, phone, alt, shared.created_at];
+        downloadCSV('emergency_contact.csv', headers, row);
+        return true;
+      }
+
+      // Legal Representative
+      function exportLR(){
+        const company = normalize(document.getElementById('lr-company-name').value);
+        const full = normalize(document.getElementById('lr-full-name').value);
+        const phone = normalize(document.getElementById('lr-phone').value);
+        const email = normalize(document.getElementById('lr-email').value);
+  if(!company && !full && !phone && !email){ alert('Enter data to export LRT.'); return false; }
+  if(!(company && full && phone && email)){ alert('LRT requires Company, Full Name, Phone and Email.'); return false; }
+        const shared = getShared(); if(!shared) return false;
+        const headers = ['type','client_id','company_name','full_name','phone','email','created_at'];
+        const row = ['LRT', shared.client_id, company, full, phone, email, shared.created_at];
+        downloadCSV('legal_representative.csv', headers, row);
+        return true;
+      }
+
+      // Insurance Company
+      function exportIC(){
+        const company = normalize(document.getElementById('ic-company-name').value);
+        const adjuster = normalize(document.getElementById('ic-adjuster-name').value);
+  if(!company && !adjuster && !document.getElementById('ic-claim-number').value){ alert('Enter data to export ICO.'); return false; }
+  if(!(company && adjuster)){ alert('ICO requires Company Name and Adjuster Name.'); return false; }
+        const phone = normalize(document.getElementById('ic-phone').value);
+        const email = normalize(document.getElementById('ic-email').value);
+        const claim = normalize(document.getElementById('ic-claim-number').value);
+        const policy = normalize(document.getElementById('ic-policy-number').value);
+        const dateAcc = normalize(document.getElementById('ic-date-accident').value);
+        const shared = getShared(); if(!shared) return false;
+        const headers = ['type','client_id','company_name','adjuster_name','phone','email','claim_number','policy_number','date_accident','created_at'];
+        const row = ['ICO', shared.client_id, company, adjuster, phone, email, claim, policy, dateAcc, shared.created_at];
+        downloadCSV('insurance_company.csv', headers, row);
+        return true;
+      }
+
+      // Button bindings
+  document.getElementById('export-cp-btn').addEventListener('click', exportCaseProfile);
+  document.getElementById('export-fp-btn').addEventListener('click', exportFP);
+      document.getElementById('export-ec-btn').addEventListener('click', exportEC);
+      document.getElementById('export-lr-btn').addEventListener('click', exportLR);
+      document.getElementById('export-ic-btn').addEventListener('click', exportIC);
+      document.getElementById('export-all-btn').addEventListener('click', ()=>{
+        const results = [exportCaseProfile(), exportFP(), exportEC(), exportLR(), exportIC()];
+  if(!results.some(r=>r)) alert('No CSV exported – fill at least one section.');
+      });
+
+      // Footer year
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
-    });
-
-    // Set form creation timestamp
-    function setFormTimestamp() {
-      const now = new Date();
-      const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
-      document.getElementById('form-created-at').value = timestamp;
-    }
-
-    // Setup input formatting for phones, postal codes, etc.
-    function setupInputFormatting() {
-      // Format postal codes
-      const postalCodeInputs = document.querySelectorAll('input[id$="-postal-code"]');
-      postalCodeInputs.forEach(input => {
-        input.addEventListener('input', function() {
-          formatPostalCode(this);
-        });
-      });
-
-      // Format phone numbers
-      const phoneInputs = document.querySelectorAll('input[type="tel"]');
-      phoneInputs.forEach(input => {
-        input.addEventListener('input', function() {
-          formatPhoneNumber(this);
-        });
-      });
-
-      // Capitalize names
-      const nameInputs = document.querySelectorAll('#fp-full-name, #ec-full-name, #lr-full-name, #ic-adjuster-name, #fp-city');
-      nameInputs.forEach(input => {
-        input.addEventListener('blur', function() {
-          capitalizeName(this);
-        });
-      });
-    }
-
-    // Format postal code (Canadian format: A1A 1A1)
-    function formatPostalCode(input) {
-      let value = input.value.replace(/\s/g, '').toUpperCase();
-      if (value.length === 6) {
-        value = value.substring(0, 3) + ' ' + value.substring(3);
-      }
-      input.value = value;
-    }
-
-    // Format phone number (basic formatting)
-    function formatPhoneNumber(input) {
-      let value = input.value.replace(/\D/g, '');
-      if (value.length === 10) {
-        value = `(${value.substring(0, 3)}) ${value.substring(3, 6)}-${value.substring(6)}`;
-      }
-      input.value = value;
-    }
-
-    // Capitalize names
-    function capitalizeName(input) {
-      const words = input.value.toLowerCase().split(' ');
-      const capitalizedWords = words.map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      );
-      input.value = capitalizedWords.join(' ');
-    }
-
-    // Setup form validation and button state management
-    function setupFormValidation() {
-      const saveBtn = document.getElementById('save-btn');
-      
-      // Initially disable the save button
-      saveBtn.disabled = true;
-      
-      // Get all required inputs
-      const requiredInputs = document.querySelectorAll('input[required], select[required]');
-      
-      // Add event listeners to all required inputs
-      requiredInputs.forEach(input => {
-        input.addEventListener('input', function() {
-          updateSaveButtonState();
-        });
-        input.addEventListener('change', function() {
-          updateSaveButtonState();
-        });
-      });
-      
-      // Initial check
-      updateSaveButtonState();
-    }
-
-    // Update save button state based on form completion
-    function updateSaveButtonState() {
-      const saveBtn = document.getElementById('save-btn');
-      
-      // Check if all required fields are filled
-      const requiredInputs = document.querySelectorAll('input[required], select[required]');
-      let allRequiredFilled = true;
-      
-      requiredInputs.forEach(input => {
-        if (!input.value.trim()) {
-          allRequiredFilled = false;
-        }
-      });
-      
-      // Enable/disable save button
-      saveBtn.disabled = !allRequiredFilled;
-    }
-
-    // Setup form save functionality
-    function setupFormSave() {
-      const saveBtn = document.getElementById('save-btn');
-      
-      saveBtn.addEventListener('click', function() {
-        if (validateForm()) {
-          saveFormData();
-        } else {
-          alert('Please fill in all required fields before saving.');
-        }
-      });
-    }
-
-    // Validate form
-    function validateForm() {
-      const requiredInputs = document.querySelectorAll('input[required], select[required]');
-      let allValid = true;
-      
-      requiredInputs.forEach(input => {
-        if (!input.value.trim()) {
-          allValid = false;
-        }
-      });
-      
-      // Validate case notes length
-      const caseNotes = document.getElementById('case-notes').value;
-      if (caseNotes.length > 1500) {
-        alert('Case notes cannot exceed 1500 characters.');
-        return false;
-      }
-      
-      return allValid;
-    }
-
-    // Save form data to CSV
-    function saveFormData() {
-      const formData = collectFormData();
-      const csvContent = generateCSV(formData);
-      downloadCSV(csvContent, `CaseProfile_${new Date().toISOString().split('T')[0]}.csv`);
-    }
-
-    // Collect all form data
-    function collectFormData() {
-      return {
-        // Form Info
-        formCreatedAt: document.getElementById('form-created-at').value,
-        
-        // Family Physician
-        fpFullName: document.getElementById('fp-full-name').value,
-        fpPhone: document.getElementById('fp-phone').value,
-        fpEmail: document.getElementById('fp-email').value,
-        fpAddress: document.getElementById('fp-address').value,
-        fpCity: document.getElementById('fp-city').value,
-        fpProvince: document.getElementById('fp-province').value,
-        fpPostalCode: document.getElementById('fp-postal-code').value,
-        fpCountry: document.getElementById('fp-country').value,
-        
-        // Emergency Contact
-        ecFullName: document.getElementById('ec-full-name').value,
-        ecRelationship: document.getElementById('ec-relationship').value,
-        ecPhone: document.getElementById('ec-phone').value,
-        ecAltPhone: document.getElementById('ec-alt-phone').value,
-        
-        // Legal Representative
-        lrCompanyName: document.getElementById('lr-company-name').value,
-        lrFullName: document.getElementById('lr-full-name').value,
-        lrPhone: document.getElementById('lr-phone').value,
-        lrEmail: document.getElementById('lr-email').value,
-        
-        // Insurance Company
-        icCompanyName: document.getElementById('ic-company-name').value,
-        icAdjusterName: document.getElementById('ic-adjuster-name').value,
-        icPhone: document.getElementById('ic-phone').value,
-        icEmail: document.getElementById('ic-email').value,
-        icClaimNumber: document.getElementById('ic-claim-number').value,
-        icPolicyNumber: document.getElementById('ic-policy-number').value,
-        icDateAccident: document.getElementById('ic-date-accident').value,
-        
-        // Case Notes
-        caseNotes: document.getElementById('case-notes').value
-      };
-    }
-
-    // Generate CSV content
-    function generateCSV(data) {
-      const headers = [
-        'Form_Created_At',
-        'FP_Full_Name', 'FP_Phone', 'FP_Email', 'FP_Address', 'FP_City', 'FP_Province', 'FP_Postal_Code', 'FP_Country',
-        'EC_Full_Name', 'EC_Relationship', 'EC_Phone', 'EC_Alt_Phone',
-        'LR_Company_Name', 'LR_Full_Name', 'LR_Phone', 'LR_Email',
-        'IC_Company_Name', 'IC_Adjuster_Name', 'IC_Phone', 'IC_Email', 'IC_Claim_Number', 'IC_Policy_Number', 'IC_Date_Accident',
-        'Case_Notes'
-      ];
-
-      const values = [
-        data.formCreatedAt,
-        `"${data.fpFullName.replace(/"/g, '""')}"`,
-        data.fpPhone,
-        data.fpEmail,
-        `"${data.fpAddress.replace(/"/g, '""')}"`,
-        `"${data.fpCity.replace(/"/g, '""')}"`,
-        data.fpProvince,
-        data.fpPostalCode,
-        `"${data.fpCountry.replace(/"/g, '""')}"`,
-        `"${data.ecFullName.replace(/"/g, '""')}"`,
-        data.ecRelationship,
-        data.ecPhone,
-        data.ecAltPhone,
-        `"${data.lrCompanyName.replace(/"/g, '""')}"`,
-        `"${data.lrFullName.replace(/"/g, '""')}"`,
-        data.lrPhone,
-        data.lrEmail,
-        `"${data.icCompanyName.replace(/"/g, '""')}"`,
-        `"${data.icAdjusterName.replace(/"/g, '""')}"`,
-        data.icPhone,
-        data.icEmail,
-        data.icClaimNumber,
-        data.icPolicyNumber,
-        data.icDateAccident,
-        `"${data.caseNotes.replace(/"/g, '""')}"`
-      ];
-
-      return headers.join(',') + '\n' + values.join(',');
-    }
-
-    // Download CSV file
-    function downloadCSV(csvContent, filename) {
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      
-      if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        alert(`Case Profile data saved as ${filename}`);
-      } else {
-        alert('File download not supported in this browser.');
-      }
-    }
-
-    // Update copyright year
-    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    })();
   </script>
 </body>
 </html>
