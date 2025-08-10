@@ -276,9 +276,8 @@
     <!-- Form Information -->
     <fieldset class="client-info">
       <legend>Form Information</legend>
-      
-      <label for="form-created-at">Created at:</label>
-      <input type="text" id="form-created-at" name="form-created-at" readonly>
+      <label for="created-at">Created at:</label>
+      <input type="text" id="created-at" name="created-at" readonly>
       
       <div style="background: #e8f4fd; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--info-color); margin-top: 1rem;">
         <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Important:</strong></p>
@@ -385,8 +384,8 @@
 
     <!-- Buttons for saving the form -->
     <div class="button-container">
-      <button type="button" id="save-btn" class="form-action-btn">
-        <i class="bi bi-download"></i> Save Client Data
+      <button type="button" id="save-btn" class="form-action-btn" disabled>
+        <i class="bi bi-download"></i> Save Client Data (DB Schema)
       </button>
     </div>
 
@@ -406,30 +405,22 @@
     // ========================= 
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Set current timestamp
-      setFormTimestamp();
-      
-      // Setup form save functionality
+      setCreatedAt();
       setupFormSave();
-      
-      // Setup form validation and button state
       setupFormValidation();
-      
-      // Setup input formatting
       setupInputFormatting();
-      
-      // Setup age calculation
       setupAgeCalculation();
-      
-      // Update copyright year
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
     });
 
     // Set form creation timestamp
-    function setFormTimestamp() {
-      const now = new Date();
-      const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
-      document.getElementById('form-created-at').value = timestamp;
+    function nowTimestamp(){
+      const d=new Date();
+      const pad=n=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+    function setCreatedAt(){
+      document.getElementById('created-at').value = nowTimestamp();
     }
 
     // Setup age calculation based on date of birth
@@ -523,12 +514,8 @@
       
       // Add event listeners to all required inputs
       requiredInputs.forEach(input => {
-        input.addEventListener('input', function() {
-          updateSaveButtonState();
-        });
-        input.addEventListener('change', function() {
-          updateSaveButtonState();
-        });
+        input.addEventListener('input', function() { updateSaveButtonState(); });
+        input.addEventListener('change', function() { updateSaveButtonState(); });
       });
       
       // Initial check
@@ -629,63 +616,46 @@
 
     // Save form data to CSV
     function saveFormData() {
-      const formData = collectFormData();
-      const csvContent = generateCSV(formData);
-      downloadCSV(csvContent, `Client_${new Date().toISOString().split('T')[0]}.csv`);
+  const { clientRecord, addressRecord } = collectFormData();
+  const clientCSV = generateClientCSV(clientRecord);
+  const addressCSV = generateAddressCSV(addressRecord);
+  downloadCSV(clientCSV, `client_${clientRecord.firstname}_${clientRecord.lastname}.csv`);
+  downloadCSV(addressCSV, `address_client_${clientRecord.firstname}_${clientRecord.lastname}.csv`);
     }
 
     // Collect all form data
     function collectFormData() {
-      return {
-        formCreatedAt: document.getElementById('form-created-at').value,
-        firstName: document.getElementById('first-name').value,
-        lastName: document.getElementById('last-name').value,
-        dateOfBirth: document.getElementById('date-of-birth').value,
-        age: document.getElementById('age').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        province: document.getElementById('province').value,
-        postalCode: document.getElementById('postal-code').value,
-        country: document.getElementById('country').value
+      const ts = document.getElementById('created-at').value.trim();
+      const clientRecord = {
+        firstname: document.getElementById('first-name').value.trim(),
+        lastname: document.getElementById('last-name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim().toLowerCase(),
+        date_of_birth: document.getElementById('date-of-birth').value.trim(),
+        created_at: ts
       };
+      const addressRecord = {
+        street: document.getElementById('address').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        province: document.getElementById('province').value.trim(),
+        postal_code: document.getElementById('postal-code').value.trim().toUpperCase(),
+        created_at: ts
+      };
+      return { clientRecord, addressRecord };
     }
 
     // Generate CSV content
-    function generateCSV(data) {
-      const headers = [
-        'Form_Created_At',
-        'First_Name',
-        'Last_Name',
-        'Date_Of_Birth',
-        'Calculated_Age',
-        'Email',
-        'Phone',
-        'Address',
-        'City',
-        'Province',
-        'Postal_Code',
-        'Country'
-      ];
-
-      const values = [
-        data.formCreatedAt,
-        `"${data.firstName.replace(/"/g, '""')}"`,
-        `"${data.lastName.replace(/"/g, '""')}"`,
-        data.dateOfBirth,
-        `"${data.age.replace(/"/g, '""')}"`,
-        data.email,
-        data.phone,
-        `"${data.address.replace(/"/g, '""')}"`,
-        `"${data.city.replace(/"/g, '""')}"`,
-        data.province,
-        data.postalCode,
-        `"${data.country.replace(/"/g, '""')}"`
-      ];
-
-      return headers.join(',') + '\n' + values.join(',');
+    function generateClientCSV(r){
+      const headers=['firstname','lastname','phone','email','date_of_birth','created_at'];
+      const values=[r.firstname,r.lastname,r.phone,r.email,r.date_of_birth,r.created_at];
+      return headers.join(',')+'\n'+values.map(csvEscape).join(',');
     }
+    function generateAddressCSV(r){
+      const headers=['street','city','province','postal_code','created_at'];
+      const values=[r.street,r.city,r.province,r.postal_code,r.created_at];
+      return headers.join(',')+'\n'+values.map(csvEscape).join(',');
+    }
+    function csvEscape(v){ if(v==null) return ''; const s=String(v); return /[",\n]/.test(s)? '"'+s.replace(/"/g,'""')+'"':s; }
 
     // Download CSV file
     function downloadCSV(csvContent, filename) {

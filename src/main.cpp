@@ -433,10 +433,10 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
-    // SCL-90-R form table
+    // SCL-90-R form table (standardized column names + computed metrics)
     string createSCL90RTable = R"(
         CREATE TABLE IF NOT EXISTS scl90r(
-            scl_id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'SCL90R',
             question_1 INTEGER DEFAULT 0 CHECK(question_1 >= 0 AND question_1 <= 3),
@@ -529,8 +529,12 @@ bool createDatabaseTables(sqlite3* db) {
             question_88 INTEGER DEFAULT 0 CHECK(question_88 >= 0 AND question_88 <= 3),
             question_89 INTEGER DEFAULT 0 CHECK(question_89 >= 0 AND question_89 <= 3),
             question_90 INTEGER DEFAULT 0 CHECK(question_90 >= 0 AND question_90 <= 3),
-            scl_createdAt TEXT NOT NULL,
-            scl_updatedAt TEXT NOT NULL,
+            gsi INTEGER DEFAULT 0,
+            pst INTEGER DEFAULT 0,
+            psdi REAL DEFAULT 0.0,
+            severity_level TEXT DEFAULT 'Minimal',
+            created_at TEXT NOT NULL,
+            modified_at TEXT NOT NULL,
             FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)
         )
     )";

@@ -225,6 +225,9 @@ namespace SilverClinic {
             m_scl_updatedAt = DateTime();
         }
 
+    // NOTE: Persistence layer (DAO) should write computed fields (gsi, pst, psdi, severity_level)
+    // after question updates. This class keeps computation on-the-fly to avoid stale cache.
+
         int SCL90R::getNextSCLId() {
             return ++scl_id_counter;
         }

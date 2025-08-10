@@ -39,7 +39,7 @@ namespace SilverClinic {
         class SCL90R {
         private:
             // Core identification
-            int m_scl_id;                    // SCL-90-R unique ID
+            int m_scl_id;                    // Internal unique ID (will map to DB column 'id')
             int m_case_profile_id;           // Foreign key to case_profile table
             string m_type;                   // Form type identifier "SCL90R"
             
@@ -136,8 +136,8 @@ namespace SilverClinic {
             int m_question_90;   // The idea that something is wrong with your mind
             
             // Timestamps
-            DateTime m_scl_createdAt;
-            DateTime m_scl_updatedAt;
+            DateTime m_scl_createdAt; // Maps to created_at
+            DateTime m_scl_updatedAt; // Maps to modified_at
             
             // Static members
             static int scl_id_counter;
@@ -176,6 +176,10 @@ namespace SilverClinic {
             string getType() const { return m_type; }
             DateTime getCreatedAt() const { return m_scl_createdAt; }
             DateTime getUpdatedAt() const { return m_scl_updatedAt; }
+            // Computed cached metrics (not persisted here, but columns exist in DB for ingestion)
+            int computeGSI() const { return getGlobalSeverityIndex(); }
+            int computePST() const { return getPositiveSymptomTotal(); }
+            double computePSDI() const { return getPositiveSymptomDistressIndex(); }
             
             // Individual question getters
             int getQuestion1() const { return m_question_1; }

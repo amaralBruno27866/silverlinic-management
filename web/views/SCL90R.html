@@ -323,6 +323,30 @@
     }
   }
 
+  /* ========================= */
+  /*   Collapsible Sections    */
+  /* ========================= */
+  .collapsible-section { border: 1px solid var(--third-color); border-radius: 0.5rem; background:#fff; margin-bottom: 0.75rem; }
+  .collapsible-header { width:100%; display:flex; align-items:center; justify-content:space-between; gap:0.75rem; background:var(--primary-color); color:#fff; padding:0.65rem 0.9rem; cursor:pointer; border:none; font-weight:600; font-size:1rem; border-radius:0.5rem; }
+  .collapsible-header .chevron { transition: transform 0.25s ease; }
+  .collapsible-header.collapsed .chevron { transform: rotate(-90deg); }
+  .collapsible-content { padding:0.75rem 0.9rem 0.9rem 0.9rem; border-top:1px solid var(--third-color); display:none; }
+  .collapsible-content.active { display:block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px);} to { opacity:1; transform:translateY(0);} }
+  .section-badge { background: #fff; color: var(--primary-color); font-weight:700; padding:0.15rem 0.55rem; border-radius:0.35rem; font-size:0.75rem; letter-spacing:0.5px; }
+  .sections-toolbar { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0 0 1rem 0; }
+  .sections-toolbar button { background:var(--secondary-color); color:#fff; border:none; border-radius:0.35rem; padding:0.4rem 0.9rem; font-size:0.85rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:0.35rem; }
+  .sections-toolbar button:hover { background:var(--primary-color); }
+  .metrics-summary { background:#fff; border:1px solid var(--third-color); border-radius:0.5rem; padding:0.9rem 1rem; margin:0 0 1rem 0; display:grid; gap:0.5rem; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); }
+  .metric-box { background:#f0f6fa; border:1px solid #e0e6ed; border-radius:0.4rem; padding:0.55rem 0.6rem; text-align:center; }
+  .metric-box h4 { margin:0 0 0.25rem 0; font-size:0.8rem; font-weight:600; letter-spacing:0.5px; color:var(--primary-color); text-transform:uppercase; }
+  .metric-box .metric-value { font-size:1.05rem; font-weight:700; color:var(--primary-color); }
+  .metric-box.severity-Minimal { background:#e8f9ef; }
+  .metric-box.severity-Mild { background:#e6f3ff; }
+  .metric-box.severity-Moderate { background:#fff7e0; }
+  .metric-box.severity-Severe { background:#ffe9e6; }
+  /* Fix invalid escaped class; add proper class for Very Severe */
+  .metric-box.severity-Very-Severe { background:#ffd6d1; }
   /* Tablets: 1279px até 768px */
   @media (max-width: 1279px) and (min-width: 768px) {
     body {
@@ -380,15 +404,6 @@
       <input type="text" id="client-name" name="client-name" value="{{CLIENT_FULL_NAME}}" readonly>
     </fieldset>
 
-    <!-- Progress Indicator -->
-    <div class="progress-container">
-      <div class="progress-text">Assessment Progress</div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-      <div id="progress-counter">0 of 90 questions completed</div>
-    </div>
-
     <!-- SCL-90-R Questions -->
     <fieldset class="scl-questions">
       <legend>Symptom Checklist Assessment</legend>
@@ -428,6 +443,22 @@
             <strong>Progress:</strong> Your progress will be tracked at the top of the form. The save button will be enabled once all 90 questions are answered.
           </p>
         </div>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="progress-container">
+        <div class="progress-text">Assessment Progress</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div id="progress-counter">0 of 90 questions completed</div>
+      </div>
+
+  <!-- Section controls toolbar (initially hidden) -->
+      <div class="sections-toolbar" id="sections-toolbar" style="display:none;">
+        <button type="button" id="expand-all-btn"><i class="bi bi-arrows-expand"></i> Expand All</button>
+        <button type="button" id="collapse-all-btn"><i class="bi bi-arrows-collapse"></i> Collapse All</button>
+        <button type="button" id="scroll-top-btn"><i class="bi bi-arrow-up-circle"></i> Top</button>
       </div>
 
       <!-- Questions 1-10 -->
@@ -2257,13 +2288,10 @@
     // ========================= 
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Setup form save functionality
       setupFormSave();
-      
-      // Setup form validation and button state
       setupFormValidation();
-      
-      // Update copyright year
+      buildCollapsibleSections();
+      setupSectionToolbar();
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
     });
 
@@ -2383,59 +2411,117 @@
 
     // Save form data to CSV
     function saveFormData() {
-      const formData = collectFormData();
-      const csvContent = generateCSV(formData);
-      downloadCSV(csvContent, `SCL90R_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+  const formData = collectFormData();
+  const csvContent = generateSchemaCSV(formData);
+  downloadCSV(csvContent, `SCL90R_${formData.case_profile_id}_${new Date().toISOString().split('T')[0]}.csv`);
     }
 
     // Collect all form data
     function collectFormData() {
       const data = {
-        sclId: document.getElementById('scl-id').value,
-        caseProfileId: document.getElementById('case-profile-id').value,
-        createdAt: document.getElementById('created-at').value,
-        assessorName: document.getElementById('assessor-name').value,
-        clientName: document.getElementById('client-name').value
+        id: document.getElementById('scl-id').value,
+        case_profile_id: document.getElementById('case-profile-id').value,
+        type: 'SCL90R',
+        created_at: normalizeTimestamp(document.getElementById('created-at').value),
+        modified_at: currentTimestamp()
       };
-
-      // Collect all question answers
-      for (let i = 1; i <= 90; i++) {
-        const questionName = `question-${i}`;
-        const radioInputs = document.querySelectorAll(`input[name="${questionName}"]`);
-        
-        for (let radio of radioInputs) {
-          if (radio.checked) {
-            data[questionName] = radio.value;
-            break;
-          }
-        }
+      for (let i=1;i<=90;i++) {
+        const name = `question-${i}`;
+        const radios = document.querySelectorAll(`input[name="${name}"]`);
+        for (const r of radios) { if (r.checked) { data[`question_${i}`] = r.value; break; } }
+        if (!data[`question_${i}`]) data[`question_${i}`] = '0';
       }
-
+      const metrics = computeMetrics(data);
+      Object.assign(data, metrics);
       return data;
     }
 
     // Generate CSV content
-    function generateCSV(data) {
-      const headers = [
-        'SCL_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name'
-      ];
-
-      // Add question headers
-      for (let i = 1; i <= 90; i++) {
-        headers.push(`Question_${i}`);
-      }
-
-      const values = [
-        data.sclId, data.caseProfileId, data.createdAt, data.assessorName, data.clientName
-      ];
-
-      // Add question values
-      for (let i = 1; i <= 90; i++) {
-        values.push(data[`question-${i}`] || '');
-      }
-
+    function generateSchemaCSV(data) {
+      const headers = ['id','case_profile_id','type'];
+      for (let i=1;i<=90;i++) headers.push(`question_${i}`);
+      headers.push('gsi','pst','psdi','severity_level','created_at','modified_at');
+      const values = [data.id,data.case_profile_id,data.type];
+      for (let i=1;i<=90;i++) values.push(data[`question_${i}`]);
+      values.push(data.gsi,data.pst,data.psdi,data.severity_level,data.created_at,data.modified_at);
       return headers.join(',') + '\n' + values.join(',');
     }
+
+    // =========================
+    //   Collapsible Sections
+    // =========================
+    function buildCollapsibleSections(){
+      const fieldset = document.querySelector('.scl-questions');
+      if (!fieldset) return;
+      const headers = Array.from(fieldset.querySelectorAll('.question-section-header'));
+      if (!headers.length) return; // no headers
+      headers.forEach((header, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'collapsible-section';
+        const btn = document.createElement('button');
+        btn.type='button';
+        btn.className = 'collapsible-header' + (idx===0 ? '' : ' collapsed');
+        btn.setAttribute('aria-expanded', idx===0 ? 'true':'false');
+        btn.innerHTML = `<span>${header.textContent}</span><span class="section-badge">${header.textContent.replace(/Questions? /,'')}</span><i class="bi bi-chevron-down chevron"></i>`;
+        const content = document.createElement('div');
+        content.className = 'collapsible-content' + (idx===0 ? ' active':'');
+        let sib = header.nextElementSibling;
+        while (sib && !sib.classList.contains('question-section-header')) {
+          const next = sib.nextElementSibling;
+          if (sib.classList && sib.classList.contains('question-item')) content.appendChild(sib);
+          sib = next;
+        }
+        header.replaceWith(wrapper);
+        wrapper.appendChild(btn);
+        wrapper.appendChild(content);
+      });
+  const toolbar = document.getElementById('sections-toolbar');
+  if (toolbar) toolbar.style.display='flex';
+      fieldset.querySelectorAll('.collapsible-header').forEach(btn=>btn.addEventListener('click',()=>toggleSection(btn)));
+    }
+
+    function toggleSection(btn){
+      const expanded = btn.getAttribute('aria-expanded')==='true';
+      const content = btn.nextElementSibling;
+      if (!content) return;
+      if (expanded){
+        btn.classList.add('collapsed');
+        btn.setAttribute('aria-expanded','false');
+        content.classList.remove('active');
+      } else {
+        btn.classList.remove('collapsed');
+        btn.setAttribute('aria-expanded','true');
+        content.classList.add('active');
+      }
+    }
+
+    function setupSectionToolbar(){
+      const expandBtn = document.getElementById('expand-all-btn');
+      const collapseBtn = document.getElementById('collapse-all-btn');
+      const topBtn = document.getElementById('scroll-top-btn');
+      const headers = () => document.querySelectorAll('.collapsible-header');
+      if (expandBtn) expandBtn.addEventListener('click',()=> headers().forEach(h=>{ if(h.getAttribute('aria-expanded')==='false') toggleSection(h);}));
+      if (collapseBtn) collapseBtn.addEventListener('click',()=> headers().forEach(h=>{ if(h.getAttribute('aria-expanded')==='true') toggleSection(h);}));
+      if (topBtn) topBtn.addEventListener('click',()=> window.scrollTo({top:0,behavior:'smooth'}));
+    }
+
+    // Metrics summary UI removed per request; metrics still computed for CSV only.
+    function computeMetrics(data){
+      let gsi=0, pst=0;
+      for (let i=1;i<=90;i++) { const v = parseInt(data[`question_${i}`]||'0',10); gsi+=v; if(v>0)pst++; }
+      const psdi = pst===0?0:(gsi/pst);
+      const severity = gsi<=45?'Minimal':gsi<=90?'Mild':gsi<=135?'Moderate':gsi<=180?'Severe':'Very Severe';
+      return { gsi, pst, psdi: psdi.toFixed(2), severity_level: severity };
+    }
+
+    // =========================
+    //   Helpers
+    // =========================
+    function currentTimestamp(){
+      const d=new Date(); const p=n=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    }
+    function normalizeTimestamp(val){ if(!val) return currentTimestamp(); if(/^\d{4}-\d{2}-\d{2} /.test(val)) return val; return currentTimestamp(); }
 
     // Download CSV file
     function downloadCSV(csvContent, filename) {
