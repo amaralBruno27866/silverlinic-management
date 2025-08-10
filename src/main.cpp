@@ -405,7 +405,7 @@ bool createDatabaseTables(sqlite3* db) {
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'PBM',
             pain_data_json TEXT NOT NULL DEFAULT '{}',
-            additional_comments TEXT CHECK(length(additional_comments) <= 1000),
+            additional_comments TEXT CHECK(length(additional_comments) <= 2000),
             created_at TEXT NOT NULL,
             modified_at TEXT NOT NULL,
             FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)

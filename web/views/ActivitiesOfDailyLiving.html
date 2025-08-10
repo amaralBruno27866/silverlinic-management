@@ -544,7 +544,8 @@
         <!-- Comments section for Functional Tasks -->
         <div class="comments-section">
           <label for="functional-comments">Additional Comments:</label>
-          <textarea id="functional-comments" name="functional-comments" data-category="functional_tasks" placeholder="Please provide any additional details about difficulties with functional tasks..."></textarea>
+          <textarea id="functional-comments" name="functional-comments" data-category="functional_tasks" maxlength="500" placeholder="Please provide any additional details about difficulties with functional tasks..."></textarea>
+          <div class="char-counter" data-counter-for="functional-comments" style="font-size:0.7rem;color:#555;text-align:right;">0 / 500</div>
         </div>
       </div>
 
@@ -710,7 +711,8 @@
         </div>        <!-- Comments section for Household Chores -->
         <div class="comments-section">
           <label for="household-comments">Additional Comments:</label>
-          <textarea id="household-comments" name="household-comments" data-category="household_chores" placeholder="Please provide any additional details about difficulties with household chores..."></textarea>
+          <textarea id="household-comments" name="household-comments" data-category="household_chores" maxlength="500" placeholder="Please provide any additional details about difficulties with household chores..."></textarea>
+          <div class="char-counter" data-counter-for="household-comments" style="font-size:0.7rem;color:#555;text-align:right;">0 / 500</div>
         </div>
       </div>
 
@@ -760,7 +762,8 @@
         <!-- Comments section for Outdoor Chores -->
         <div class="comments-section">
           <label for="outdoor-comments">Additional Comments:</label>
-          <textarea id="outdoor-comments" name="outdoor-comments" data-category="outdoor_chores" placeholder="Please provide any additional details about difficulties with outdoor chores..."></textarea>
+          <textarea id="outdoor-comments" name="outdoor-comments" data-category="outdoor_chores" maxlength="500" placeholder="Please provide any additional details about difficulties with outdoor chores..."></textarea>
+          <div class="char-counter" data-counter-for="outdoor-comments" style="font-size:0.7rem;color:#555;text-align:right;">0 / 500</div>
         </div>
       </div>
 
@@ -862,7 +865,8 @@
         <!-- Comments section for Personal Care -->
         <div class="comments-section">
           <label for="personal-comments">Additional Comments:</label>
-          <textarea id="personal-comments" name="personal-comments" data-category="personal_care" placeholder="Please provide any additional details about difficulties with personal care activities..."></textarea>
+          <textarea id="personal-comments" name="personal-comments" data-category="personal_care" maxlength="500" placeholder="Please provide any additional details about difficulties with personal care activities..."></textarea>
+          <div class="char-counter" data-counter-for="personal-comments" style="font-size:0.7rem;color:#555;text-align:right;">0 / 500</div>
         </div>
       </div>
 
@@ -916,7 +920,8 @@
         <!-- Comments section for Child Care -->
         <div class="comments-section">
           <label for="childcare-comments">Additional Comments (include which children you are referring to):</label>
-          <textarea id="childcare-comments" name="childcare-comments" data-category="child_care" placeholder="Please specify which children you are referring to and provide any additional details about difficulties with child care activities..."></textarea>
+          <textarea id="childcare-comments" name="childcare-comments" data-category="child_care" maxlength="500" placeholder="Please specify which children you are referring to and provide any additional details about difficulties with child care activities..."></textarea>
+          <div class="char-counter" data-counter-for="childcare-comments" style="font-size:0.7rem;color:#555;text-align:right;">0 / 500</div>
         </div>
       </div>
 
@@ -950,13 +955,14 @@
       
       // Setup form validation and button state
       setupFormValidation();
+      ensureFullTimestamp();
       
       // Update copyright year
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
     });
 
     // Setup form validation and button state management
-    function setupFormValidation() {
+  function setupFormValidation() {
       const saveBtn = document.getElementById('save-btn');
       
       // Initially disable the save button
@@ -976,12 +982,27 @@
       // Add event listeners to all textareas
       allTextareas.forEach(textarea => {
         textarea.addEventListener('input', function() {
+          enforceAndCount(textarea);
           updateSaveButtonState();
         });
+        // initial count
+        enforceAndCount(textarea);
       });
       
       // Initial check
       updateSaveButtonState();
+    }
+
+    // Enforce maxlength (safety) and update counter
+    function enforceAndCount(textarea) {
+      const max = 500;
+      if (textarea.value.length > max) {
+        textarea.value = textarea.value.substring(0, max);
+      }
+      const counter = document.querySelector(`.char-counter[data-counter-for="${textarea.id}"]`);
+      if (counter) {
+        counter.textContent = `${textarea.value.length} / 500`;
+      }
     }
 
     // Update save button state based on form completion
@@ -1039,7 +1060,8 @@
     function saveFormData() {
       const formData = collectFormData();
       const csvContent = generateCSV(formData);
-      downloadCSV(csvContent, `ADL_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+      const stamp = formData.createdAt.split(' ')[0];
+      downloadCSV(csvContent, `ADL_${formData.caseProfileId}_${stamp}.csv`);
     }
 
     // Collect all form data
@@ -1047,7 +1069,8 @@
       const data = {
         adlId: document.getElementById('adl-id').value,
         caseProfileId: document.getElementById('case-profile-id').value,
-        createdAt: document.getElementById('created-at').value,
+        createdAt: document.getElementById('created-at').value, // full timestamp ensured earlier
+        modifiedAt: document.getElementById('created-at').value, // initial export mirrors createdAt
         assessorName: document.getElementById('assessor-name').value,
         clientName: document.getElementById('client-name').value,
         activitiesData: {}
@@ -1081,7 +1104,7 @@
     }
 
     // Generate CSV content
-    function generateCSV(data) {
+  function generateCSV(data) {
       // Create JSON structure that matches C++ expectations
       const activitiesJson = {};
       
@@ -1098,24 +1121,37 @@
       });
 
       const headers = [
-        'ADL_ID', 
-        'Case_Profile_ID', 
-        'Activities_Data_JSON', 
-        'Created_At', 
-        'Updated_At'
+        'id',
+        'case_profile_id',
+        'type',
+        'activities_data_json',
+        'created_at',
+        'modified_at'
       ];
-      
-      const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
-      
+
       const values = [
         data.adlId,
         data.caseProfileId,
-        `"${JSON.stringify(activitiesJson).replace(/"/g, '""')}"`, // Escape JSON for CSV
+        '"ADL"',
+        `"${JSON.stringify(activitiesJson).replace(/"/g, '""')}"`,
         `"${data.createdAt}"`,
-        `"${now}"`
+        `"${data.modifiedAt}"`
       ];
 
       return headers.join(',') + '\n' + values.join(',');
+    }
+
+    // Ensure timestamp has time component (YYYY-MM-DD HH:MM:SS)
+    function ensureFullTimestamp() {
+      const input = document.getElementById('created-at');
+      if (!input) return;
+      const val = input.value.trim();
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(val)) return; // already full
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const now = new Date();
+        const pad = n => n.toString().padStart(2,'0');
+        input.value = `${val} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      }
     }
 
     // Download CSV file

@@ -20,7 +20,7 @@ namespace SilverClinic {
             bool side_left;                 // Left side affected
             bool side_right;                // Right side affected  
             int pain_level;                 // 0-10 scale
-            string comments;                // Max 255 characters
+            string comments;                // Max 500 characters (frontend + backend enforced)
             
             BodyPartPain() : body_part(""), side_left(false), side_right(false), pain_level(0), comments("") {}
             
@@ -49,7 +49,7 @@ namespace SilverClinic {
             
             // JSON field for complex data (stored as TEXT in SQLite)
             string m_pain_data_json;           // JSON string containing all pain data
-            string m_additional_comments;      // Other pain experiences
+            string m_additional_comments;      // Other pain experiences (max 2000 chars)
             
             // Internal C++ representation (for easy manipulation)
             map<string, BodyPartPain> m_pain_data;     // Parsed from JSON for runtime use

@@ -19,7 +19,7 @@ namespace SilverClinic {
         struct ActivityCategory {
             string category_name;               // Name of the category (e.g., "functional_tasks")
             map<string, bool> activities;       // Activity name -> has difficulty (true/false)
-            string comments;                    // Comments for this category (max 1000 characters)
+            string comments;                    // Comments for this category (max 500 characters)
             
             ActivityCategory() : category_name(""), comments("") {}
             

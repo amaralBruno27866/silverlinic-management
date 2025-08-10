@@ -935,15 +935,28 @@
     // ========================= 
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Setup form save functionality
+      ensureFullTimestamp();
       setupFormSave();
-      
-      // Setup form validation and button state
       setupFormValidation();
-      
-      // Update copyright year
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
     });
+
+    function ensureFullTimestamp(){
+      const input = document.getElementById('created-at');
+      let v = input.value.trim();
+      if(!v){
+        input.value = formatDateTime(new Date());
+      } else if(/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+        input.value = v + ' 00:00:00';
+      } else if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(v)) {
+        input.value = v + ':00';
+      }
+    }
+
+    function formatDateTime(d){
+      const pad=n=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
 
     // Setup form validation and button state management
     function setupFormValidation() {
@@ -1025,37 +1038,37 @@
     // Collect all form data
     function collectFormData() {
       const data = {
-        bdiId: document.getElementById('bdi-id').value,
-        caseProfileId: document.getElementById('case-profile-id').value,
-        createdAt: document.getElementById('created-at').value,
-        assessorName: document.getElementById('assessor-name').value,
-        clientName: document.getElementById('client-name').value,
+        id: document.getElementById('bdi-id').value.trim(),
+        case_profile_id: document.getElementById('case-profile-id').value.trim(),
+        type: 'BDI',
+        created_at: document.getElementById('created-at').value.trim(),
         answers: {}
       };
-
-      // Collect all question answers
-      for (let i = 1; i <= 21; i++) {
+      for (let i=1;i<=21;i++) {
         const questionInput = document.querySelector(`input[name="question-${i}"]:checked`);
-        data.answers[`question_${i}`] = questionInput ? questionInput.value : '';
+        data.answers[`question_${i}`] = questionInput ? parseInt(questionInput.value,10) : 0;
       }
-
+      data.total_score = computeTotalScore(data.answers);
+      data.severity_level = interpretSeverity(data.total_score);
+      data.modified_at = data.created_at; // initial export
       return data;
     }
+
+    function computeTotalScore(ans){ let t=0; for(let i=1;i<=21;i++){ t += (ans['question_'+i]||0); } return t; }
+    function interpretSeverity(score){ if(score<=13) return 'Minimal'; if(score<=19) return 'Mild'; if(score<=28) return 'Moderate'; return 'Severe'; }
 
     // Generate CSV content
     function generateCSV(data) {
       const headers = [
-        'BDI_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
-        'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
-        'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21'
+        'id','case_profile_id','type',
+        'question_1','question_2','question_3','question_4','question_5','question_6','question_7','question_8','question_9','question_10',
+        'question_11','question_12','question_13','question_14','question_15','question_16','question_17','question_18','question_19','question_20','question_21',
+        'total_score','severity_level','created_at','modified_at'
       ];
-
       const values = [
-        data.bdiId,
-        data.caseProfileId,
-        data.createdAt,
-        `"${data.assessorName.replace(/"/g, '""')}"`, // Escape quotes in names
-        `"${data.clientName.replace(/"/g, '""')}"`,   // Escape quotes in names
+        escapeCSV(data.id),
+        escapeCSV(data.case_profile_id),
+        '"BDI"',
         data.answers.question_1,
         data.answers.question_2,
         data.answers.question_3,
@@ -1076,11 +1089,16 @@
         data.answers.question_18,
         data.answers.question_19,
         data.answers.question_20,
-        data.answers.question_21
+        data.answers.question_21,
+        data.total_score,
+        '"'+data.severity_level+'"',
+        '"'+data.created_at+'"',
+        '"'+data.modified_at+'"'
       ];
-
       return headers.join(',') + '\n' + values.join(',');
     }
+
+    function escapeCSV(v){ if(v==null) return ''; const s=String(v); return /[",\n]/.test(s)? '"'+s.replace(/"/g,'""')+'"': s; }
 
     // Download CSV file
     function downloadCSV(csvContent, filename) {

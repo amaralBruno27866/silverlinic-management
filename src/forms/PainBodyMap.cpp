@@ -211,7 +211,7 @@ namespace SilverClinic {
                 throw invalid_argument("Invalid pain level: " + to_string(painLevel));
             }
             if (!isValidComments(comments)) {
-                throw invalid_argument("Comments too long (max 255 characters)");
+                throw invalid_argument("Comments too long (max 500 characters)");
             }
             
             BodyPartPain pain(bodyPart, leftSide, rightSide, painLevel, comments);
@@ -228,7 +228,7 @@ namespace SilverClinic {
                 throw invalid_argument("Invalid pain level: " + to_string(pain.pain_level));
             }
             if (!isValidComments(pain.comments)) {
-                throw invalid_argument("Comments too long (max 255 characters)");
+                throw invalid_argument("Comments too long (max 500 characters)");
             }
             
             m_pain_data[pain.body_part] = pain;
@@ -252,8 +252,8 @@ namespace SilverClinic {
         }
 
         void PainBodyMap::setAdditionalComments(const string& comments) {
-            if (comments.length() > 1000) {
-                throw invalid_argument("Additional comments too long (max 1000 characters)");
+            if (comments.length() > 2000) {
+                throw invalid_argument("Additional comments too long (max 2000 characters)");
             }
             m_additional_comments = comments;
             updateTimestamp();
@@ -286,12 +286,12 @@ namespace SilverClinic {
         }
 
         bool PainBodyMap::isValidComments(const string& comments) const {
-            return comments.length() <= 255;
+            return comments.length() <= 500;
         }
 
         bool PainBodyMap::isValidData() const {
             if (!isValidCaseProfileId(m_case_profile_id)) return false;
-            if (m_additional_comments.length() > 1000) return false;
+            if (m_additional_comments.length() > 2000) return false;
             
             for (const auto& [key, pain] : m_pain_data) {
                 if (!isValidBodyPart(pain.body_part)) return false;

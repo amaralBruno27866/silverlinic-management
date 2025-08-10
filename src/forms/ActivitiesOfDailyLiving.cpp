@@ -378,7 +378,8 @@ namespace SilverClinic {
         }
 
         bool ActivitiesOfDailyLiving::isValidComments(const string& comments) const {
-            return comments.length() <= 1000;
+            // Updated: enforce 500 char limit to align with front-end constraint
+            return comments.length() <= 500;
         }
 
         bool ActivitiesOfDailyLiving::isValidData() const {
