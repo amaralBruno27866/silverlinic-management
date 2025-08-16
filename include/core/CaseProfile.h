@@ -4,6 +4,7 @@
 #include <string>
 #include "DateTime.h"
 #include "Utils.h"
+#include "utils/StructuredLogger.h"
 
 using namespace std;
 namespace SilverClinic {
@@ -64,7 +65,10 @@ namespace SilverClinic {
             m_notes = normalizedNotes; 
             updateTimestamp(); 
         } else {
-            utils::logMessage("WARNING", "Notes truncated to " + to_string(MAX_NOTES_LENGTH) + " characters");
+      {
+        utils::LogEventContext ctx{"MODEL","truncate","CaseProfile", std::to_string(m_case_profile_id), std::nullopt};
+        utils::logStructured(utils::LogLevel::WARN, ctx, "Notes truncated to max length");
+      }
             m_notes = normalizedNotes.substr(0, MAX_NOTES_LENGTH);
             updateTimestamp();
         }

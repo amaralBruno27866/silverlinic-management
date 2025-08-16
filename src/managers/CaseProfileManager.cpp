@@ -8,6 +8,8 @@
 #include <fstream>
 #include <algorithm>
 #include <hpdf.h>
+#include "managers/AutomobileAnxietyInventoryManager.h"
+#include "utils/StructuredLogger.h"
 
 using namespace std;
 using namespace SilverClinic;
@@ -18,7 +20,8 @@ namespace SilverClinic {
 // Constructor
 CaseProfileManager::CaseProfileManager(sqlite3* database) : m_db(database) {
     if (!m_db) {
-        logMessage("ERROR", "CaseProfileManager: Invalid database connection");
+        utils::LogEventContext ctx{"MANAGER","init","CaseProfile", std::nullopt, std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "CaseProfileManager: Invalid database connection");
     }
 }
 
@@ -28,13 +31,15 @@ CaseProfileManager::CaseProfileManager(sqlite3* database) : m_db(database) {
 
 bool CaseProfileManager::create(const CaseProfile& caseProfile) {
     if (!validateCaseProfile(caseProfile)) {
-        logMessage("ERROR", "CaseProfileManager::create - Invalid case profile data");
+        utils::LogEventContext ctx{"MANAGER","create","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Invalid case profile data");
         return false;
     }
     
     // Additional validation: check if client and assessor exist
     if (!validateRelationship(caseProfile.getClientId(), caseProfile.getAssessorId())) {
-        logMessage("ERROR", "CaseProfileManager::create - Invalid client or assessor relationship");
+        utils::LogEventContext ctx{"MANAGER","create","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Invalid client or assessor relationship");
         return false;
     }
     // Defensive double-check using EXISTS to ensure referential integrity prior to insert (even if FK pragma off)
@@ -43,7 +48,8 @@ bool CaseProfileManager::create(const CaseProfile& caseProfile) {
         std::string q = std::string("SELECT 1 FROM ")+table+" WHERE id=? LIMIT 1";
         sqlite3_stmt* st=nullptr; if(sqlite3_prepare_v2(m_db,q.c_str(),-1,&st,nullptr)!=SQLITE_OK) return false; sqlite3_bind_int(st,1,id); bool ok = sqlite3_step(st)==SQLITE_ROW; sqlite3_finalize(st); return ok; };
     if(!existsQuick("client", caseProfile.getClientId()) || !existsQuick("assessor", caseProfile.getAssessorId())){
-        logMessage("ERROR","CaseProfileManager::create - Referenced client or assessor not found (pre-insert abort)");
+        utils::LogEventContext ctx{"MANAGER","create","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Referenced client or assessor not found (pre-insert abort)");
         return false;
     }
     
@@ -75,7 +81,10 @@ bool CaseProfileManager::create(const CaseProfile& caseProfile) {
         return false;
     }
     
-    logMessage("INFO", "Case profile created successfully with ID: " + toString(caseProfile.getCaseProfileId()));
+    {
+        utils::LogEventContext ctx{"MANAGER","create","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::INFO, ctx, "Created successfully");
+    }
     return true;
 }
 
@@ -130,12 +139,14 @@ optional<CaseProfile> CaseProfileManager::readById(int caseProfileId) const {
 
 bool CaseProfileManager::update(const CaseProfile& caseProfile) {
     if (!validateCaseProfile(caseProfile)) {
-        logMessage("ERROR", "CaseProfileManager::update - Invalid case profile data");
+        utils::LogEventContext ctx{"MANAGER","update","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Invalid case profile data");
         return false;
     }
-    
+
     if (!exists(caseProfile.getCaseProfileId())) {
-        logMessage("ERROR", "CaseProfileManager::update - Case profile not found with ID: " + toString(caseProfile.getCaseProfileId()));
+        utils::LogEventContext ctx{"MANAGER","update","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Case profile not found");
         return false;
     }
     
@@ -176,13 +187,17 @@ bool CaseProfileManager::update(const CaseProfile& caseProfile) {
         return false;
     }
     
-    logMessage("INFO", "Case profile updated successfully with ID: " + toString(caseProfile.getCaseProfileId()));
+    {
+        utils::LogEventContext ctx{"MANAGER","update","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::INFO, ctx, "Updated successfully");
+    }
     return true;
 }
 
 bool CaseProfileManager::deleteById(int caseProfileId) {
     if (!canDelete(caseProfileId)) {
-        logMessage("ERROR", "CaseProfileManager::deleteById - Cannot delete case profile with ID: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","delete","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Cannot delete case profile");
         return false;
     }
     
@@ -282,18 +297,21 @@ vector<CaseProfile> CaseProfileManager::getCasesByClientAndAssessor(int clientId
 
 bool CaseProfileManager::activateCase(int caseProfileId, int assessorId) {
     if (!validateAssessorPermission(caseProfileId, assessorId)) {
-        logMessage("ERROR", "CaseProfileManager::activateCase - Assessor not authorized for case: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","activate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Assessor not authorized");
         return false;
     }
-    
+
     auto caseProfile = readById(caseProfileId);
     if (!caseProfile.has_value()) {
-        logMessage("ERROR", "CaseProfileManager::activateCase - Case not found: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","activate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Case not found");
         return false;
     }
-    
+
     if (!caseProfile->isPending()) {
-        logMessage("ERROR", "CaseProfileManager::activateCase - Case is not in pending status: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","activate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Case not pending");
         return false;
     }
     
@@ -302,18 +320,21 @@ bool CaseProfileManager::activateCase(int caseProfileId, int assessorId) {
 
 bool CaseProfileManager::closeCase(int caseProfileId, int assessorId, const string& reason) {
     if (!validateAssessorPermission(caseProfileId, assessorId)) {
-        logMessage("ERROR", "CaseProfileManager::closeCase - Assessor not authorized for case: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","close","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Assessor not authorized");
         return false;
     }
-    
+
     auto caseProfile = readById(caseProfileId);
     if (!caseProfile.has_value()) {
-        logMessage("ERROR", "CaseProfileManager::closeCase - Case not found: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","close","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Case not found");
         return false;
     }
-    
+
     if (!caseProfile->isActive()) {
-        logMessage("ERROR", "CaseProfileManager::closeCase - Case is not active: " + toString(caseProfileId));
+        utils::LogEventContext ctx{"MANAGER","close","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Case not active");
         return false;
     }
     
@@ -349,19 +370,21 @@ bool CaseProfileManager::closeCase(int caseProfileId, int assessorId, const stri
         return false;
     }
     
-    logMessage("INFO", "Case closed successfully: " + toString(caseProfileId));
+    { utils::LogEventContext ctx{"MANAGER","close","CaseProfile", std::to_string(caseProfileId), std::nullopt}; logStructured(utils::LogLevel::INFO, ctx, "Case closed successfully"); }
     return true;
 }
 
 bool CaseProfileManager::transferCase(int caseProfileId, int newAssessorId, int currentAssessorId) {
     if (!validateAssessorPermission(caseProfileId, currentAssessorId)) {
-        logMessage("ERROR", "CaseProfileManager::transferCase - Current assessor not authorized: " + toString(currentAssessorId));
+        utils::LogEventContext ctx{"MANAGER","transfer","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Current assessor not authorized");
         return false;
     }
-    
+
     // Validate new assessor exists
     if (!validateRelationship(0, newAssessorId)) { // We only care about assessor existing
-        logMessage("ERROR", "CaseProfileManager::transferCase - New assessor not found: " + toString(newAssessorId));
+        utils::LogEventContext ctx{"MANAGER","transfer","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "New assessor not found");
         return false;
     }
     
@@ -396,7 +419,7 @@ bool CaseProfileManager::transferCase(int caseProfileId, int newAssessorId, int 
         return false;
     }
     
-    logMessage("INFO", "Case transferred successfully: " + toString(caseProfileId));
+    { utils::LogEventContext ctx{"MANAGER","transfer","CaseProfile", std::to_string(caseProfileId), std::nullopt}; logStructured(utils::LogLevel::INFO, ctx, "Case transferred successfully"); }
     return true;
 }
 
@@ -431,19 +454,22 @@ CaseProfile CaseProfileManager::createCaseProfileFromRow(sqlite3_stmt* stmt) con
 bool CaseProfileManager::validateCaseProfile(const CaseProfile& caseProfile) const {
     // Validate ID range (400001-499999)
     if (caseProfile.getCaseProfileId() < 400001 || caseProfile.getCaseProfileId() > 499999) {
-        logMessage("ERROR", "Validation failed: Invalid case profile ID range: " + toString(caseProfile.getCaseProfileId()));
+        utils::LogEventContext ctx{"MANAGER","validate","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Invalid case profile ID range");
         return false;
     }
     
     // Validate client ID range (300001-399999)
     if (caseProfile.getClientId() < 300001 || caseProfile.getClientId() > 399999) {
-        logMessage("ERROR", "Validation failed: Invalid client ID range: " + toString(caseProfile.getClientId()));
+        utils::LogEventContext ctx{"MANAGER","validate","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Invalid client ID range");
         return false;
     }
     
     // Validate assessor ID range (100001-199999)
     if (caseProfile.getAssessorId() < 100001 || caseProfile.getAssessorId() > 199999) {
-        logMessage("ERROR", "Validation failed: Invalid assessor ID range: " + toString(caseProfile.getAssessorId()));
+        utils::LogEventContext ctx{"MANAGER","validate","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Invalid assessor ID range");
         return false;
     }
     
@@ -452,13 +478,15 @@ bool CaseProfileManager::validateCaseProfile(const CaseProfile& caseProfile) con
     // Accept both human-readable (capitalized) and normalized uppercase variants
     if (status != "Pending" && status != "Active" && status != "Closed" && status != "Cancelled" &&
         status != "PENDING" && status != "ACTIVE" && status != "CLOSED" && status != "CANCELLED") {
-        logMessage("ERROR", "Validation failed: Invalid status: " + status);
+        utils::LogEventContext ctx{"MANAGER","validate","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, std::string("Invalid status: ")+status);
         return false;
     }
     
     // Validate notes length
     if (caseProfile.getNotes().length() > 1500) {
-        logMessage("ERROR", "Validation failed: Notes too long: " + toString(caseProfile.getNotes().length()) + " characters");
+        utils::LogEventContext ctx{"MANAGER","validate","CaseProfile", std::to_string(caseProfile.getCaseProfileId()), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Notes too long");
         return false;
     }
     
@@ -569,7 +597,8 @@ string CaseProfileManager::getCurrentTimestamp() const {
 
 void CaseProfileManager::logDatabaseError(const string& operation) const {
     string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
-    logMessage("ERROR", errorMsg);
+    utils::LogEventContext ctx{"DB","error","CaseProfile", std::nullopt, std::nullopt};
+    logStructured(utils::LogLevel::ERROR, ctx, errorMsg);
 }
 
 // ========================================
@@ -638,14 +667,16 @@ bool CaseProfileManager::generatePDFReport(int caseProfileId, const string& outp
     // Get case profile data
     auto caseProfile = readById(caseProfileId);
     if (!caseProfile.has_value()) {
-        logMessage("ERROR", "CaseProfileManager::generatePDFReport - Case profile not found: " + to_string(caseProfileId));
+        utils::LogEventContext ctx{"PDF","generate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Case profile not found");
         return false;
     }
     
     // Initialize PDF document
     HPDF_Doc pdf = HPDF_New(nullptr, nullptr);
     if (!pdf) {
-        logMessage("ERROR", "CaseProfileManager::generatePDFReport - Failed to create PDF document");
+        utils::LogEventContext ctx{"PDF","generate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, "Failed to create PDF document");
         return false;
     }
     
@@ -697,6 +728,35 @@ bool CaseProfileManager::generatePDFReport(int caseProfileId, const string& outp
             currentY -= 60; // Case info section height
         }
         
+        // Inject Automobile Anxiety Inventory summary (latest record)
+        try {
+            AutomobileAnxietyInventoryManager aaiMgr(m_db);
+            auto list = aaiMgr.listByCase(caseProfileId);
+            if(!list.empty()){
+                auto latest = list.back();
+                HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", nullptr);
+                HPDF_Page_SetFontAndSize(page, font, PDFConfig::TEXT_FONT_SIZE);
+                float x = PDFConfig::MARGIN_LEFT;
+                float y = currentY - 20;
+                std::string heading = "Automobile Anxiety Inventory (latest)";
+                HPDF_Page_BeginText(page); HPDF_Page_TextOut(page, x, y, heading.c_str()); HPDF_Page_EndText(page);
+                y -= 14;
+                auto boolToStr=[](bool b){ return b?"Yes":"No"; };
+                std::string line1 = std::string("Q1:")+boolToStr(latest.getQuestion1())+" Q2:"+boolToStr(latest.getQuestion2())+" Q3:"+boolToStr(latest.getQuestion3());
+                HPDF_Page_BeginText(page); HPDF_Page_TextOut(page, x, y, line1.c_str()); HPDF_Page_EndText(page); y -= 12;
+                std::string line2 = std::string("Q14 Driver:")+boolToStr(latest.getQuestion14Driver())+" Passenger:"+boolToStr(latest.getQuestion14Passenger())+" NoDiff:"+boolToStr(latest.getQuestion14NoDifference());
+                HPDF_Page_BeginText(page); HPDF_Page_TextOut(page, x, y, line2.c_str()); HPDF_Page_EndText(page); y -= 12;
+                std::string line3 = std::string("Q19:")+boolToStr(latest.getQuestion19())+" Sidewalks:"+boolToStr(latest.getQuestion19Sidewalks())+" Crossing:"+boolToStr(latest.getQuestion19Crossing())+" Both:"+boolToStr(latest.getQuestion19Both());
+                HPDF_Page_BeginText(page); HPDF_Page_TextOut(page, x, y, line3.c_str()); HPDF_Page_EndText(page); y -= 14;
+                currentY = y;
+                utils::LogEventContext ctx{"PDF","embed_form","AAI", std::to_string(latest.getAAIId()), std::nullopt};
+                logStructured(utils::LogLevel::INFO, ctx, "Embedded latest AAI summary into report");
+            }
+        } catch(const std::exception &e){
+            utils::LogEventContext ctx{"PDF","embed_form","AAI", std::nullopt, std::nullopt};
+            logStructured(utils::LogLevel::ERROR, ctx, std::string("Failed to embed AAI: ")+e.what());
+        }
+
         if (template_config.includeFooter) {
             // Generate footer inline
             HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", nullptr);
@@ -714,10 +774,14 @@ bool CaseProfileManager::generatePDFReport(int caseProfileId, const string& outp
         // Save PDF to file
         HPDF_SaveToFile(pdf, outputPath.c_str());
         
-        logMessage("INFO", "PDF report generated successfully: " + outputPath);
+        {
+            utils::LogEventContext ctx{"PDF","generate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+            logStructured(utils::LogLevel::INFO, ctx, std::string("PDF generated ")+outputPath);
+        }
         
     } catch (const exception& e) {
-        logMessage("ERROR", "CaseProfileManager::generatePDFReport - Exception: " + string(e.what()));
+        utils::LogEventContext ctx{"PDF","generate","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::ERROR, ctx, std::string("Exception: ")+e.what());
         HPDF_Free(pdf);
         return false;
     }
@@ -739,7 +803,10 @@ int CaseProfileManager::generateBulkPDFReports(const vector<int>& caseProfileIds
         }
     }
     
-    logMessage("INFO", "Bulk PDF generation completed: " + to_string(successCount) + " of " + to_string(caseProfileIds.size()) + " PDFs generated");
+    {
+        utils::LogEventContext ctx{"PDF","bulk_generate","CaseProfile", std::nullopt, std::nullopt};
+        logStructured(utils::LogLevel::INFO, ctx, "Completed: "+ std::to_string(successCount) + "/" + std::to_string(caseProfileIds.size()));
+    }
     return successCount;
 }
 
@@ -747,7 +814,10 @@ bool CaseProfileManager::generateCustomPDFReport(int caseProfileId, const string
                                                 bool /*includeTimeline*/, bool /*includeFullNotes*/, 
                                                 const string& /*watermarkText*/) const {
     // Custom implementation similar to generatePDFReport but with custom options
-    logMessage("INFO", "Custom PDF generation requested for case: " + to_string(caseProfileId));
+    {
+        utils::LogEventContext ctx{"PDF","custom_request","CaseProfile", std::to_string(caseProfileId), std::nullopt};
+        logStructured(utils::LogLevel::INFO, ctx, "Custom PDF generation requested");
+    }
     
     // For now, use the detailed template and modify behavior
     return generatePDFReport(caseProfileId, outputPath, "detailed");

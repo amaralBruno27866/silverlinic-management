@@ -120,6 +120,7 @@ include_directories(${HPDF_INCLUDE_DIR})
 
 # Source files - recursively find all .cpp files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+# (StructuredLogger added under src/utils; glob captures automatically)
 
 # Exclude main.cpp from the sources for library
 set(LIB_SOURCES ${SOURCES})
@@ -175,6 +176,7 @@ if(BUILD_TESTING)
     tests/forms/test_BAIManager.cpp
     tests/forms/test_SCL90RManager.cpp
     tests/forms/test_AAIManager.cpp
+    tests/forms/test_AAIManager_CSVNegative.cpp
     )
     foreach(test_src ${FORMS_TEST_SOURCES})
         if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
@@ -193,6 +195,12 @@ if(BUILD_TESTING)
     tests/integration/test_pragmas.cpp
     tests/integration/test_form_generation.cpp
     )
+    # Managers specific tests (new)
+    if(EXISTS ${CMAKE_SOURCE_DIR}/tests/managers/test_AddressManager.cpp)
+        add_executable(test_AddressManager tests/managers/test_AddressManager.cpp)
+        target_link_libraries(test_AddressManager ${PROJECT_NAME}_lib)
+        add_test(NAME test_AddressManager COMMAND test_AddressManager)
+    endif()
     foreach(test_src ${INTEGRATION_TEST_SOURCES})
         if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
             get_filename_component(test_name ${test_src} NAME_WE)

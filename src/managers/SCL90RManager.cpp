@@ -95,7 +95,7 @@ int SCL90RManager::importFromCSV(const std::string &filePath) {
         auto table=csv::CSVReader::readFile(filePath);
         std::vector<std::string> required={"case_profile_id"};
         for(int i=1;i<=90;++i) required.push_back("question_"+std::to_string(i));
-        for(const auto &h: required){ if(std::find(table.headers.begin(),table.headers.end(),h)==table.headers.end()){ utils::logMessage("ERROR","SCL90R CSV missing header: "+h); return 0; } }
+    for(const auto &h: required){ if(std::find(table.headers.begin(),table.headers.end(),h)==table.headers.end()){ utils::LogEventContext ctx{"IMPORT","validate","SCL90R", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("CSV missing header: ")+h); return 0; } }
         if(sqlite3_exec(m_db,"BEGIN TRANSACTION;",nullptr,nullptr,nullptr)==SQLITE_OK) inTx=true;
         for(const auto &row: table.rows){
             try{
@@ -117,11 +117,12 @@ int SCL90RManager::importFromCSV(const std::string &filePath) {
                     q[80],q[81],q[82],q[83],q[84],q[85],q[86],q[87],q[88],q[89],
                     dt, dt);
                 if(!create(form)) failed++; else success++;
-            } catch(const std::exception &e){ failed++; utils::logMessage("ERROR", std::string("SCL90R CSV row error: ")+e.what()); }
+            } catch(const std::exception &e){ failed++; utils::LogEventContext ctx{"IMPORT","row_error","SCL90R", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("CSV row error: ")+e.what()); }
         }
         if(inTx){ if(sqlite3_exec(m_db,"COMMIT;",nullptr,nullptr,nullptr)!=SQLITE_OK) sqlite3_exec(m_db,"ROLLBACK;",nullptr,nullptr,nullptr);} }
-    catch(const std::exception &e){ if(inTx) sqlite3_exec(m_db,"ROLLBACK;",nullptr,nullptr,nullptr); utils::logMessage("ERROR", std::string("SCL90R CSV file error: ")+e.what()); }
-    utils::logMessage("INFO","SCL90RManager::importFromCSV success="+std::to_string(success)+", failed="+std::to_string(failed)); return success; }
+    catch(const std::exception &e){ if(inTx) sqlite3_exec(m_db,"ROLLBACK;",nullptr,nullptr,nullptr); utils::LogEventContext ctx{"IMPORT","file_error","SCL90R", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("CSV file error: ")+e.what()); }
+    { utils::LogEventContext ctx{"IMPORT","summary","SCL90R", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::INFO, ctx, std::string("importFromCSV success=")+std::to_string(success)+", failed="+std::to_string(failed)); }
+    return success; }
 
 void SCL90RManager::computeAndPersistDerived(int id) {
     sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,"SELECT * FROM scl90r WHERE id=?",-1,&stmt,nullptr)!=SQLITE_OK) return; sqlite3_bind_int(stmt,1,id);

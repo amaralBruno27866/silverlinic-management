@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include "utils/StructuredLogger.h"
 #include <cmath>
 
 using namespace std;
@@ -118,7 +119,12 @@ namespace utils {
     // Template para logging simples
     template<typename T>
     void logMessage(const string& level, const T& message) {
-        cout << "[" << getCurrentTimestamp() << "] [" << level << "] " << message << endl;
+        // Legacy shim -> structured logging
+        utils::LogLevel lvl = utils::LogLevel::INFO;
+        if(level == "ERROR") lvl = utils::LogLevel::ERROR; else if(level == "WARNING" || level=="WARN") lvl = utils::LogLevel::WARN; else if(level=="DEBUG") lvl = utils::LogLevel::DEBUG; else if(level=="TRACE") lvl = utils::LogLevel::TRACE;
+        utils::LogEventContext ctx{"LEGACY","log", std::nullopt, std::nullopt, std::nullopt};
+        std::ostringstream oss; oss << message; // generic stringify
+        utils::logStructured(lvl, ctx, oss.str());
     }
     
     // === NORMALIZAÇÃO PARA BANCO DE DADOS ===

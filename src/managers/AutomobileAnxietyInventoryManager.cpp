@@ -9,21 +9,21 @@ using namespace SilverClinic::Forms;
 bool AutomobileAnxietyInventoryManager::create(const AutomobileAnxietyInventory &form){
     const char* sql = R"SQL(INSERT INTO automobile_anxiety_inventory(
         id, case_profile_id, type,
-        q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12,q13,
-        q14_driver,q14_passenger,q14_no_difference,
-        q15_a,q15_b,
-        q16,q17,q18,
-        q19,q19_sidewalks,q19_crossing,q19_both,
-        q20,q21,q22,q23,
+        question_1,question_2,question_3,question_4,question_5,question_6,question_7,question_8,question_9,question_10,question_11,question_12,question_13,
+        question_14_driver,question_14_passenger,question_14_no_difference,
+        question_15_a,question_15_b,
+        question_16,question_17,question_18,
+        question_19,question_19_sidewalks,question_19_crossing,question_19_both,
+        question_20,question_21,question_22,question_23,
         created_at, modified_at
     ) VALUES(
         ?, ?, ?,               -- id, case_profile_id, type
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,        -- q1..q13 (13)
-        ?, ?, ?,               -- q14 variants (3)
-        ?, ?,                   -- q15_a, q15_b
-        ?, ?, ?,                -- q16,q17,q18
-        ?, ?, ?, ?,             -- q19 group (4)
-        ?, ?, ?, ?,             -- q20..q23 (4)
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,        -- question_1..question_13 (13)
+        ?, ?, ?,               -- question_14 variants (3)
+        ?, ?,                   -- question_15_a, question_15_b
+        ?, ?, ?,                -- question_16,17,18
+        ?, ?, ?, ?,             -- question_19 group (4)
+        ?, ?, ?, ?,             -- question_20..23 (4)
         ?, ?                    -- created_at, modified_at
     );)SQL";
     sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK){ utils::logDbPrepareError("AAI create", m_db, sql); return false; }
@@ -45,12 +45,12 @@ bool AutomobileAnxietyInventoryManager::create(const AutomobileAnxietyInventory 
 bool AutomobileAnxietyInventoryManager::update(const AutomobileAnxietyInventory &form){
     const char* sql = R"SQL(UPDATE automobile_anxiety_inventory SET
         case_profile_id=?,
-        q1=?,q2=?,q3=?,q4=?,q5=?,q6=?,q7=?,q8=?,q9=?,q10=?,q11=?,q12=?,q13=?,
-        q14_driver=?,q14_passenger=?,q14_no_difference=?,
-        q15_a=?,q15_b=?,
-        q16=?,q17=?,q18=?,
-        q19=?,q19_sidewalks=?,q19_crossing=?,q19_both=?,
-        q20=?,q21=?,q22=?,q23=?,
+        question_1=?,question_2=?,question_3=?,question_4=?,question_5=?,question_6=?,question_7=?,question_8=?,question_9=?,question_10=?,question_11=?,question_12=?,question_13=?,
+        question_14_driver=?,question_14_passenger=?,question_14_no_difference=?,
+        question_15_a=?,question_15_b=?,
+        question_16=?,question_17=?,question_18=?,
+        question_19=?,question_19_sidewalks=?,question_19_crossing=?,question_19_both=?,
+        question_20=?,question_21=?,question_22=?,question_23=?,
         modified_at=?
     WHERE id=?;)SQL";
     sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK){ utils::logDbPrepareError("AAI update", m_db, sql); return false; }
@@ -91,26 +91,26 @@ AutomobileAnxietyInventory AutomobileAnxietyInventoryManager::mapRow(sqlite3_stm
     return form; }
 
 std::optional<AutomobileAnxietyInventory> AutomobileAnxietyInventoryManager::getById(int id) const {
-    const char* sql = "SELECT * FROM automobile_anxiety_inventory WHERE id=?"; sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK) return std::nullopt; sqlite3_bind_int(stmt,1,id); std::optional<AutomobileAnxietyInventory> res; if(sqlite3_step(stmt)==SQLITE_ROW) res=mapRow(stmt); sqlite3_finalize(stmt); return res; }
+    const char* sql = "SELECT * FROM automobile_anxiety_inventory WHERE id=?"; sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK){ utils::logDbPrepareError("AAI getById", m_db, sql); return std::nullopt; } sqlite3_bind_int(stmt,1,id); std::optional<AutomobileAnxietyInventory> res; int rc=sqlite3_step(stmt); if(rc==SQLITE_ROW) res=mapRow(stmt); else if(rc!=SQLITE_DONE){ utils::LogEventContext ctx{"DB","step","AAI", std::to_string(id), std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("getById step error: ")+sqlite3_errmsg(m_db)); } sqlite3_finalize(stmt); return res; }
 
-std::vector<AutomobileAnxietyInventory> AutomobileAnxietyInventoryManager::listByCase(int caseProfileId) const { std::vector<AutomobileAnxietyInventory> v; const char* sql="SELECT * FROM automobile_anxiety_inventory WHERE case_profile_id=? ORDER BY created_at"; sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK) return v; sqlite3_bind_int(stmt,1,caseProfileId); while(sqlite3_step(stmt)==SQLITE_ROW) v.push_back(mapRow(stmt)); sqlite3_finalize(stmt); return v; }
+std::vector<AutomobileAnxietyInventory> AutomobileAnxietyInventoryManager::listByCase(int caseProfileId) const { std::vector<AutomobileAnxietyInventory> v; const char* sql="SELECT * FROM automobile_anxiety_inventory WHERE case_profile_id=? ORDER BY created_at"; sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK){ utils::logDbPrepareError("AAI listByCase", m_db, sql); return v; } sqlite3_bind_int(stmt,1,caseProfileId); int rc; while((rc=sqlite3_step(stmt))==SQLITE_ROW) v.push_back(mapRow(stmt)); if(rc!=SQLITE_DONE){ utils::LogEventContext ctx{"DB","step","AAI", std::to_string(caseProfileId), std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("listByCase step error: ")+sqlite3_errmsg(m_db)); } sqlite3_finalize(stmt); return v; }
 
-bool AutomobileAnxietyInventoryManager::deleteById(int id){ const char* sql="DELETE FROM automobile_anxiety_inventory WHERE id=?"; sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK) return false; sqlite3_bind_int(stmt,1,id); bool ok= sqlite3_step(stmt)==SQLITE_DONE; sqlite3_finalize(stmt); return ok; }
+bool AutomobileAnxietyInventoryManager::deleteById(int id){ const char* sql="DELETE FROM automobile_anxiety_inventory WHERE id=?"; sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db,sql,-1,&stmt,nullptr)!=SQLITE_OK){ utils::logDbPrepareError("AAI delete", m_db, sql); return false; } sqlite3_bind_int(stmt,1,id); int rc=sqlite3_step(stmt); if(rc!=SQLITE_DONE){ utils::LogEventContext ctx{"DB","step","AAI", std::to_string(id), std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("delete step error: ")+sqlite3_errmsg(m_db)); sqlite3_finalize(stmt); return false; } sqlite3_finalize(stmt); return true; }
 
 int AutomobileAnxietyInventoryManager::importFromCSV(const std::string &filePath){ int success=0, failed=0; bool inTx=false; try{ auto table=csv::CSVReader::readFile(filePath); std::vector<std::string> required={"case_profile_id"};
     // For questions: require 1-13 and 16-23; question 14 is represented by three variant columns (driver/passenger/no_difference)
     for(int i=1;i<=13;++i) required.push_back("question_"+std::to_string(i));
     for(int i=16;i<=23;++i) required.push_back("question_"+std::to_string(i));
     std::vector<std::string> optionals={"question_14_driver","question_14_passenger","question_14_no_difference","question_15_b","question_19_sidewalks","question_19_crossing","question_19_both"};
-    for(const auto &h: required){ if(std::find(table.headers.begin(),table.headers.end(),h)==table.headers.end()){ utils::logMessage("ERROR","AAI CSV missing header: "+h); return 0; } }
+    for(const auto &h: required){ if(std::find(table.headers.begin(),table.headers.end(),h)==table.headers.end()){ utils::LogEventContext ctx{"IMPORT","validate","AAI", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("CSV missing header: ")+h); return 0; } }
     bool hasQ14Driver = std::find(table.headers.begin(),table.headers.end(),"question_14_driver")!=table.headers.end();
     bool hasQ14Passenger = std::find(table.headers.begin(),table.headers.end(),"question_14_passenger")!=table.headers.end();
     bool hasQ14NoDiff = std::find(table.headers.begin(),table.headers.end(),"question_14_no_difference")!=table.headers.end();
-    if(!hasQ14Driver && !hasQ14Passenger && !hasQ14NoDiff){ utils::logMessage("INFO","AAI CSV: no question 14 variant columns present (driver/passenger/no_difference)"); }
+    if(!hasQ14Driver && !hasQ14Passenger && !hasQ14NoDiff){ utils::LogEventContext ctx{"IMPORT","info","AAI", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::INFO, ctx, "CSV: no question 14 variant columns present (driver/passenger/no_difference)"); }
     if(sqlite3_exec(m_db,"BEGIN TRANSACTION;",nullptr,nullptr,nullptr)==SQLITE_OK) inTx=true;
     for(const auto &row: table.rows){ try{ int caseId=std::stoi(csv::safeGet(row,"case_profile_id")); AutomobileAnxietyInventory form(caseId); // set boolean questions
             // Simple questions (1-13,16-18,19 yes/no,20-23) map to question_X columns (treat non-empty & not 0 as yes)
-            auto readBool=[&](int q){ std::string v=csv::safeGet(row,"question_"+std::to_string(q)); if(v.empty()) return false; return v!="0"; };
+            auto readBool=[&](int q){ std::string v=csv::safeGet(row,"question_"+std::to_string(q)); if(v=="1") return true; return false; }; // somente '1' é true; qualquer outro valor tratado como 0
             form.setQuestion1(readBool(1)); form.setQuestion2(readBool(2)); form.setQuestion3(readBool(3)); form.setQuestion4(readBool(4)); form.setQuestion5(readBool(5)); form.setQuestion6(readBool(6)); form.setQuestion7(readBool(7)); form.setQuestion8(readBool(8)); form.setQuestion9(readBool(9)); form.setQuestion10(readBool(10)); form.setQuestion11(readBool(11)); form.setQuestion12(readBool(12)); form.setQuestion13(readBool(13));
             // Question 14 options
             if(std::find(table.headers.begin(),table.headers.end(),"question_14_driver")!=table.headers.end()) form.setQuestion14Driver(csv::safeGet(row,"question_14_driver")=="1");
@@ -123,7 +123,8 @@ int AutomobileAnxietyInventoryManager::importFromCSV(const std::string &filePath
             if(std::find(table.headers.begin(),table.headers.end(),"question_19_both")!=table.headers.end()) form.setQuestion19Both(csv::safeGet(row,"question_19_both")=="1");
             form.setQuestion20(readBool(20)); form.setQuestion21(readBool(21)); form.setQuestion22(readBool(22)); form.setQuestion23(readBool(23));
             std::string created = csv::safeGet(row,"created_at"); if(created.empty()) created = utils::getCurrentTimestamp(); // timestamps handled internally
-            if(!create(form)) failed++; else success++; } catch(const std::exception &e){ failed++; utils::logMessage("ERROR", std::string("AAI CSV row error: ")+e.what()); } }
+            if(!create(form)) failed++; else success++; } catch(const std::exception &e){ failed++; utils::LogEventContext ctx{"IMPORT","row_error","AAI", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("CSV row error: ")+e.what()); } }
     if(inTx){ if(sqlite3_exec(m_db,"COMMIT;",nullptr,nullptr,nullptr)!=SQLITE_OK) sqlite3_exec(m_db,"ROLLBACK;",nullptr,nullptr,nullptr);} }
-    catch(const std::exception &e){ if(inTx) sqlite3_exec(m_db,"ROLLBACK;",nullptr,nullptr,nullptr); utils::logMessage("ERROR", std::string("AAI CSV file error: ")+e.what()); }
-    utils::logMessage("INFO","AutomobileAnxietyInventoryManager::importFromCSV success="+std::to_string(success)+", failed="+std::to_string(failed)); return success; }
+    catch(const std::exception &e){ if(inTx) sqlite3_exec(m_db,"ROLLBACK;",nullptr,nullptr,nullptr); utils::LogEventContext ctx{"IMPORT","file_error","AAI", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::ERROR, ctx, std::string("CSV file error: ")+e.what()); }
+    { utils::LogEventContext ctx{"IMPORT","summary","AAI", std::nullopt, std::nullopt}; utils::logStructured(utils::LogLevel::INFO, ctx, std::string("importFromCSV success=")+std::to_string(success)+", failed="+std::to_string(failed)); }
+    return success; }
