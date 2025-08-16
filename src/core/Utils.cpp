@@ -15,7 +15,7 @@ namespace utils {
 	std::string toUpper(const std::string& str)
 	{
 		std::string result = str;
-		std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+		std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
 		return result;
 	}
 
@@ -95,10 +95,10 @@ namespace utils {
 			if (std::isspace(static_cast<unsigned char>(result[i]))) {
 				newWord = true;
 			} else if (newWord) {
-				result[i] = std::toupper(static_cast<unsigned char>(result[i]));
+				result[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(result[i])));
 				newWord = false;
 			} else {
-				result[i] = std::tolower(static_cast<unsigned char>(result[i]));
+				result[i] = static_cast<char>(std::tolower(static_cast<unsigned char>(result[i])));
 			}
 		}
 		return result;
@@ -237,12 +237,12 @@ namespace utils {
 
 	std::string maskSensitiveData(const std::string& data, int visibleChars)
 	{
-		if (data.length() <= visibleChars) {
+		if (data.length() <= static_cast<size_t>(visibleChars)) {
 			return std::string(data.length(), '*');
 		}
-		
-		std::string result = data.substr(0, visibleChars);
-		result += std::string(data.length() - visibleChars, '*');
+
+		std::string result = data.substr(0, static_cast<size_t>(visibleChars));
+		result += std::string(data.length() - static_cast<size_t>(visibleChars), '*');
 		return result;
 	}
 

@@ -440,7 +440,9 @@ bool CaseProfileManager::validateCaseProfile(const CaseProfile& caseProfile) con
     
     // Validate status
     string status = caseProfile.getStatus();
-    if (status != "Pending" && status != "Active" && status != "Closed" && status != "Cancelled") {
+    // Accept both human-readable (capitalized) and normalized uppercase variants
+    if (status != "Pending" && status != "Active" && status != "Closed" && status != "Cancelled" &&
+        status != "PENDING" && status != "ACTIVE" && status != "CLOSED" && status != "CANCELLED") {
         logMessage("ERROR", "Validation failed: Invalid status: " + status);
         return false;
     }

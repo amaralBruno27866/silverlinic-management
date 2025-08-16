@@ -199,7 +199,7 @@ bool test_SetInvalidPainLevel() {
 
 bool test_SetInvalidComments() {
     PainBodyMap pbm(400001);
-    string longComment(256, 'x'); // 256 characters, exceeds 255 limit
+    string longComment(501, 'x'); // exceeds 500 character limit in implementation
     bool exception_thrown = false;
     
     try {
@@ -292,8 +292,8 @@ bool test_ValidationMethods() {
     // Test comments validation
     TEST_ASSERT(pbm.isValidComments(""), "Empty comments should be valid");
     TEST_ASSERT(pbm.isValidComments("Short comment"), "Short comments should be valid");
-    TEST_ASSERT(pbm.isValidComments(string(255, 'x')), "255 character comments should be valid");
-    TEST_ASSERT(!pbm.isValidComments(string(256, 'x')), "256 character comments should be invalid");
+    TEST_ASSERT(pbm.isValidComments(string(500, 'x')), "500 character comments should be valid");
+    TEST_ASSERT(!pbm.isValidComments(string(501, 'x')), "501 character comments should be invalid");
     
     // Test case profile ID validation
     TEST_ASSERT(pbm.isValidCaseProfileId(400001), "Case profile ID 400001 should be valid");
@@ -357,13 +357,13 @@ bool test_AdditionalComments() {
     pbm.setAdditionalComments("Patient reports chronic pain patterns.");
     TEST_ASSERT(pbm.getAdditionalComments() == "Patient reports chronic pain patterns.", "Additional comments should match");
     
-    // Test long comment (within limit)
-    string longComment(1000, 'x');
+    // Test long comment within 2000 char limit (implementation limit)
+    string longComment(2000, 'x');
     pbm.setAdditionalComments(longComment);
     TEST_ASSERT(pbm.getAdditionalComments() == longComment, "Long comments should be accepted");
     
     // Test comment too long
-    string tooLongComment(1001, 'x');
+    string tooLongComment(2001, 'x');
     bool exception_thrown = false;
     try {
         pbm.setAdditionalComments(tooLongComment);

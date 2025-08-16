@@ -174,20 +174,20 @@ namespace SilverClinic {
     // Status conversion helper methods
     string CaseProfile::getStatusString(int statusId) {
         switch (statusId) {
-            case STATUS_PENDING: return "PENDING";
-            case STATUS_ACTIVE: return "ACTIVE";
-            case STATUS_CLOSED: return "CLOSED";
-            case STATUS_CANCELLED: return "CANCELLED";
-            default: return "UNKNOWN";
+            case STATUS_PENDING: return "Pending";
+            case STATUS_ACTIVE: return "Active";
+            case STATUS_CLOSED: return "Closed";
+            case STATUS_CANCELLED: return "Cancelled";
+            default: return "Unknown";
         }
     }
 
     int CaseProfile::getStatusFromString(const string& status) {
         string normalizedStatus = utils::normalizeForDatabase(status);
-        if (normalizedStatus == "PENDING") return STATUS_PENDING;
-        if (normalizedStatus == "ACTIVE") return STATUS_ACTIVE;
-        if (normalizedStatus == "CLOSED") return STATUS_CLOSED;
-        if (normalizedStatus == "CANCELLED") return STATUS_CANCELLED;
+        if (normalizedStatus == "PENDING" || normalizedStatus == "Pending") return STATUS_PENDING;
+        if (normalizedStatus == "ACTIVE" || normalizedStatus == "Active") return STATUS_ACTIVE;
+        if (normalizedStatus == "CLOSED" || normalizedStatus == "Closed") return STATUS_CLOSED;
+        if (normalizedStatus == "CANCELLED" || normalizedStatus == "Cancelled") return STATUS_CANCELLED;
         return STATUS_PENDING; // Default to pending if unknown
     }
 

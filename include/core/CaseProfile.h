@@ -9,6 +9,7 @@ using namespace std;
 namespace SilverClinic {
   class CaseProfile {
     public:
+    enum class Status { Pending, Active, Closed, Cancelled };
     // Status constants
     static const int STATUS_PENDING = 1;
     static const int STATUS_ACTIVE = 2;
@@ -104,6 +105,16 @@ namespace SilverClinic {
     // Status conversion helper methods
     static string getStatusString(int statusId);
     static int getStatusFromString(const string& status);
+  public:
+  static std::string toString(Status s){
+    switch(s){
+      case Status::Pending: return "Pending";
+      case Status::Active: return "Active";
+      case Status::Closed: return "Closed";
+      case Status::Cancelled: return "Cancelled";
+    }
+    return "Unknown";
+  }
     
     public:
     // Stream operators

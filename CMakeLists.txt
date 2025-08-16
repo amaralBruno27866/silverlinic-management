@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(SilverClinic)
 
+enable_testing()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -139,6 +141,7 @@ if(BUILD_TESTING)
         get_filename_component(test_name ${test_src} NAME_WE)
         add_executable(${test_name} ${test_src})
         target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+        add_test(NAME ${test_name} COMMAND ${test_name})
     endforeach()
 
     # Form tests (explicit list to ensure inclusion)
@@ -146,12 +149,16 @@ if(BUILD_TESTING)
         tests/forms/test_PainBodyMap.cpp
         tests/forms/test_ActivitiesOfDailyLiving.cpp
         tests/forms/test_SCL90R.cpp
+    tests/forms/test_BDIManager.cpp
+    tests/forms/test_BAIManager.cpp
+    tests/forms/test_SCL90RManager.cpp
     )
     foreach(test_src ${FORMS_TEST_SOURCES})
         if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
             get_filename_component(test_name ${test_src} NAME_WE)
             add_executable(${test_name} ${test_src})
             target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+            add_test(NAME ${test_name} COMMAND ${test_name})
         endif()
     endforeach()
 
@@ -161,12 +168,14 @@ if(BUILD_TESTING)
         tests/integration/test_database.cpp
         tests/integration/test_datetime_integration.cpp
     tests/integration/test_pragmas.cpp
+    tests/integration/test_form_generation.cpp
     )
     foreach(test_src ${INTEGRATION_TEST_SOURCES})
         if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
             get_filename_component(test_name ${test_src} NAME_WE)
             add_executable(${test_name} ${test_src})
             target_link_libraries(${test_name} ${PROJECT_NAME}_lib)
+            add_test(NAME ${test_name} COMMAND ${test_name})
         endif()
     endforeach()
 endif()
