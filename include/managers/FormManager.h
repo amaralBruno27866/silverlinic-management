@@ -52,6 +52,9 @@ namespace SilverClinic {
         bool writeFile(const std::string& path, const std::string& content) const;
     std::string injectContext(const std::string& html, const Context& ctx, const std::string& key) const;
     bool formRequiresContext(const std::string& key) const;
+
+    // Helper to perform placeholder replacements (supports legacy uppercase tokens during transition)
+    void replaceAllPlaceholders(std::string &buffer, const Context& ctx) const;
         bool isUniqueFormIdField(const std::string& line) const;
     };
 

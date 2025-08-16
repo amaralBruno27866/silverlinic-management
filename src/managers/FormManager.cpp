@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <cstring> // for strlen
 
 using namespace std;
 using namespace SilverClinic;
@@ -152,14 +153,35 @@ string FormManager::injectContext(const string& html, const Context& ctx, const 
     }
     string joined; joined.reserve(html.size()+512);
     for (auto &l : lines) { joined += l; if (joined.empty() || joined.back()!='\n') joined += '\n'; }
-    auto replaceAll = [&](const string& token, const string& value){ size_t pos=0; while((pos=joined.find(token,pos))!=string::npos){ joined.replace(pos, token.size(), value); pos+=value.size(); } };
-    replaceAll("{{case_profile_id}}", to_string(ctx.caseProfileId));
-    replaceAll("{{assessor_full_name}}", ctx.assessorFullName);
-    replaceAll("{{assessor_email}}", ctx.assessorEmail);
-    replaceAll("{{client_full_name}}", ctx.clientFullName);
-    replaceAll("{{client_email}}", ctx.clientEmail);
-    replaceAll("{{created_at}}", ctx.caseCreatedAt);
+    replaceAllPlaceholders(joined, ctx);
     return joined;
+}
+
+void FormManager::replaceAllPlaceholders(string &buffer, const Context& ctx) const {
+    struct PH { const char* token; string value; };
+    const string caseId = to_string(ctx.caseProfileId);
+    vector<PH> ph = {
+        {"{{case_profile_id}}", caseId},
+        {"{{assessor_full_name}}", ctx.assessorFullName},
+        {"{{assessor_email}}", ctx.assessorEmail},
+        {"{{client_full_name}}", ctx.clientFullName},
+        {"{{client_email}}", ctx.clientEmail},
+        {"{{created_at}}", ctx.caseCreatedAt},
+        // Legacy uppercase placeholders (to be removed after templates are migrated)
+        {"{{CASE_PROFILE_ID}}", caseId},
+        {"{{ASSESSOR_FULL_NAME}}", ctx.assessorFullName},
+        {"{{ASSESSOR_EMAIL}}", ctx.assessorEmail},
+        {"{{CLIENT_FULL_NAME}}", ctx.clientFullName},
+        {"{{CLIENT_EMAIL}}", ctx.clientEmail},
+        {"{{CREATED_AT}}", ctx.caseCreatedAt}
+    };
+    for (auto &p : ph) {
+        size_t pos = 0;
+        while ((pos = buffer.find(p.token, pos)) != string::npos) {
+            buffer.replace(pos, strlen(p.token), p.value);
+            pos += p.value.size();
+        }
+    }
 }
 
 vector<FormGenerationResult> FormManager::generateForms(int caseProfileId,
