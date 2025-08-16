@@ -641,6 +641,14 @@ int main() {
         }
         
         logMessage("INFO", "Database opened successfully: " + DatabaseConfig::MAIN_DATABASE_PATH);
+
+    // Apply standardized PRAGMAs (centralized)
+    if (!DatabaseConfig::applyStandardPragmas(db)) {
+        cerr << "❌ Failed to apply standard SQLite PRAGMAs" << endl;
+        sqlite3_close(db);
+        return 1;
+    }
+    logMessage("INFO", "Standard SQLite PRAGMAs applied successfully");
         
         // Validate database integrity
         if (!validateDatabaseIntegrity(db)) {

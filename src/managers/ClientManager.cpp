@@ -545,14 +545,21 @@ void ClientManager::logDatabaseError(const string& operation) const {
 
 int ClientManager::importFromCSV(const string& filePath) {
     int success = 0;
+    int failed  = 0;
+    bool inTransaction = false;
     try {
         auto table = csv::CSVReader::readFile(filePath);
         const vector<string> required = {"firstname","lastname","phone","email","date_of_birth","created_at"};
         for (const auto &h : required) {
             if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
                 utils::logMessage("ERROR", "ClientManager::importFromCSV - Missing required header: " + h);
-                return 0;
+                return 0; // structural error
             }
+        }
+        if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
+            inTransaction = true;
+        } else {
+            utils::logMessage("ERROR", "ClientManager::importFromCSV - Failed to BEGIN TRANSACTION (continuing non-atomic)");
         }
         for (const auto &row : table.rows) {
             try {
@@ -566,7 +573,6 @@ int ClientManager::importFromCSV(const string& filePath) {
                 DateTime createdAt = createdAtRaw.empty() ? DateTime::now() : DateTime::fromString(createdAtNorm);
                 DateTime modifiedAt = createdAt;
 
-                // Address (optional)
                 Address address;
                 string street = csv::safeGet(row, "street");
                 if (!street.empty()) {
@@ -584,17 +590,28 @@ int ClientManager::importFromCSV(const string& filePath) {
                 int id = Client::getNextClientId();
                 Client client(id, firstName, lastName, email, phone, dob, address, createdAt, modifiedAt);
                 if (!create(client)) {
+                    failed++;
                     utils::logMessage("ERROR", "Failed to insert client from CSV row (email: " + email + ")");
                     continue;
                 }
                 success++;
             } catch (const exception &e) {
+                failed++;
                 utils::logMessage("ERROR", string("ClientManager::importFromCSV row error: ")+ e.what());
             }
         }
+        if (inTransaction) {
+            if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+                utils::logMessage("ERROR", "ClientManager::importFromCSV - COMMIT failed, attempting ROLLBACK");
+                sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+            }
+        }
     } catch (const exception &e) {
+        if (inTransaction) {
+            sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+        }
         utils::logMessage("ERROR", string("ClientManager::importFromCSV file error: ")+ e.what());
     }
-    utils::logMessage("INFO", "ClientManager::importFromCSV imported " + to_string(success) + " rows");
+    utils::logMessage("INFO", "ClientManager::importFromCSV imported success=" + to_string(success) + ", failed=" + to_string(failed));
     return success;
 }

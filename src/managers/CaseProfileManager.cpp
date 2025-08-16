@@ -733,8 +733,8 @@ int CaseProfileManager::generateBulkPDFReports(const vector<int>& caseProfileIds
 }
 
 bool CaseProfileManager::generateCustomPDFReport(int caseProfileId, const string& outputPath, 
-                                                bool includeTimeline, bool includeFullNotes, 
-                                                const string& watermarkText) const {
+                                                bool /*includeTimeline*/, bool /*includeFullNotes*/, 
+                                                const string& /*watermarkText*/) const {
     // Custom implementation similar to generatePDFReport but with custom options
     logMessage("INFO", "Custom PDF generation requested for case: " + to_string(caseProfileId));
     
@@ -746,39 +746,32 @@ bool CaseProfileManager::generateCustomPDFReport(int caseProfileId, const string
 // PDF Generation Helper Methods
 // ========================================
 
-bool CaseProfileManager::generatePDFHeader(void* pdfPage, const string& reportType) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFHeader(void* /*pdfPage*/, const string& /*reportType*/) const {
+    return true; // deprecated stub
 }
 
-bool CaseProfileManager::generatePDFCaseInfo(void* pdfPage, const CaseProfile& caseProfile) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFCaseInfo(void* /*pdfPage*/, const CaseProfile& /*caseProfile*/) const {
+    return true; // deprecated stub
 }
 
-bool CaseProfileManager::generatePDFClientInfo(void* pdfPage, int clientId) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFClientInfo(void* /*pdfPage*/, int /*clientId*/) const {
+    return true; // deprecated stub
 }
 
-bool CaseProfileManager::generatePDFAssessorInfo(void* pdfPage, int assessorId) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFAssessorInfo(void* /*pdfPage*/, int /*assessorId*/) const {
+    return true; // deprecated stub
 }
 
-bool CaseProfileManager::generatePDFTimeline(void* pdfPage, int caseProfileId) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFTimeline(void* /*pdfPage*/, int /*caseProfileId*/) const {
+    return true; // deprecated stub
 }
 
-bool CaseProfileManager::generatePDFNotes(void* pdfPage, const string& notes) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFNotes(void* /*pdfPage*/, const string& /*notes*/) const {
+    return true; // deprecated stub
 }
 
-bool CaseProfileManager::generatePDFFooter(void* pdfPage) const {
-    // This method is no longer used - PDF generation is now inline
-    return true;
+bool CaseProfileManager::generatePDFFooter(void* /*pdfPage*/) const {
+    return true; // deprecated stub
 }
 
 // Helper methods for PDF formatting
@@ -794,14 +787,21 @@ string CaseProfileManager::getStatusIcon(const string& status) const {
 
 int CaseProfileManager::importFromCSV(const string& filePath) {
     int success = 0;
+    int failed  = 0;
+    bool inTransaction = false;
     try {
         auto table = csv::CSVReader::readFile(filePath);
         const vector<string> required = {"client_id","assessor_id","status","notes","created_at"};
         for (const auto &h : required) {
             if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
                 logMessage("ERROR", "CaseProfileManager::importFromCSV - Missing required header: " + h);
-                return 0;
+                return 0; // structural error
             }
+        }
+        if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
+            inTransaction = true;
+        } else {
+            logMessage("ERROR", "CaseProfileManager::importFromCSV - Failed to BEGIN TRANSACTION (continuing non-atomic)");
         }
         for (const auto &row : table.rows) {
             try {
@@ -819,11 +819,10 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
                 int id = CaseProfile::getNextCaseProfileId();
                 CaseProfile cp(id, clientId, assessorId, status, notes, createdAt, closedAt, modifiedAt);
                 if (!create(cp)) {
+                    failed++;
                     logMessage("ERROR", "Failed to insert case profile from CSV row (id attempt: " + toString(id) + ")");
                     continue;
                 }
-
-                // If closedAt was provided but schema create() insert omits closed_at, perform update now
                 if (!closedAtRaw.empty()) {
                     const string upd = "UPDATE case_profile SET closed_at = ? WHERE id = ?";
                     sqlite3_stmt* stmt;
@@ -838,13 +837,23 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
                 }
                 success++;
             } catch (const exception &e) {
+                failed++;
                 logMessage("ERROR", string("CaseProfileManager::importFromCSV row error: ")+ e.what());
             }
         }
+        if (inTransaction) {
+            if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+                logMessage("ERROR", "CaseProfileManager::importFromCSV - COMMIT failed, attempting ROLLBACK");
+                sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+            }
+        }
     } catch (const exception &e) {
-        logMessage("ERROR", string("CaseProfileManager::importFromCSV file error: ")+ e.what());
+        if (inTransaction) {
+            sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+        }
+        logMessage("ERROR", string("CaseProfileManager::importFromCSV file error: ") + e.what());
     }
-    logMessage("INFO", "CaseProfileManager::importFromCSV imported " + toString(success) + " rows");
+    logMessage("INFO", "CaseProfileManager::importFromCSV imported success=" + toString(success) + ", failed=" + toString(failed));
     return success;
 }
 

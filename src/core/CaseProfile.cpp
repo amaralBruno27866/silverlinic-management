@@ -101,15 +101,20 @@ namespace SilverClinic {
             string closeNote = (m_notes.empty() ? "" : "\n") + string("Closed: ") + reason;
             string newNotes = m_notes + closeNote;
             
-            if (newNotes.length() > MAX_NOTES_LENGTH) {
+            if (newNotes.length() > static_cast<size_t>(MAX_NOTES_LENGTH)) {
                 // Truncate to fit within limit
-                int availableSpace = MAX_NOTES_LENGTH - m_notes.length();
-                if (availableSpace > 10) { // Minimum space for close note
-                    string truncatedCloseNote = closeNote.substr(0, availableSpace);
-                    m_notes += truncatedCloseNote;
-                    utils::logMessage("WARNING", "Close reason truncated to fit within notes limit");
+                size_t currentLen = m_notes.length();
+                if (currentLen < static_cast<size_t>(MAX_NOTES_LENGTH)) {
+                    size_t availableSpace = static_cast<size_t>(MAX_NOTES_LENGTH) - currentLen;
+                    if (availableSpace > 10U) { // Minimum space for close note
+                        string truncatedCloseNote = closeNote.substr(0, availableSpace);
+                        m_notes += truncatedCloseNote;
+                        utils::logMessage("WARNING", "Close reason truncated to fit within notes limit");
+                    } else {
+                        utils::logMessage("WARNING", "Cannot add close reason - notes too long");
+                    }
                 } else {
-                    utils::logMessage("WARNING", "Cannot add close reason - notes too long");
+                    utils::logMessage("WARNING", "Cannot add close reason - notes already at limit");
                 }
             } else {
                 m_notes = newNotes;

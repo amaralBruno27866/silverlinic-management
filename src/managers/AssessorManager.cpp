@@ -488,16 +488,24 @@ void AssessorManager::logDatabaseError(const string& operation) const {
 
 int AssessorManager::importFromCSV(const string& filePath) {
     int success = 0;
+    int failed  = 0;
+    bool inTransaction = false;
     try {
         auto table = csv::CSVReader::readFile(filePath);
-        // Basic required headers
         const vector<string> required = {"firstname","lastname","phone","email","created_at"};
         for (const auto &h : required) {
             if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
                 utils::logMessage("ERROR", "AssessorManager::importFromCSV - Missing required header: " + h);
-                return 0;
+                return 0; // structural error, nothing inserted yet
             }
         }
+        // Begin best-effort transaction
+        if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
+            inTransaction = true;
+        } else {
+            utils::logMessage("ERROR", "AssessorManager::importFromCSV - Failed to BEGIN TRANSACTION (continuing without atomic batch)");
+        }
+
         for (const auto &row : table.rows) {
             try {
                 string firstName = utils::normalizeName(csv::safeGet(row, "firstname"));
@@ -507,9 +515,8 @@ int AssessorManager::importFromCSV(const string& filePath) {
                 string createdAtRaw = csv::safeGet(row, "created_at");
                 string createdAtNorm = csv::normalizeTimestampForDateTime(createdAtRaw);
                 DateTime createdAt = createdAtRaw.empty() ? DateTime::now() : DateTime::fromString(createdAtNorm);
-                DateTime modifiedAt = createdAt; // initial
+                DateTime modifiedAt = createdAt;
 
-                // Address (optional)
                 Address address;
                 string street = csv::safeGet(row, "street");
                 if (!street.empty()) {
@@ -527,17 +534,29 @@ int AssessorManager::importFromCSV(const string& filePath) {
                 int id = Assessor::getNextAssessorId();
                 Assessor assessor(id, firstName, lastName, email, phone, address, createdAt, modifiedAt);
                 if (!create(assessor)) {
+                    failed++;
                     utils::logMessage("ERROR", "Failed to insert assessor from CSV row (email: " + email + ")");
                     continue;
                 }
                 success++;
             } catch (const exception &e) {
-                utils::logMessage("ERROR", string("AssessorManager::importFromCSV row error: ")+ e.what());
+                failed++;
+                utils::logMessage("ERROR", string("AssessorManager::importFromCSV row error: ") + e.what());
+            }
+        }
+
+        if (inTransaction) {
+            if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
+                utils::logMessage("ERROR", "AssessorManager::importFromCSV - COMMIT failed, attempting ROLLBACK");
+                sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
             }
         }
     } catch (const exception &e) {
-        utils::logMessage("ERROR", string("AssessorManager::importFromCSV file error: ")+ e.what());
+        if (inTransaction) {
+            sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+        }
+        utils::logMessage("ERROR", string("AssessorManager::importFromCSV file error: ") + e.what());
     }
-    utils::logMessage("INFO", "AssessorManager::importFromCSV imported " + to_string(success) + " rows");
+    utils::logMessage("INFO", "AssessorManager::importFromCSV imported success=" + to_string(success) + ", failed=" + to_string(failed));
     return success;
 }

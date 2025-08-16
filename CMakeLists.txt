@@ -4,6 +4,20 @@ project(SilverClinic)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Option: enable strict compile warnings by default
+option(BUILD_STRICT_DEFAULT "Enable strict compiler warnings" ON)
+
+if (BUILD_STRICT_DEFAULT)
+    if (MSVC)
+        add_compile_options(/W4 /permissive-)
+    else()
+        add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+    endif()
+endif()
+
+# Position independent code for shared lib friendliness
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Windows-specific configuration
 if(WIN32)
     # Enable static runtime for Windows
@@ -98,6 +112,23 @@ target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
+# Installation rules
+include(GNUInstallDirs)
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_lib
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+# Install static assets (HTML templates)
+if (EXISTS ${CMAKE_SOURCE_DIR}/web/views)
+    install(DIRECTORY web/views DESTINATION ${CMAKE_INSTALL_DATADIR}/silverclinic)
+endif()
+
+# Optionally install existing database (mainly for demo). In production a migration/init step should create it.
+if (EXISTS ${CMAKE_SOURCE_DIR}/data/clinic.db)
+    install(FILES data/clinic.db DESTINATION ${CMAKE_INSTALL_DATADIR}/silverclinic OPTIONAL)
+endif()
+
 # Optional test build toggle
 option(BUILD_TESTING "Build test executables" ON)
 
@@ -129,6 +160,7 @@ if(BUILD_TESTING)
         tests/integration/test_pdf.cpp
         tests/integration/test_database.cpp
         tests/integration/test_datetime_integration.cpp
+    tests/integration/test_pragmas.cpp
     )
     foreach(test_src ${INTEGRATION_TEST_SOURCES})
         if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})

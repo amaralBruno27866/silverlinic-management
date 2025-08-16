@@ -460,7 +460,7 @@ namespace SilverClinic {
             int totalDifficulties = 0;
             
             for (const auto& [categoryName, activities] : STANDARD_ACTIVITIES) {
-                totalActivities += activities.size();
+                totalActivities += static_cast<int>(activities.size());
             }
             
             totalDifficulties = getTotalDifficulties();
@@ -542,7 +542,7 @@ namespace SilverClinic {
             for (const string& category : STANDARD_CATEGORIES) {
                 int difficulties = getDifficultiesInCategory(category);
                 auto it = STANDARD_ACTIVITIES.find(category);
-                int totalActivities = (it != STANDARD_ACTIVITIES.end()) ? it->second.size() : 0;
+                int totalActivities = (it != STANDARD_ACTIVITIES.end()) ? static_cast<int>(it->second.size()) : 0;
                 
                 cout << "\n" << category << ":" << endl;
                 cout << "  Difficulties: " << difficulties << "/" << totalActivities << endl;
@@ -629,7 +629,7 @@ namespace SilverClinic {
             return os;
         }
 
-        istream& operator>>(istream& is, ActivitiesOfDailyLiving& adl) {
+    istream& operator>>(istream& is, ActivitiesOfDailyLiving& /*adl*/) {
             // Basic implementation for reading from stream
             string line;
             getline(is, line);

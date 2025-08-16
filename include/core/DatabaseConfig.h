@@ -2,6 +2,7 @@
 #define DATABASE_CONFIG_H
 
 #include <string>
+#include <sqlite3.h>
 
 namespace SilverClinic {
     
@@ -45,6 +46,21 @@ namespace SilverClinic {
          * @return true if cleanup was successful, false otherwise
          */
         static bool cleanupTestDatabases();
+
+    /**
+     * @brief Apply standard SQLite PRAGMAs used across the application.
+     *
+     * Enforces:
+     *  - foreign_keys = ON (referential integrity)
+     *  - journal_mode = WAL (better concurrency / durability balance)
+     *  - synchronous = NORMAL (performance vs safety trade-off acceptable for app)
+     *
+     * This centralizes configuration to avoid duplication in executables / tests.
+     *
+     * @param db Open sqlite3* handle (must not be null)
+     * @return true if all PRAGMAs executed (foreign_keys verified ON), false otherwise
+     */
+    static bool applyStandardPragmas(sqlite3* db);
         
     private:
         DatabaseConfig() = delete; // Static-only class

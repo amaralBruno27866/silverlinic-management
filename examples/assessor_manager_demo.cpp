@@ -24,8 +24,11 @@ void initializeDatabase() {
         exit(1);
     }
     
-    // Enable foreign keys
-    sqlite3_exec(db, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+    // Apply core PRAGMAs via centralized helper
+    if (!DatabaseConfig::applyStandardPragmas(db)) {
+        cerr << "Failed to apply standard PRAGMAs" << endl;
+        exit(1);
+    }
     
     // Create tables (same as in main.cpp)
     string createAssessorTable = R"(

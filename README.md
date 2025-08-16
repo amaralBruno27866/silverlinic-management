@@ -162,10 +162,12 @@ familyDoc.setPostalCode("M5G1X5");  // Auto-formatted to "M5G 1X5"
 ### ✅ Completed
 - Core entity management system
 - SQLite3 database integration
+- Centralized SQLite PRAGMA application (foreign_keys=ON, WAL mode, synchronous=NORMAL)
 - Canadian data validation utilities
 - Case profile workflow management
 - Form processing framework
 - Character limit validation
+- Unified lowercase snake_case HTML placeholder convention (e.g., {{case_profile_id}}, {{assessor_full_name}})
 
 ### 🔄 In Progress
 - Additional form entities (Emergency Contact, Legal Representative)
@@ -174,6 +176,23 @@ familyDoc.setPostalCode("M5G1X5");  // Auto-formatted to "M5G 1X5"
 - Appointment scheduling
 
 ### 📋 Planned
+## 🔤 Placeholder Convention
+
+All dynamic HTML template placeholders follow lowercase snake_case wrapped in double curly braces, e.g.:
+
+{{case_profile_id}}, {{assessor_full_name}}, {{assessor_email}}, {{client_full_name}}, {{client_email}}, {{created_at}}
+
+Legacy UPPERCASE placeholders were removed (August 2025 migration). `FormManager` now only replaces the new lowercase tokens ensuring consistency across templates and reducing conditional replacement logic.
+
+## ⚙️ SQLite Configuration
+
+Standard database runtime settings are applied immediately after each `sqlite3_open` via `DatabaseConfig::applyStandardPragmas(sqlite3*)`:
+
+- PRAGMA foreign_keys=ON (referential integrity enforcement)
+- PRAGMA journal_mode=WAL (improved concurrent read performance)
+- PRAGMA synchronous=NORMAL (balanced durability vs performance)
+
+Integration test `test_pragmas` verifies `foreign_keys` is active.
 - Multi-language support
 - Advanced reporting dashboard
 - Integration with external systems

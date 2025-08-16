@@ -1,6 +1,7 @@
 #include "core/DatabaseConfig.h"
 #include <filesystem>
 #include <iostream>
+#include <sqlite3.h>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -96,6 +97,33 @@ namespace SilverClinic {
             std::cerr << "Error cleaning up test databases: " << e.what() << std::endl;
             return false;
         }
+    }
+
+    bool DatabaseConfig::applyStandardPragmas(sqlite3* db) {
+        if (!db) return false;
+        // Order: foreign_keys first (no dependency), then WAL, then synchronous.
+        char* errMsg = nullptr;
+        auto exec = [&](const char* sql){
+            if (sqlite3_exec(db, sql, nullptr, nullptr, &errMsg) != SQLITE_OK) {
+                std::cerr << "PRAGMA error (" << sql << "): " << (errMsg?errMsg:"?") << std::endl;
+                if (errMsg) sqlite3_free(errMsg);
+                return false;
+            }
+            return true;
+        };
+        if (!exec("PRAGMA foreign_keys=ON;")) return false;
+        if (!exec("PRAGMA journal_mode=WAL;")) return false;
+        if (!exec("PRAGMA synchronous=NORMAL;")) return false;
+        // Verify foreign_keys actually ON (defensive)
+        sqlite3_stmt* stmt = nullptr;
+        bool ok = false;
+        if (sqlite3_prepare_v2(db, "PRAGMA foreign_keys;", -1, &stmt, nullptr) == SQLITE_OK) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                ok = sqlite3_column_int(stmt, 0) == 1;
+            }
+        }
+        if (stmt) sqlite3_finalize(stmt);
+        return ok;
     }
     
 } // namespace SilverClinic

@@ -59,11 +59,15 @@ optional<FormManager::Context> FormManager::loadContext(int caseProfileId) const
         ctx.assessorId = sqlite3_column_int(stmt, 1);
         const char* createdAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
         ctx.caseCreatedAt = createdAt ? createdAt : "";
-        string cFirst = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)) ?: "";
-        string cLast  = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)) ?: "";
+    const char* cFirstPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+    const char* cLastPtr  = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+    string cFirst = cFirstPtr ? cFirstPtr : "";
+    string cLast  = cLastPtr  ? cLastPtr  : "";
         const char* cEmail = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
-        string aFirst = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6)) ?: "";
-        string aLast  = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)) ?: "";
+    const char* aFirstPtr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6));
+    const char* aLastPtr  = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
+    string aFirst = aFirstPtr ? aFirstPtr : "";
+    string aLast  = aLastPtr  ? aLastPtr  : "";
         const char* aEmail = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8));
         ctx.clientFullName = cFirst + (cLast.empty()?"":" ") + cLast;
         ctx.clientEmail = cEmail ? cEmail : "";
@@ -102,7 +106,7 @@ bool FormManager::isUniqueFormIdField(const string& line) const {
     return false;
 }
 
-string FormManager::injectContext(const string& html, const Context& ctx, const string& key) const {
+string FormManager::injectContext(const string& html, const Context& ctx, const string& /*key*/) const {
     stringstream in(html); string line; vector<string> lines; lines.reserve(512);
     bool insertedBlock = false; bool insideFormInfo = false;
     regex formInfoHeader(R"((Form Information))", regex_constants::icase);
@@ -167,13 +171,6 @@ void FormManager::replaceAllPlaceholders(string &buffer, const Context& ctx) con
         {"{{client_full_name}}", ctx.clientFullName},
         {"{{client_email}}", ctx.clientEmail},
         {"{{created_at}}", ctx.caseCreatedAt},
-        // Legacy uppercase placeholders (to be removed after templates are migrated)
-        {"{{CASE_PROFILE_ID}}", caseId},
-        {"{{ASSESSOR_FULL_NAME}}", ctx.assessorFullName},
-        {"{{ASSESSOR_EMAIL}}", ctx.assessorEmail},
-        {"{{CLIENT_FULL_NAME}}", ctx.clientFullName},
-        {"{{CLIENT_EMAIL}}", ctx.clientEmail},
-        {"{{CREATED_AT}}", ctx.caseCreatedAt}
     };
     for (auto &p : ph) {
         size_t pos = 0;
@@ -211,16 +208,16 @@ vector<FormGenerationResult> FormManager::generateForms(int caseProfileId,
         r.templatePath = (fs::path(templatesDir) / it->second.filename).string();
         string raw = loadFile(r.templatePath);
         if (raw.empty()) { r.message = "Template not found or empty"; results.push_back(r); continue; }
-        bool requires = it->second.needsContext;
+    bool requiresContext = it->second.needsContext;
         string processed = raw;
-        if (requires) {
+    if (requiresContext) {
             if (!ctxOpt) { r.message = "Missing case context"; results.push_back(r); continue; }
             processed = injectContext(raw, *ctxOpt, key);
         }
         int idForName = (caseProfileId > 0) ? caseProfileId : 0; // for base forms allow 0 in filename? keep 0 or omit
         r.outputPath = (fs::path(outputDir) / buildOutputFileName(key, idForName)).string();
         if (!writeFile(r.outputPath, processed)) { r.message = "Failed to write output"; results.push_back(r); continue; }
-        r.success = true; r.message = requires ? "Generated (with context)" : "Generated";
+    r.success = true; r.message = requiresContext ? "Generated (with context)" : "Generated";
         results.push_back(r);
     }
     return results;

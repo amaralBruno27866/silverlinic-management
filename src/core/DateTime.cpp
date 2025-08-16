@@ -178,8 +178,10 @@ namespace SilverClinic {
         auto now = system_clock::now();
         auto duration = now - m_time_point;
         auto hours = duration_cast<chrono::hours>(duration).count();
-        auto days = hours / 24;
-        return static_cast<int>(days / 365.25); // Approximate age in years
+    auto days = hours / 24; // integral days
+    // Use integer division with 365, adjust minimally for leap years (~ + days/1461)
+    int years = static_cast<int>(days / 365);
+    return years;
     }
 
     int DateTime::getDaysFromNow() const {
