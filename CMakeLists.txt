@@ -8,12 +8,31 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Option: enable strict compile warnings by default
 option(BUILD_STRICT_DEFAULT "Enable strict compiler warnings" ON)
+option(BUILD_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(ENABLE_SANITIZERS "Enable address/undefined sanitizers on Debug builds (GCC/Clang)" OFF)
 
 if (BUILD_STRICT_DEFAULT)
     if (MSVC)
         add_compile_options(/W4 /permissive-)
     else()
         add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+        # Helpful extra warnings (opt-in lightweight)
+        add_compile_options(-Wmissing-include-dirs -Wnull-dereference -Wduplicated-cond -Wduplicated-branches -Wlogical-op)
+    endif()
+endif()
+
+if (BUILD_WARNINGS_AS_ERRORS)
+    if (MSVC)
+        add_compile_options(/WX)
+    else()
+        add_compile_options(-Werror)
+    endif()
+endif()
+
+if (ENABLE_SANITIZERS AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(-fsanitize=address,undefined)
+        add_link_options(-fsanitize=address,undefined)
     endif()
 endif()
 
@@ -116,10 +135,13 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
 # Installation rules
 include(GNUInstallDirs)
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_lib
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_lib EXPORT SilverClinicTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+# Install public headers
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SilverClinic FILES_MATCHING PATTERN "*.h")
 
 # Install static assets (HTML templates)
 if (EXISTS ${CMAKE_SOURCE_DIR}/web/views)
@@ -152,6 +174,7 @@ if(BUILD_TESTING)
     tests/forms/test_BDIManager.cpp
     tests/forms/test_BAIManager.cpp
     tests/forms/test_SCL90RManager.cpp
+    tests/forms/test_AAIManager.cpp
     )
     foreach(test_src ${FORMS_TEST_SOURCES})
         if(EXISTS ${CMAKE_SOURCE_DIR}/${test_src})
@@ -195,3 +218,21 @@ target_link_libraries(${PROJECT_NAME}_lib ${SQLITE3_LIBRARY} ${HPDF_LIBRARY})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
 # Link to example executables (already linked individually above for clarity)
+
+# ---- Package Config (basic) ----
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfigVersion.cmake
+    VERSION 0.1.0
+    COMPATIBILITY SameMajorVersion)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/SilverClinicConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfig.cmake @ONLY)
+
+install(EXPORT SilverClinicTargets
+        NAMESPACE SilverClinic::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SilverClinic)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SilverClinic)

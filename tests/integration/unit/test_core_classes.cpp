@@ -85,7 +85,10 @@ bool test_case_profile() {
     TEST_ASSERT(cp.getCaseProfileId() >= CaseProfile::ID_PREFIX, "CaseProfile ID should have correct prefix");
     TEST_ASSERT(cp.getClientId() == 300001, "Client ID should match");
     TEST_ASSERT(cp.getAssessorId() == 100001, "Assessor ID should match");
-    TEST_ASSERT(cp.getStatus() == "PENDING", "Initial status should be Pending (normalized)");
+    {
+        auto s = cp.getStatus();
+        TEST_ASSERT(s == "Pending", "Initial status should be Pending (normalized)");
+    }
     TEST_ASSERT(cp.isPending(), "Should be pending");
     
     cp.activate();

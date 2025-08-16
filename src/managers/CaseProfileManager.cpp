@@ -37,6 +37,15 @@ bool CaseProfileManager::create(const CaseProfile& caseProfile) {
         logMessage("ERROR", "CaseProfileManager::create - Invalid client or assessor relationship");
         return false;
     }
+    // Defensive double-check using EXISTS to ensure referential integrity prior to insert (even if FK pragma off)
+    auto existsQuick=[&](const char* table,int id){
+        const char* sql="SELECT 1 FROM %s WHERE id=? LIMIT 1"; // can't param table directly; build string
+        std::string q = std::string("SELECT 1 FROM ")+table+" WHERE id=? LIMIT 1";
+        sqlite3_stmt* st=nullptr; if(sqlite3_prepare_v2(m_db,q.c_str(),-1,&st,nullptr)!=SQLITE_OK) return false; sqlite3_bind_int(st,1,id); bool ok = sqlite3_step(st)==SQLITE_ROW; sqlite3_finalize(st); return ok; };
+    if(!existsQuick("client", caseProfile.getClientId()) || !existsQuick("assessor", caseProfile.getAssessorId())){
+        logMessage("ERROR","CaseProfileManager::create - Referenced client or assessor not found (pre-insert abort)");
+        return false;
+    }
     
     const string sql = R"(
         INSERT INTO case_profile (id, client_id, assessor_id, status, notes, created_at, modified_at)
