@@ -49,7 +49,7 @@ optional<FormManager::Context> FormManager::loadContext(int caseProfileId) const
                           WHERE cp.id = ? LIMIT 1)";
     sqlite3_stmt* stmt = nullptr;
     if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
-        utils::logMessage("ERROR", string("FormManager::loadContext prepare: ")+ sqlite3_errmsg(m_db));
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","prepare_fail","FormContext","",""}, sqlite3_errmsg(m_db));
         return nullopt;
     }
     sqlite3_bind_int(stmt, 1, caseProfileId);
@@ -193,7 +193,7 @@ vector<FormGenerationResult> FormManager::generateForms(int caseProfileId,
         ctxOpt = loadContext(caseProfileId);
         if (!ctxOpt) {
             // Context requested but not found -> forms needing context will fail
-            utils::logMessage("ERROR", "FormManager::generateForms - Case profile context not found for id=" + to_string(caseProfileId));
+            utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","context_not_found","FormContext", to_string(caseProfileId), {}}, "Case profile context not found");
         }
     }
     error_code ec; fs::create_directories(outputDir, ec);

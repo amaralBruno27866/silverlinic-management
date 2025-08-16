@@ -64,7 +64,7 @@ namespace Forms {
             m_ec_full_name = normalizedName;
             updateTimestamp();
         } else if (normalizedName.length() > MAX_FULL_NAME_LENGTH) {
-            utils::logMessage("WARNING", "Full name truncated to " + to_string(MAX_FULL_NAME_LENGTH) + " characters");
+            utils::logStructured(utils::LogLevel::WARN, {"FORM","truncate_fullname","EmergencyContact","",""}, "Full name truncated");
             m_ec_full_name = normalizedName.substr(0, MAX_FULL_NAME_LENGTH);
             updateTimestamp();
         }
@@ -76,7 +76,7 @@ namespace Forms {
             m_ec_relationship = normalizedRelationship;
             updateTimestamp();
         } else if (normalizedRelationship.length() > MAX_RELATIONSHIP_LENGTH) {
-            utils::logMessage("WARNING", "Relationship truncated to " + to_string(MAX_RELATIONSHIP_LENGTH) + " characters");
+            utils::logStructured(utils::LogLevel::WARN, {"FORM","truncate_relationship","EmergencyContact","",""}, "Relationship truncated");
             m_ec_relationship = normalizedRelationship.substr(0, MAX_RELATIONSHIP_LENGTH);
             updateTimestamp();
         }
@@ -88,7 +88,7 @@ namespace Forms {
             m_ec_phone = normalizedPhone;
             updateTimestamp();
         } else {
-            utils::logMessage("WARNING", "Invalid phone number format: " + ec_phone);
+            utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_phone","EmergencyContact","",""}, "Invalid phone: "+ ec_phone);
             m_ec_phone = normalizedPhone; // Store anyway but log warning
             updateTimestamp();
         }
@@ -100,7 +100,7 @@ namespace Forms {
             m_ec_alt_phone = normalizedPhone;
             updateTimestamp();
         } else {
-            utils::logMessage("WARNING", "Invalid alternative phone number format: " + ec_alt_phone);
+            utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_alt_phone","EmergencyContact","",""}, "Invalid alternative phone: "+ ec_alt_phone);
             m_ec_alt_phone = normalizedPhone; // Store anyway but log warning
             updateTimestamp();
         }

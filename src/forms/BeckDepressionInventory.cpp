@@ -268,7 +268,7 @@ namespace SilverClinic {
 
         bool BeckDepressionInventory::isValidData() const {
             if (!isValidCaseProfileId(m_case_profile_id)) {
-                utils::logMessage("WARNING", "Invalid case profile ID: " + to_string(m_case_profile_id));
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_case_id","BDI", to_string(m_bdi_id), {}}, "Invalid case profile ID");
                 return false;
             }
 
@@ -281,7 +281,7 @@ namespace SilverClinic {
 
             for (size_t i = 0; i < questions.size(); ++i) {
                 if (!isValidQuestionValue(questions[i])) {
-                    utils::logMessage("WARNING", "Invalid value for question " + to_string(i + 1) + ": " + to_string(questions[i]));
+                    utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q","BDI", to_string(m_bdi_id), {}}, "Invalid value for question "+ to_string(i+1));
                     return false;
                 }
             }
@@ -410,7 +410,7 @@ namespace SilverClinic {
         // Static methods
         void BeckDepressionInventory::resetIdCounter() {
             bdi_id_counter = 0;
-            utils::logMessage("INFO", "BDI ID counter reset to 0");
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","reset_counter","BDI","",""}, "BDI ID counter reset");
         }
 
         int BeckDepressionInventory::getNextId() {
