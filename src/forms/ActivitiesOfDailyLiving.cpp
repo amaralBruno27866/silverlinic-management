@@ -154,7 +154,7 @@ namespace SilverClinic {
             : m_adl_id(getNextADLId()), m_case_profile_id(0), m_type(FORM_TYPE),
               m_activities_data_json("{}") {
             setTimestamps();
-            utils::logMessage("INFO", "ActivitiesOfDailyLiving created with ID: " + to_string(m_adl_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","ActivitiesOfDailyLiving", to_string(m_adl_id), {}}, "Created");
         }
 
         ActivitiesOfDailyLiving::ActivitiesOfDailyLiving(int case_profile_id) 
@@ -164,7 +164,7 @@ namespace SilverClinic {
                 throw invalid_argument("Invalid case profile ID provided");
             }
             setTimestamps();
-            utils::logMessage("INFO", "ActivitiesOfDailyLiving created with ID: " + to_string(m_adl_id) + " for case: " + to_string(case_profile_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","ActivitiesOfDailyLiving", to_string(m_adl_id), {}}, "Created for case: "+ to_string(case_profile_id));
         }
 
         ActivitiesOfDailyLiving::ActivitiesOfDailyLiving(int adl_id, int case_profile_id, 
@@ -181,7 +181,7 @@ namespace SilverClinic {
             // Parse JSON to C++ map
             syncJsonToCppData();
             
-            utils::logMessage("INFO", "ActivitiesOfDailyLiving loaded from database with ID: " + to_string(m_adl_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","load","ActivitiesOfDailyLiving", to_string(m_adl_id), {}}, "Loaded from database");
         }
 
         // Private helper methods

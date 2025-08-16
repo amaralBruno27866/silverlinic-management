@@ -875,14 +875,15 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
         const vector<string> required = {"client_id","assessor_id","status","notes","created_at"};
         for (const auto &h : required) {
             if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
-                logMessage("ERROR", "CaseProfileManager::importFromCSV - Missing required header: " + h);
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_missing_header","CaseProfile","",""}, "Missing required header: "+h);
                 return 0; // structural error
             }
         }
         if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
             inTransaction = true;
+            utils::logStructured(utils::LogLevel::DEBUG, {"MANAGER","csv_begin","CaseProfile", "",""}, "BEGIN TRANSACTION for import");
         } else {
-            logMessage("ERROR", "CaseProfileManager::importFromCSV - Failed to BEGIN TRANSACTION (continuing non-atomic)");
+            utils::logStructured(utils::LogLevel::WARN, {"MANAGER","csv_begin_fail","CaseProfile", "",""}, "Failed to BEGIN TRANSACTION (continuing non-atomic)");
         }
         for (const auto &row : table.rows) {
             try {
@@ -901,7 +902,7 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
                 CaseProfile cp(id, clientId, assessorId, status, notes, createdAt, closedAt, modifiedAt);
                 if (!create(cp)) {
                     failed++;
-                    logMessage("ERROR", "Failed to insert case profile from CSV row (id attempt: " + toString(id) + ")");
+                    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_insert_fail","CaseProfile", toString(id), ""}, "Failed to insert case profile from CSV row");
                     continue;
                 }
                 if (!closedAtRaw.empty()) {
@@ -911,7 +912,7 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
                         sqlite3_bind_text(stmt, 1, closedAt.toString().c_str(), -1, SQLITE_TRANSIENT);
                         sqlite3_bind_int(stmt, 2, id);
                         if (sqlite3_step(stmt) != SQLITE_DONE) {
-                            logMessage("ERROR", "Failed to update closed_at for imported case profile id: " + toString(id));
+                            utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_closed_at_fail","CaseProfile", toString(id), ""}, "Failed to update closed_at for imported case profile");
                         }
                         sqlite3_finalize(stmt);
                     }
@@ -919,12 +920,12 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
                 success++;
             } catch (const exception &e) {
                 failed++;
-                logMessage("ERROR", string("CaseProfileManager::importFromCSV row error: ")+ e.what());
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_row_error","CaseProfile","",""}, e.what());
             }
         }
         if (inTransaction) {
             if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-                logMessage("ERROR", "CaseProfileManager::importFromCSV - COMMIT failed, attempting ROLLBACK");
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_commit_fail","CaseProfile","",""}, "COMMIT failed, attempting ROLLBACK");
                 sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
             }
         }
@@ -932,9 +933,9 @@ int CaseProfileManager::importFromCSV(const string& filePath) {
         if (inTransaction) {
             sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
         }
-        logMessage("ERROR", string("CaseProfileManager::importFromCSV file error: ") + e.what());
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_file_error","CaseProfile","",""}, e.what());
     }
-    logMessage("INFO", "CaseProfileManager::importFromCSV imported success=" + toString(success) + ", failed=" + toString(failed));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","csv_import_summary","CaseProfile","",""}, "imported success=" + toString(success) + ", failed=" + toString(failed));
     return success;
 }
 

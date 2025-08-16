@@ -18,7 +18,7 @@ AssessorManager::AssessorManager(sqlite3* database) : m_db(database) {
 
 bool AssessorManager::create(const Assessor& assessor) {
     if (!validateAssessor(assessor)) {
-        utils::logMessage("ERROR", "AssessorManager::create - Invalid assessor data");
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor data");
         return false;
     }
     
@@ -50,7 +50,7 @@ bool AssessorManager::create(const Assessor& assessor) {
         return false;
     }
     
-    utils::logMessage("INFO", "Assessor created successfully with ID: " + to_string(assessor.getAssessorId()));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","create","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Assessor created successfully");
     return true;
 }
 
@@ -109,12 +109,11 @@ optional<Assessor> AssessorManager::readById(int assessorId) const {
 
 bool AssessorManager::update(const Assessor& assessor) {
     if (!validateAssessor(assessor)) {
-        utils::logMessage("ERROR", "AssessorManager::update - Invalid assessor data");
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor data");
         return false;
     }
-    
     if (!exists(assessor.getAssessorId())) {
-        utils::logMessage("ERROR", "AssessorManager::update - Assessor not found with ID: " + to_string(assessor.getAssessorId()));
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","not_found","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Assessor not found");
         return false;
     }
     
@@ -146,18 +145,18 @@ bool AssessorManager::update(const Assessor& assessor) {
         return false;
     }
     
-    utils::logMessage("INFO", "Assessor updated successfully with ID: " + to_string(assessor.getAssessorId()));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","update","Assessor", to_string(assessor.getAssessorId()), {}}, "Assessor updated successfully");
     return true;
 }
 
 bool AssessorManager::deleteById(int assessorId) {
     if (!exists(assessorId)) {
-        utils::logMessage("ERROR", "AssessorManager::deleteById - Assessor not found with ID: " + to_string(assessorId));
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","delete_not_found","Assessor", to_string(assessorId), {}}, "Assessor not found");
         return false;
     }
     
     if (!canDelete(assessorId)) {
-        utils::logMessage("ERROR", "AssessorManager::deleteById - Cannot delete assessor with associated cases. ID: " + to_string(assessorId));
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","delete_conflict_cases","Assessor", to_string(assessorId), {}}, "Cannot delete assessor with associated cases");
         return false;
     }
     
@@ -179,7 +178,7 @@ bool AssessorManager::deleteById(int assessorId) {
         return false;
     }
     
-    utils::logMessage("INFO", "Assessor deleted successfully with ID: " + to_string(assessorId));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","delete","Assessor", to_string(assessorId), {}}, "Assessor deleted successfully");
     return true;
 }
 
@@ -362,35 +361,35 @@ vector<Assessor> AssessorManager::readWithPagination(int limit, int offset) cons
 bool AssessorManager::validateAssessor(const Assessor& assessor) const {
     // Check required fields
     if (assessor.getFirstName().empty()) {
-        utils::logMessage("ERROR", "Validation failed: First name is required");
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","missing_firstname","Assessor", std::to_string(assessor.getAssessorId()), {}}, "First name is required");
         return false;
     }
     
     if (assessor.getLastName().empty()) {
-        utils::logMessage("ERROR", "Validation failed: Last name is required");
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","missing_lastname","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Last name is required");
         return false;
     }
     
     // Use Utils functions for validation
     if (!utils::isValidEmail(assessor.getEmail())) {
-        utils::logMessage("ERROR", "Validation failed: Invalid email format: " + assessor.getEmail());
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_email","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid email: "+assessor.getEmail());
         return false;
     }
     
     if (!utils::isValidCanadianPhoneNumber(assessor.getPhone())) {
-        utils::logMessage("ERROR", "Validation failed: Invalid Canadian phone format: " + assessor.getPhone());
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_phone","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid phone: "+assessor.getPhone());
         return false;
     }
     
     // Check ID range
     if (assessor.getAssessorId() < Assessor::ID_PREFIX) {
-        utils::logMessage("ERROR", "Validation failed: Invalid assessor ID range: " + utils::toString(assessor.getAssessorId()));
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id_range","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor ID range");
         return false;
     }
     
     // Check names are not just numeric or contain invalid characters
     if (utils::isNumeric(assessor.getFirstName()) || utils::isNumeric(assessor.getLastName())) {
-        utils::logMessage("ERROR", "Validation failed: Names cannot be purely numeric");
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","numeric_name","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Names cannot be purely numeric");
         return false;
     }
     
@@ -483,7 +482,7 @@ Address AssessorManager::createAddressFromRow(sqlite3_stmt* stmt, int startColum
 
 void AssessorManager::logDatabaseError(const string& operation) const {
     string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
-    utils::logMessage("ERROR", errorMsg);
+    utils::logStructured(utils::LogLevel::ERROR, {"DB","exec_error","Assessor","",""}, errorMsg);
 }
 
 int AssessorManager::importFromCSV(const string& filePath) {
@@ -495,7 +494,7 @@ int AssessorManager::importFromCSV(const string& filePath) {
         const vector<string> required = {"firstname","lastname","phone","email","created_at"};
         for (const auto &h : required) {
             if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
-                utils::logMessage("ERROR", "AssessorManager::importFromCSV - Missing required header: " + h);
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_missing_header","Assessor","",""}, "Missing header: "+h);
                 return 0; // structural error, nothing inserted yet
             }
         }
@@ -503,7 +502,7 @@ int AssessorManager::importFromCSV(const string& filePath) {
         if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
             inTransaction = true;
         } else {
-            utils::logMessage("ERROR", "AssessorManager::importFromCSV - Failed to BEGIN TRANSACTION (continuing without atomic batch)");
+            utils::logStructured(utils::LogLevel::WARN, {"MANAGER","csv_begin_fail","Assessor","",""}, "Failed to BEGIN TRANSACTION (continuing non-atomic)");
         }
 
         for (const auto &row : table.rows) {
@@ -535,19 +534,19 @@ int AssessorManager::importFromCSV(const string& filePath) {
                 Assessor assessor(id, firstName, lastName, email, phone, address, createdAt, modifiedAt);
                 if (!create(assessor)) {
                     failed++;
-                    utils::logMessage("ERROR", "Failed to insert assessor from CSV row (email: " + email + ")");
+                    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_insert_fail","Assessor","",""}, "Failed to insert assessor row (email: "+email+")");
                     continue;
                 }
                 success++;
             } catch (const exception &e) {
                 failed++;
-                utils::logMessage("ERROR", string("AssessorManager::importFromCSV row error: ") + e.what());
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_row_error","Assessor","",""}, e.what());
             }
         }
 
         if (inTransaction) {
             if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-                utils::logMessage("ERROR", "AssessorManager::importFromCSV - COMMIT failed, attempting ROLLBACK");
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_commit_fail","Assessor","",""}, "COMMIT failed, attempting ROLLBACK");
                 sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
             }
         }
@@ -555,8 +554,8 @@ int AssessorManager::importFromCSV(const string& filePath) {
         if (inTransaction) {
             sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
         }
-        utils::logMessage("ERROR", string("AssessorManager::importFromCSV file error: ") + e.what());
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_file_error","Assessor","",""}, e.what());
     }
-    utils::logMessage("INFO", "AssessorManager::importFromCSV imported success=" + to_string(success) + ", failed=" + to_string(failed));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","csv_import_summary","Assessor","",""}, "imported success=" + to_string(success) + ", failed=" + to_string(failed));
     return success;
 }

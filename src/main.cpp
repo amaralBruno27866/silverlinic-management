@@ -77,7 +77,7 @@ bool validateDatabaseIntegrity(sqlite3* db) {
     // Check if database file is not empty (size > 0)
     string dbPath = DatabaseConfig::MAIN_DATABASE_PATH;
     if (filesystem::file_size(dbPath) == 0) {
-        logMessage("WARNING", "Database file is empty, will initialize with new tables");
+    utils::logStructured(utils::LogLevel::WARN, {"APP","db_empty","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database file empty - initializing tables");
         return true; // Empty DB is OK, we'll create tables
     }
     
@@ -92,7 +92,7 @@ bool validateDatabaseIntegrity(sqlite3* db) {
         return false;
     }
     
-    logMessage("INFO", "Database integrity validated successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_integrity","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database integrity validated successfully");
     return true;
 }
 
@@ -107,13 +107,13 @@ bool executeSQLCommand(sqlite3* db, const string& sql, const string& description
         return false;
     }
     
-    logMessage("INFO", description + " executed successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","sql_exec","SQL", "", {}}, description + " executed successfully");
     return true;
 }
 
 // Function to create database tables
 bool createDatabaseTables(sqlite3* db) {
-    logMessage("INFO", "Creating database tables...");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_create_tables","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Creating database tables...");
     
     // Enable foreign keys in SQLite
     if (!executeSQLCommand(db, "PRAGMA foreign_keys = ON;", "Foreign keys activation")) {
@@ -543,13 +543,13 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
-    logMessage("INFO", "All database tables created successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_tables_created","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "All database tables created successfully");
     return true;
 }
 
 // Function to insert sample data
 bool insertSampleData(sqlite3* db) {
-    logMessage("INFO", "Inserting sample data...");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","sample_data_insert","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Inserting sample data...");
     
     string currentTime = getCurrentTimestamp();
     
@@ -610,7 +610,7 @@ bool insertSampleData(sqlite3* db) {
         return false;
     }
     
-    logMessage("INFO", "Sample data inserted successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","sample_data_done","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Sample data inserted successfully");
     return true;
 }
 
@@ -640,7 +640,7 @@ int main() {
             return 1;
         }
         
-        logMessage("INFO", "Database opened successfully: " + DatabaseConfig::MAIN_DATABASE_PATH);
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_open","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database opened successfully");
 
     // Apply standardized PRAGMAs (centralized)
     if (!DatabaseConfig::applyStandardPragmas(db)) {
@@ -648,7 +648,7 @@ int main() {
         sqlite3_close(db);
         return 1;
     }
-    logMessage("INFO", "Standard SQLite PRAGMAs applied successfully");
+    utils::logStructured(utils::LogLevel::DEBUG, {"APP","pragmas_applied","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Standard SQLite PRAGMAs applied successfully");
         
         // Validate database integrity
         if (!validateDatabaseIntegrity(db)) {
@@ -766,11 +766,11 @@ int main() {
         
         // Close database
         sqlite3_close(db);
-        logMessage("INFO", "Database connection closed");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_close","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database connection closed");
         
     } catch (const exception& e) {
         cerr << "Error occurred: " << e.what() << endl;
-        logMessage("ERROR", "Application failed to initialize: " + string(e.what()));
+    utils::logStructured(utils::LogLevel::ERROR, {"APP","init_fail","App", "", {}}, string("Application failed to initialize: ")+e.what());
         return 1;
     }
     

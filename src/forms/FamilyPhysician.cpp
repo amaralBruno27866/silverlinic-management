@@ -76,7 +76,7 @@ void FamilyPhysician::setFpFullName(const string& fp_full_name) {
         m_fp_full_name = normalizedName;
         updateTimestamp();
     } else if (normalizedName.length() > MAX_FULL_NAME_LENGTH) {
-        utils::logMessage("WARNING", "Full name truncated to " + to_string(MAX_FULL_NAME_LENGTH) + " characters");
+    utils::logStructured(utils::LogLevel::WARN, {"FORM","truncate_fullname","FamilyPhysician", "",""}, "Full name truncated");
         m_fp_full_name = normalizedName.substr(0, MAX_FULL_NAME_LENGTH);
         updateTimestamp();
     }
@@ -88,7 +88,7 @@ void FamilyPhysician::setFpPhone(const string& fp_phone) {
         m_fp_phone = normalizedPhone;
         updateTimestamp();
     } else {
-        utils::logMessage("WARNING", "Invalid phone number format: " + fp_phone);
+    utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_phone","FamilyPhysician", "",""}, "Invalid phone format: "+ fp_phone);
         m_fp_phone = normalizedPhone; // Store anyway but log warning
         updateTimestamp();
     }
@@ -100,7 +100,7 @@ void FamilyPhysician::setFpEmail(const string& fp_email) {
         m_fp_email = normalizedEmail;
         updateTimestamp();
     } else {
-        utils::logMessage("WARNING", "Invalid email format: " + fp_email);
+    utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_email","FamilyPhysician", "",""}, "Invalid email: "+ fp_email);
         m_fp_email = fp_email; // Store anyway but log warning
         updateTimestamp();
     }

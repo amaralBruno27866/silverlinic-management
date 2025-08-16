@@ -29,7 +29,7 @@ namespace SilverClinic {
         m_notes = utils::normalizeForDatabase(notes);
         m_closed_at = DateTime(); // Empty DateTime
         setTimestamps();
-        utils::logMessage("INFO", "New Case Profile created with ID " + to_string(m_case_profile_id) + " (Status: Pending)");
+    utils::logStructured(utils::LogLevel::INFO, {"MODEL","create","CaseProfile", to_string(m_case_profile_id), {}}, "New Case Profile created (Status: Pending)");
     }
 
     CaseProfile::CaseProfile(int case_profile_id, int client_id, int assessor_id, const string& status,
@@ -91,7 +91,7 @@ namespace SilverClinic {
 
     void CaseProfile::activate() {
         setStatusId(STATUS_ACTIVE);
-        utils::logMessage("INFO", "Case Profile " + to_string(m_case_profile_id) + " activated");
+    utils::logStructured(utils::LogLevel::INFO, {"MODEL","activate","CaseProfile", to_string(m_case_profile_id), {}}, "Case Profile activated");
     }
 
     void CaseProfile::close(const string& reason) {
@@ -109,24 +109,24 @@ namespace SilverClinic {
                     if (availableSpace > 10U) { // Minimum space for close note
                         string truncatedCloseNote = closeNote.substr(0, availableSpace);
                         m_notes += truncatedCloseNote;
-                        utils::logMessage("WARNING", "Close reason truncated to fit within notes limit");
+                        utils::logStructured(utils::LogLevel::WARN, {"MODEL","close_reason_truncated","CaseProfile", to_string(m_case_profile_id), {}}, "Close reason truncated");
                     } else {
-                        utils::logMessage("WARNING", "Cannot add close reason - notes too long");
+                        utils::logStructured(utils::LogLevel::WARN, {"MODEL","close_reason_notes_too_long","CaseProfile", to_string(m_case_profile_id), {}}, "Cannot add close reason - notes too long");
                     }
                 } else {
-                    utils::logMessage("WARNING", "Cannot add close reason - notes already at limit");
+                    utils::logStructured(utils::LogLevel::WARN, {"MODEL","close_reason_notes_limit","CaseProfile", to_string(m_case_profile_id), {}}, "Cannot add close reason - notes already at limit");
                 }
             } else {
                 m_notes = newNotes;
             }
         }
         updateTimestamp();
-        utils::logMessage("INFO", "Case Profile " + to_string(m_case_profile_id) + " closed");
+    utils::logStructured(utils::LogLevel::INFO, {"MODEL","close","CaseProfile", to_string(m_case_profile_id), {}}, "Case Profile closed");
     }
 
     void CaseProfile::setPending() {
         setStatusId(STATUS_PENDING);
-        utils::logMessage("INFO", "Case Profile " + to_string(m_case_profile_id) + " set to pending");
+    utils::logStructured(utils::LogLevel::INFO, {"MODEL","set_pending","CaseProfile", to_string(m_case_profile_id), {}}, "Case Profile set to pending");
     }
 
     // Validation methods
@@ -168,7 +168,7 @@ namespace SilverClinic {
 
     void CaseProfile::resetIdCounter() {
         case_profile_id_counter = 1;
-        utils::logMessage("INFO", "CaseProfile ID counter reset");
+        utils::logStructured(utils::LogLevel::INFO, {"MODEL","reset_counter","CaseProfile","",""}, "CaseProfile ID counter reset");
     }
 
     // Status conversion helper methods

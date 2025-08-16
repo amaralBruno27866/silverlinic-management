@@ -18,7 +18,7 @@ ClientManager::ClientManager(sqlite3* database) : m_db(database) {
 
 bool ClientManager::create(const Client& client) {
     if (!validateClient(client)) {
-        utils::logMessage("ERROR", "ClientManager::create - Invalid client data");
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Client","",{}}, "Invalid client data");
         return false;
     }
     
@@ -51,7 +51,7 @@ bool ClientManager::create(const Client& client) {
         return false;
     }
     
-    utils::logMessage("INFO", "Client created successfully with ID: " + utils::toString(client.getClientId()));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","create","Client", utils::toString(client.getClientId()), {}}, "Client created successfully");
     return true;
 }
 
@@ -110,12 +110,12 @@ optional<Client> ClientManager::readById(int clientId) const {
 
 bool ClientManager::update(const Client& client) {
     if (!validateClient(client)) {
-        utils::logMessage("ERROR", "ClientManager::update - Invalid client data");
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Client", utils::toString(client.getClientId()), {}}, "Invalid client data");
         return false;
     }
     
     if (!exists(client.getClientId())) {
-        utils::logMessage("ERROR", "ClientManager::update - Client not found with ID: " + utils::toString(client.getClientId()));
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","not_found","Client", utils::toString(client.getClientId()), {}}, "Client not found");
         return false;
     }
     
@@ -148,18 +148,18 @@ bool ClientManager::update(const Client& client) {
         return false;
     }
     
-    utils::logMessage("INFO", "Client updated successfully with ID: " + utils::toString(client.getClientId()));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","update","Client", utils::toString(client.getClientId()), {}}, "Client updated successfully");
     return true;
 }
 
 bool ClientManager::deleteById(int clientId) {
     if (!exists(clientId)) {
-        utils::logMessage("ERROR", "ClientManager::deleteById - Client not found with ID: " + utils::toString(clientId));
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","delete_not_found","Client", utils::toString(clientId), {}}, "Client not found");
         return false;
     }
     
     if (!canDelete(clientId)) {
-        utils::logMessage("ERROR", "ClientManager::deleteById - Cannot delete client with associated cases. ID: " + utils::toString(clientId));
+    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","delete_conflict_cases","Client", utils::toString(clientId), {}}, "Cannot delete client with associated cases");
         return false;
     }
     
@@ -181,7 +181,7 @@ bool ClientManager::deleteById(int clientId) {
         return false;
     }
     
-    utils::logMessage("INFO", "Client deleted successfully with ID: " + utils::toString(clientId));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","delete","Client", utils::toString(clientId), {}}, "Client deleted successfully");
     return true;
 }
 
@@ -407,35 +407,35 @@ vector<Client> ClientManager::readWithPagination(int limit, int offset) const {
 bool ClientManager::validateClient(const Client& client) const {
     // Check required fields
     if (client.getFirstName().empty()) {
-        utils::logMessage("ERROR", "Validation failed: First name is required");
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","missing_firstname","Client", utils::toString(client.getClientId()), {}}, "First name is required");
         return false;
     }
     
     if (client.getLastName().empty()) {
-        utils::logMessage("ERROR", "Validation failed: Last name is required");
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","missing_lastname","Client", utils::toString(client.getClientId()), {}}, "Last name is required");
         return false;
     }
     
     // Use Utils functions for validation
     if (!utils::isValidEmail(client.getEmail())) {
-        utils::logMessage("ERROR", "Validation failed: Invalid email format: " + client.getEmail());
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_email","Client", utils::toString(client.getClientId()), {}}, "Invalid email: "+client.getEmail());
         return false;
     }
     
     if (!utils::isValidCanadianPhoneNumber(client.getPhone())) {
-        utils::logMessage("ERROR", "Validation failed: Invalid Canadian phone format: " + client.getPhone());
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_phone","Client", utils::toString(client.getClientId()), {}}, "Invalid phone: "+client.getPhone());
         return false;
     }
     
     // Check ID range
     if (client.getClientId() < Client::ID_PREFIX) {
-        utils::logMessage("ERROR", "Validation failed: Invalid client ID range: " + utils::toString(client.getClientId()));
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id_range","Client", utils::toString(client.getClientId()), {}}, "Invalid client ID range");
         return false;
     }
     
     // Check names are not just numeric or contain invalid characters
     if (utils::isNumeric(client.getFirstName()) || utils::isNumeric(client.getLastName())) {
-        utils::logMessage("ERROR", "Validation failed: Names cannot be purely numeric");
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","numeric_name","Client", utils::toString(client.getClientId()), {}}, "Names cannot be purely numeric");
         return false;
     }
     
@@ -443,7 +443,7 @@ bool ClientManager::validateClient(const Client& client) const {
     if (!client.getDateOfBirth().empty()) {
         // Basic date format validation (you might want to enhance this)
         if (client.getDateOfBirth().length() < 8) {
-            utils::logMessage("ERROR", "Validation failed: Invalid date of birth format");
+            utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_dob","Client", utils::toString(client.getClientId()), {}}, "Invalid date of birth format");
             return false;
         }
     }
@@ -540,7 +540,7 @@ Address ClientManager::createAddressFromRow(sqlite3_stmt* stmt, int startColumn)
 
 void ClientManager::logDatabaseError(const string& operation) const {
     string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
-    utils::logMessage("ERROR", errorMsg);
+    utils::logStructured(utils::LogLevel::ERROR, {"DB","exec_error","Client","",""}, errorMsg);
 }
 
 int ClientManager::importFromCSV(const string& filePath) {
@@ -552,14 +552,14 @@ int ClientManager::importFromCSV(const string& filePath) {
         const vector<string> required = {"firstname","lastname","phone","email","date_of_birth","created_at"};
         for (const auto &h : required) {
             if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
-                utils::logMessage("ERROR", "ClientManager::importFromCSV - Missing required header: " + h);
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_missing_header","Client","",""}, "Missing header: "+h);
                 return 0; // structural error
             }
         }
         if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
             inTransaction = true;
         } else {
-            utils::logMessage("ERROR", "ClientManager::importFromCSV - Failed to BEGIN TRANSACTION (continuing non-atomic)");
+            utils::logStructured(utils::LogLevel::WARN, {"MANAGER","csv_begin_fail","Client","",""}, "Failed to BEGIN TRANSACTION (continuing non-atomic)");
         }
         for (const auto &row : table.rows) {
             try {
@@ -591,18 +591,18 @@ int ClientManager::importFromCSV(const string& filePath) {
                 Client client(id, firstName, lastName, email, phone, dob, address, createdAt, modifiedAt);
                 if (!create(client)) {
                     failed++;
-                    utils::logMessage("ERROR", "Failed to insert client from CSV row (email: " + email + ")");
+                    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_insert_fail","Client","",""}, "Failed to insert client row (email: "+email+")");
                     continue;
                 }
                 success++;
             } catch (const exception &e) {
                 failed++;
-                utils::logMessage("ERROR", string("ClientManager::importFromCSV row error: ")+ e.what());
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_row_error","Client","",""}, e.what());
             }
         }
         if (inTransaction) {
             if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-                utils::logMessage("ERROR", "ClientManager::importFromCSV - COMMIT failed, attempting ROLLBACK");
+                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_commit_fail","Client","",""}, "COMMIT failed, attempting ROLLBACK");
                 sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
             }
         }

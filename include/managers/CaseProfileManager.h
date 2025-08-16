@@ -307,6 +307,8 @@ namespace SilverClinic {
      * @return number of successfully imported case profiles
      */
     int importFromCSV(const string& filePath);
+    // Service layer support: expose raw db handle (read-only usage in services)
+    sqlite3* getDb() const { return m_db; }
         
     private:
         // Internal helper methods

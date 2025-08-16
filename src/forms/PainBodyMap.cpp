@@ -92,7 +92,7 @@ namespace SilverClinic {
         PainBodyMap::PainBodyMap() : m_pbm_id(getNextPBMId()), m_case_profile_id(0), m_type(FORM_TYPE),
                                    m_pain_data_json("{}"), m_additional_comments("") {
             setTimestamps();
-            utils::logMessage("INFO", "PainBodyMap created with ID: " + to_string(m_pbm_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","PainBodyMap", to_string(m_pbm_id), {}}, "Created");
         }
 
         PainBodyMap::PainBodyMap(int case_profile_id) : m_pbm_id(getNextPBMId()), m_case_profile_id(case_profile_id), 
@@ -101,7 +101,7 @@ namespace SilverClinic {
                 throw invalid_argument("Invalid case profile ID provided");
             }
             setTimestamps();
-            utils::logMessage("INFO", "PainBodyMap created with ID: " + to_string(m_pbm_id) + " for case: " + to_string(case_profile_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","PainBodyMap", to_string(m_pbm_id), {}}, "Created for case: "+ to_string(case_profile_id));
         }
 
         PainBodyMap::PainBodyMap(int pbm_id, int case_profile_id, const string& painDataJson,
@@ -117,7 +117,7 @@ namespace SilverClinic {
             // Parse JSON to C++ map
             syncJsonToCppData();
             
-            utils::logMessage("INFO", "PainBodyMap loaded from database with ID: " + to_string(m_pbm_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","load","PainBodyMap", to_string(m_pbm_id), {}}, "Loaded from database");
         }
 
         // Private helper methods

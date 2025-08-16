@@ -26,7 +26,7 @@ namespace SilverClinic {
               m_question_19(false), m_question_19_sidewalks(false), m_question_19_crossing(false), m_question_19_both(false),
               m_question_20(false), m_question_21(false), m_question_22(false), m_question_23(false) {
             setTimestamps();
-            utils::logMessage("INFO", "AutomobileAnxietyInventory created with ID: " + to_string(m_aai_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","AAI", to_string(m_aai_id), {}}, "Created");
         }
 
         // Constructor with case profile ID
@@ -47,10 +47,10 @@ namespace SilverClinic {
             
             if (isValidCaseProfileId(case_profile_id)) {
                 setTimestamps();
-                utils::logMessage("INFO", "AutomobileAnxietyInventory created with ID: " + to_string(m_aai_id) + 
+                utils::logStructured(utils::LogLevel::INFO, {"FORM","create","AAI", to_string(m_aai_id), {}}, 
                                          " for CaseProfile: " + to_string(case_profile_id));
             } else {
-                utils::logMessage("WARNING", "Invalid case_profile_id provided: " + to_string(case_profile_id));
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_case_id","AAI", to_string(case_profile_id), {}}, "Invalid case_profile_id provided");
             }
         }
 
@@ -76,7 +76,7 @@ namespace SilverClinic {
               m_question_20(q20), m_question_21(q21), m_question_22(q22), m_question_23(q23),
               m_aai_createdAt(createdAt), m_aai_updatedAt(updatedAt) {
             
-            utils::logMessage("INFO", "AutomobileAnxietyInventory loaded from database with ID: " + to_string(m_aai_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","load","AAI", to_string(m_aai_id), {}}, "Loaded from database");
         }
 
         // Private helper methods
@@ -117,12 +117,12 @@ namespace SilverClinic {
             } else if (normalizedOption == "NO_DIFFERENCE") {
                 m_question_14_no_difference = true;
             } else {
-                utils::logMessage("WARNING", "Invalid Question 14 option: " + option);
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_option_q14","AAI", to_string(m_aai_id), {}}, "Invalid Question 14 option: "+ option);
                 return;
             }
             
             updateTimestamp();
-            utils::logMessage("INFO", "Question 14 set to: " + normalizedOption);
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","set_q14","AAI", to_string(m_aai_id), {}}, "Question 14 set to: "+ normalizedOption);
         }
 
         // Question 15 text setter with validation
@@ -132,12 +132,12 @@ namespace SilverClinic {
             if (isValidQuestion15Text(normalizedText)) {
                 m_question_15_b = normalizedText;
                 updateTimestamp();
-                utils::logMessage("INFO", "Question 15 text set successfully");
+                utils::logStructured(utils::LogLevel::INFO, {"FORM","set_q15","AAI", to_string(m_aai_id), {}}, "Question 15 text set");
             } else {
                 // Truncate if too long
                 m_question_15_b = normalizedText.substr(0, MAX_TEXT_LENGTH);
                 updateTimestamp();
-                utils::logMessage("WARNING", "Question 15 text truncated to " + to_string(MAX_TEXT_LENGTH) + " characters");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","truncate_q15","AAI", to_string(m_aai_id), {}}, "Question 15 text truncated");
             }
         }
 
@@ -163,7 +163,7 @@ namespace SilverClinic {
             m_question_19_crossing = crossing;
             m_question_19_both = both;
             updateTimestamp();
-            utils::logMessage("INFO", "Question 19 options updated");
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","set_q19","AAI", to_string(m_aai_id), {}}, "Question 19 options updated");
         }
 
         // Validation methods
@@ -177,12 +177,12 @@ namespace SilverClinic {
 
         bool AutomobileAnxietyInventory::isValidData() const {
             if (!isValidCaseProfileId(m_case_profile_id)) {
-                utils::logMessage("ERROR", "Invalid case_profile_id: " + to_string(m_case_profile_id));
+                utils::logStructured(utils::LogLevel::ERROR, {"FORM","invalid_case_id","AAI", to_string(m_case_profile_id), {}}, "Invalid case_profile_id");
                 return false;
             }
             
             if (!isValidQuestion15Text(m_question_15_b)) {
-                utils::logMessage("ERROR", "Question 15 text too long: " + to_string(m_question_15_b.length()) + " chars");
+                utils::logStructured(utils::LogLevel::ERROR, {"FORM","q15_too_long","AAI", to_string(m_aai_id), {}}, "Question 15 text too long");
                 return false;
             }
             
@@ -297,7 +297,7 @@ namespace SilverClinic {
         // Static methods
         void AutomobileAnxietyInventory::resetIdCounter() {
             aai_id_counter = 0;
-            utils::logMessage("INFO", "AutomobileAnxietyInventory ID counter reset");
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","reset_counter","AAI","",""}, "AAI ID counter reset");
         }
 
         int AutomobileAnxietyInventory::getNextId() {
@@ -315,7 +315,7 @@ namespace SilverClinic {
             string input;
             getline(is, input);
             // For now, just log that input was received
-            utils::logMessage("INFO", "AAI input received: " + input);
+            utils::logStructured(utils::LogLevel::DEBUG, {"FORM","input","AAI", to_string(m_aai_id), {}}, "AAI input received: "+ input);
             return is;
         }
 

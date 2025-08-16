@@ -143,7 +143,7 @@ namespace SilverClinic {
               m_question_81(0), m_question_82(0), m_question_83(0), m_question_84(0), m_question_85(0),
               m_question_86(0), m_question_87(0), m_question_88(0), m_question_89(0), m_question_90(0) {
             setTimestamps();
-            utils::logMessage("INFO", "SCL90R created with ID: " + to_string(m_scl_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","SCL90R", to_string(m_scl_id), {}}, "Created");
         }
 
         SCL90R::SCL90R(int case_profile_id) 
@@ -170,7 +170,7 @@ namespace SilverClinic {
                 throw invalid_argument("Invalid case profile ID provided");
             }
             setTimestamps();
-            utils::logMessage("INFO", "SCL90R created with ID: " + to_string(m_scl_id) + " for case: " + to_string(case_profile_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","SCL90R", to_string(m_scl_id), {}}, "Created for case: "+ to_string(case_profile_id));
         }
 
         SCL90R::SCL90R(int scl_id, int case_profile_id, 
@@ -212,7 +212,7 @@ namespace SilverClinic {
                 throw invalid_argument("Invalid question values provided");
             }
             
-            utils::logMessage("INFO", "SCL90R loaded from database with ID: " + to_string(m_scl_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","load","SCL90R", to_string(m_scl_id), {}}, "Loaded from database");
         }
 
         // Private helper methods
