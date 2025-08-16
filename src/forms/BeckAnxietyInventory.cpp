@@ -22,7 +22,7 @@ namespace SilverClinic {
               m_question_11(0), m_question_12(0), m_question_13(0), m_question_14(0), m_question_15(0),
               m_question_16(0), m_question_17(0), m_question_18(0), m_question_19(0), m_question_20(0), m_question_21(0) {
             setTimestamps();
-            utils::logMessage("INFO", "BeckAnxietyInventory created with ID: " + to_string(m_bai_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","BAI", to_string(m_bai_id), {}}, "Created");
         }
 
         // Constructor with case profile ID
@@ -33,8 +33,7 @@ namespace SilverClinic {
               m_question_11(0), m_question_12(0), m_question_13(0), m_question_14(0), m_question_15(0),
               m_question_16(0), m_question_17(0), m_question_18(0), m_question_19(0), m_question_20(0), m_question_21(0) {
             setTimestamps();
-            utils::logMessage("INFO", "BeckAnxietyInventory created with ID: " + to_string(m_bai_id) + 
-                      ", Case Profile ID: " + to_string(case_profile_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","create","BAI", to_string(m_bai_id), {}}, "Created for case: "+ to_string(case_profile_id));
         }
 
         // Full constructor
@@ -50,7 +49,7 @@ namespace SilverClinic {
               m_question_11(q11), m_question_12(q12), m_question_13(q13), m_question_14(q14), m_question_15(q15),
               m_question_16(q16), m_question_17(q17), m_question_18(q18), m_question_19(q19), m_question_20(q20), m_question_21(q21),
               m_bai_createdAt(createdAt), m_bai_updatedAt(updatedAt) {
-            utils::logMessage("INFO", "BeckAnxietyInventory loaded with ID: " + to_string(m_bai_id));
+            utils::logStructured(utils::LogLevel::INFO, {"FORM","load","BAI", to_string(m_bai_id), {}}, "Loaded from database");
         }
 
         // Private helper methods
@@ -74,7 +73,7 @@ namespace SilverClinic {
                 m_question_1 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 1: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q1","BAI", to_string(m_bai_id), {}}, "Invalid value for Q1");
             }
         }
 
@@ -83,7 +82,7 @@ namespace SilverClinic {
                 m_question_2 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 2: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q2","BAI", to_string(m_bai_id), {}}, "Invalid value for Q2");
             }
         }
 
@@ -92,7 +91,7 @@ namespace SilverClinic {
                 m_question_3 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 3: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q3","BAI", to_string(m_bai_id), {}}, "Invalid value for Q3");
             }
         }
 
@@ -101,7 +100,7 @@ namespace SilverClinic {
                 m_question_4 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 4: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q4","BAI", to_string(m_bai_id), {}}, "Invalid value for Q4");
             }
         }
 
@@ -110,7 +109,7 @@ namespace SilverClinic {
                 m_question_5 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 5: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q5","BAI", to_string(m_bai_id), {}}, "Invalid value for Q5");
             }
         }
 
@@ -119,7 +118,7 @@ namespace SilverClinic {
                 m_question_6 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 6: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q6","BAI", to_string(m_bai_id), {}}, "Invalid value for Q6");
             }
         }
 
@@ -128,7 +127,7 @@ namespace SilverClinic {
                 m_question_7 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 7: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q7","BAI", to_string(m_bai_id), {}}, "Invalid value for Q7");
             }
         }
 
@@ -137,7 +136,7 @@ namespace SilverClinic {
                 m_question_8 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 8: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q8","BAI", to_string(m_bai_id), {}}, "Invalid value for Q8");
             }
         }
 
@@ -146,7 +145,7 @@ namespace SilverClinic {
                 m_question_9 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 9: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q9","BAI", to_string(m_bai_id), {}}, "Invalid value for Q9");
             }
         }
 
@@ -155,7 +154,7 @@ namespace SilverClinic {
                 m_question_10 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 10: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q10","BAI", to_string(m_bai_id), {}}, "Invalid value for Q10");
             }
         }
 
@@ -164,7 +163,7 @@ namespace SilverClinic {
                 m_question_11 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 11: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q11","BAI", to_string(m_bai_id), {}}, "Invalid value for Q11");
             }
         }
 
@@ -173,7 +172,7 @@ namespace SilverClinic {
                 m_question_12 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 12: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q12","BAI", to_string(m_bai_id), {}}, "Invalid value for Q12");
             }
         }
 
@@ -182,7 +181,7 @@ namespace SilverClinic {
                 m_question_13 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 13: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q13","BAI", to_string(m_bai_id), {}}, "Invalid value for Q13");
             }
         }
 
@@ -191,7 +190,7 @@ namespace SilverClinic {
                 m_question_14 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 14: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q14","BAI", to_string(m_bai_id), {}}, "Invalid value for Q14");
             }
         }
 
@@ -200,7 +199,7 @@ namespace SilverClinic {
                 m_question_15 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 15: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q15","BAI", to_string(m_bai_id), {}}, "Invalid value for Q15");
             }
         }
 
@@ -209,7 +208,7 @@ namespace SilverClinic {
                 m_question_16 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 16: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q16","BAI", to_string(m_bai_id), {}}, "Invalid value for Q16");
             }
         }
 
@@ -218,7 +217,7 @@ namespace SilverClinic {
                 m_question_17 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 17: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q17","BAI", to_string(m_bai_id), {}}, "Invalid value for Q17");
             }
         }
 
@@ -227,7 +226,7 @@ namespace SilverClinic {
                 m_question_18 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 18: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q18","BAI", to_string(m_bai_id), {}}, "Invalid value for Q18");
             }
         }
 
@@ -236,7 +235,7 @@ namespace SilverClinic {
                 m_question_19 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 19: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q19","BAI", to_string(m_bai_id), {}}, "Invalid value for Q19");
             }
         }
 
@@ -245,7 +244,7 @@ namespace SilverClinic {
                 m_question_20 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 20: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q20","BAI", to_string(m_bai_id), {}}, "Invalid value for Q20");
             }
         }
 
@@ -254,7 +253,7 @@ namespace SilverClinic {
                 m_question_21 = value;
                 updateTimestamp();
             } else {
-                utils::logMessage("WARNING", "Invalid value for Question 21: " + to_string(value) + ". Must be 0-3.");
+                utils::logStructured(utils::LogLevel::WARN, {"FORM","invalid_q21","BAI", to_string(m_bai_id), {}}, "Invalid value for Q21");
             }
         }
 

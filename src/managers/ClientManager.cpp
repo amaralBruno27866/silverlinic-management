@@ -610,8 +610,8 @@ int ClientManager::importFromCSV(const string& filePath) {
         if (inTransaction) {
             sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
         }
-        utils::logMessage("ERROR", string("ClientManager::importFromCSV file error: ")+ e.what());
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_file_error","Client","",""}, e.what());
     }
-    utils::logMessage("INFO", "ClientManager::importFromCSV imported success=" + to_string(success) + ", failed=" + to_string(failed));
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","csv_import_summary","Client","",""}, "imported success=" + to_string(success) + ", failed=" + to_string(failed));
     return success;
 }

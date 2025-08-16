@@ -315,7 +315,7 @@ namespace SilverClinic {
             string input;
             getline(is, input);
             // For now, just log that input was received
-            utils::logStructured(utils::LogLevel::DEBUG, {"FORM","input","AAI", to_string(m_aai_id), {}}, "AAI input received: "+ input);
+            utils::logStructured(utils::LogLevel::DEBUG, {"FORM","input","AAI", "", {}}, "AAI input received: "+ input);
             return is;
         }
 
