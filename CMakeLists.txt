@@ -125,6 +125,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 # Exclude main.cpp from the sources for library
 set(LIB_SOURCES ${SOURCES})
 list(REMOVE_ITEM LIB_SOURCES "${CMAKE_SOURCE_DIR}/src/main.cpp")
+list(REMOVE_ITEM LIB_SOURCES "${CMAKE_SOURCE_DIR}/src/gui/main.cpp")
 
 # Create a library with all sources except main.cpp
 add_library(${PROJECT_NAME}_lib ${LIB_SOURCES})
@@ -244,3 +245,10 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfigVersion.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SilverClinic)
+
+# ---- Qt6 GUI Integration ----
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
+
+# GUI executable target
+add_executable(silverclinic_gui src/gui/main.cpp)
+target_link_libraries(silverclinic_gui PRIVATE SilverClinic_lib Qt6::Widgets)
