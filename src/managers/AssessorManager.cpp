@@ -1,6 +1,7 @@
 #include "managers/AssessorManager.h"
 #include "core/Utils.h"
 #include "utils/CSVUtils.h"
+#include "managers/AddressManager.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -49,7 +50,24 @@ bool AssessorManager::create(const Assessor& assessor) {
         logDatabaseError("execute create statement");
         return false;
     }
-    
+    // If assessor has address data, persist it
+    try {
+        const Address &addr = assessor.getAddress();
+        // If street (or other field) not empty, save address
+        if (!addr.getStreet().empty()) {
+            // Use AddressManager to insert address
+            AddressManager addrMgr(m_db);
+            Address toInsert = addr;
+            toInsert.setUserKey(assessor.getAssessorId());
+            if (!addrMgr.create(toInsert)) {
+                utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to persist associated address");
+            }
+        }
+    } catch (...) {
+        // Non-fatal: address persistence should not break assessor creation
+        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_persist_exception","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Exception while persisting address");
+    }
+
     utils::logStructured(utils::LogLevel::INFO, {"MANAGER","create","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Assessor created successfully");
     return true;
 }
@@ -63,7 +81,7 @@ vector<Assessor> AssessorManager::readAll() const {
                addr.created_at as addr_created, addr.modified_at as addr_modified
         FROM assessor a
         LEFT JOIN address addr ON a.id = addr.user_key
-        ORDER BY a.lastname, a.firstname
+    ORDER BY a.id ASC
     )";
     
     sqlite3_stmt* stmt;
@@ -146,6 +164,33 @@ bool AssessorManager::update(const Assessor& assessor) {
     }
     
     utils::logStructured(utils::LogLevel::INFO, {"MANAGER","update","Assessor", to_string(assessor.getAssessorId()), {}}, "Assessor updated successfully");
+    // Persist address changes if present
+    try {
+        const Address &addr = assessor.getAddress();
+        if (!addr.getStreet().empty()) {
+            AddressManager addrMgr(m_db);
+            // If address has an id and exists, attempt update; otherwise create
+            if (addr.getAddressId() >= Address::ID_PREFIX) {
+                // try update, if fails, attempt create
+                if (!addrMgr.update(addr)) {
+                    Address toInsert = addr;
+                    toInsert.setUserKey(assessor.getAssessorId());
+                    if (!addrMgr.create(toInsert)) {
+                        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_update_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to update/create associated address");
+                    }
+                }
+            } else {
+                Address toInsert = addr;
+                toInsert.setUserKey(assessor.getAssessorId());
+                if (!addrMgr.create(toInsert)) {
+                    utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to persist associated address");
+                }
+            }
+        }
+    } catch (...) {
+        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_persist_exception","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Exception while persisting address on update");
+    }
+
     return true;
 }
 

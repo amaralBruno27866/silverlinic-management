@@ -1,8 +1,11 @@
 #include "dashboard.h"
+#include "managers/AssessorManager.h"
+#include "assessor/assessor_view.h"
+#include "managers/AssessorManager.h"
 #include <QList>
 #include <QString>
 
-Dashboard::Dashboard(QWidget *parent) : QWidget(parent) {
+Dashboard::Dashboard(SilverClinic::AssessorManager* manager, QWidget *parent) : QWidget(parent) {
 	// Paleta de cores
 	QString colorTitleBar = "#6e00ff";
 	QString colorButton = "#aa1bf7";
@@ -12,6 +15,8 @@ Dashboard::Dashboard(QWidget *parent) : QWidget(parent) {
 	QString colorAlert = "#eef42c";
 	QString colorSuccess = "#2a77fc";
 
+	// Apply light background and dark text to improve readability across widgets
+	this->setStyleSheet("QWidget { background: #fafafa; color: #333333; }");
 	// Barra lateral
 	QFrame *sideBar = new QFrame;
 	sideBar->setFixedWidth(180);
@@ -41,7 +46,9 @@ Dashboard::Dashboard(QWidget *parent) : QWidget(parent) {
 	QStackedWidget *stack = new QStackedWidget;
 	QWidget *assessorPage = new QWidget;
 	assessorPage->setLayout(new QVBoxLayout);
-	assessorPage->layout()->addWidget(new QLabel("Assessor Management"));
+	// use the AssessorView widget for the assessor page
+	AssessorView* assessorView = new AssessorView(manager, assessorPage);
+	assessorPage->layout()->addWidget(assessorView);
 	QWidget *clientPage = new QWidget;
 	clientPage->setLayout(new QVBoxLayout);
 	clientPage->layout()->addWidget(new QLabel("Client Management"));

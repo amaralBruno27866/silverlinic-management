@@ -10,8 +10,10 @@
 #include <QList>
 #include <QString>
 
+namespace SilverClinic { class AssessorManager; }
+
 class Dashboard : public QWidget {
   Q_OBJECT
 public:
-  Dashboard(QWidget *parent = nullptr);
+  explicit Dashboard(SilverClinic::AssessorManager* manager = nullptr, QWidget *parent = nullptr);
 };
