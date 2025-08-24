@@ -3,6 +3,9 @@ project(SilverClinic)
 
 enable_testing()
 
+# Enable AUTOMOC for Qt (required to generate moc files for Q_OBJECT)
+set(CMAKE_AUTOMOC ON)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -126,6 +129,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 set(LIB_SOURCES ${SOURCES})
 list(REMOVE_ITEM LIB_SOURCES "${CMAKE_SOURCE_DIR}/src/main.cpp")
 list(REMOVE_ITEM LIB_SOURCES "${CMAKE_SOURCE_DIR}/src/gui/main.cpp")
+list(REMOVE_ITEM LIB_SOURCES "${CMAKE_SOURCE_DIR}/src/gui/dashboard.cpp")
 
 # Create a library with all sources except main.cpp
 add_library(${PROJECT_NAME}_lib ${LIB_SOURCES})
@@ -250,5 +254,5 @@ install(FILES
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 # GUI executable target
-add_executable(silverclinic_gui src/gui/main.cpp)
+add_executable(silverclinic_gui src/gui/main.cpp src/gui/dashboard.cpp)
 target_link_libraries(silverclinic_gui PRIVATE SilverClinic_lib Qt6::Widgets)
