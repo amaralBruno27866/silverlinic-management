@@ -34,52 +34,22 @@ AssessorView::AssessorView(SilverClinic::AssessorManager* manager, QWidget* pare
     m_table->setAlternatingRowColors(true);
     m_table->horizontalHeader()->setStretchLastSection(true);
     m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    // Improve readability: ensure table text uses dark-gray and clean grid/background
-    // Table styling: white rows, black text; selected rows use translucent blue; hover uses translucent gray
-    m_table->setStyleSheet(
-        "QTableView { color: #000000; background: #ffffff; gridline-color: #e6e6e6; font-size: 13px; }"
-        "QTableView::item { padding: 6px; background: #ffffff; color: #000000; }"
-        "QHeaderView::section { color: #333333; background: #f5f5f5; font-weight: bold; }"
-        "QTableView::indicator { border: none; }"
-        // Selected row: import-blue (#2a77fc) with 75% transparency => rgba(42,119,252,0.25)
-        "QTableView::item:selected { background: rgba(42,119,252,0.25); color: #000000; }"
-        "QTableView::item:selected:active { background: rgba(42,119,252,0.25); }"
-        "QTableView::item:selected:!active { background: rgba(42,119,252,0.25); }"
-        "QTableView { selection-background-color: rgba(42,119,252,0.25); }"
-        // Hover: #333333 at 65% transparency => rgba(51,51,51,0.35)
-        "QTableView::item:hover { background: rgba(51,51,51,0.35); }"
-    );
+    // Table styling is provided by central theme QSS (theme.qss). Keep defaults here.
 
     m_placeholder = new QLabel("Nenhum assessor encontrado.", this);
     m_placeholder->setAlignment(Qt::AlignCenter);
     m_placeholder->setStyleSheet("color: #777; font-size: 14px; padding:20px");
 
-    m_add = new QPushButton("Add");
-    m_edit = new QPushButton("Edit");
-    m_delete = new QPushButton("Delete");
-    m_import = new QPushButton("Import CSV");
+    m_add = new QPushButton(tr("Add"));
+    m_edit = new QPushButton(tr("Edit"));
+    m_delete = new QPushButton(tr("Delete"));
+    m_import = new QPushButton(tr("Import CSV"));
     m_edit->setEnabled(false);
-    m_delete->setEnabled(false);
-    // Add button: purple with hover (30% darker)
-    m_add->setStyleSheet(
-        "QPushButton { background:#aa1bf7; color:white; padding:6px 12px; border-radius:6px; }"
-        "QPushButton:hover { background:#7713ad; }"
-    );
-    // Edit button: confirm green with hover (30% darker)
-    m_edit->setStyleSheet(
-        "QPushButton { background:#3bf73b; color:white; padding:6px 12px; border-radius:6px; }"
-        "QPushButton:hover { background:#29ad29; }"
-    );
-    // Delete button: red with hover (30% darker)
-    m_delete->setStyleSheet(
-        "QPushButton { background:#ff5555; color:white; padding:6px 12px; border-radius:6px; }"
-        "QPushButton:hover { background:#b23c3c; }"
-    );
-    // Import CSV: success blue with hover (30% darker)
-    m_import->setStyleSheet(
-        "QPushButton { background:#2a77fc; color:white; padding:6px 12px; border-radius:6px; }"
-        "QPushButton:hover { background:#1d53b0; }"
-    );
+    // semantic object names for QSS theming (use declared member names)
+    m_add->setObjectName("primaryButton");
+    m_edit->setObjectName("secondaryButton");
+    m_delete->setObjectName("dangerButton");
+    m_import->setObjectName("secondaryButton");
 
     // Add filter and search controls
     m_filterCombo = new QComboBox(this);
@@ -89,8 +59,11 @@ AssessorView::AssessorView(SilverClinic::AssessorManager* manager, QWidget* pare
 
     m_searchField = new QLineEdit(this);
     m_searchField->setPlaceholderText("Search by id, first, last, email or phone...");
+        m_searchField->setObjectName("searchField");
 
     QHBoxLayout* toolbarLayout = new QHBoxLayout;
+    toolbarLayout->setContentsMargins(12, 0, 12, 0); // align with table padding
+    toolbarLayout->setSpacing(8);
     toolbarLayout->addWidget(m_add);
     toolbarLayout->addWidget(m_edit);
     toolbarLayout->addWidget(m_delete);
@@ -99,8 +72,14 @@ AssessorView::AssessorView(SilverClinic::AssessorManager* manager, QWidget* pare
     toolbarLayout->addWidget(m_filterCombo);
     toolbarLayout->addWidget(m_searchField);
 
+    // Place toolbar layout inside a named widget so QSS can target its buttons
+    QWidget* toolbarWidget = new QWidget(this);
+    toolbarWidget->setObjectName("assessorToolbar");
+    toolbarWidget->setContentsMargins(0,0,0,0);
+    toolbarWidget->setLayout(toolbarLayout);
+
     QVBoxLayout* main = new QVBoxLayout(this);
-    main->addLayout(toolbarLayout);
+    main->addWidget(toolbarWidget);
     main->addWidget(m_placeholder);
     main->addWidget(m_table);
 

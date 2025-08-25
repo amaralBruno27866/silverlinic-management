@@ -62,25 +62,14 @@ AssessorDialog::AssessorDialog(QWidget* parent) : QDialog(parent) {
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     layout->addWidget(m_buttons);
 
-    // Styling to ensure labels/input are readable regardless of parent styles
-    this->setStyleSheet(
-    "QDialog { background: #ffffff; }"
-    "QLabel { color: #222222; font-size: 14px; }"
-    "QLineEdit { color: #333333; font-size: 13px; padding:6px; border:1px solid #d0d0d0; border-radius:4px; background:#ffffff; }"
-    "QLineEdit:disabled { color: #777777; }"
-    "QLineEdit[placeholderText] { color: #888888; }"
-    "QComboBox { color: #333333; font-size: 13px; padding:6px; }"
-    "QComboBox QAbstractItemView { color: #333333; }")
-    ;
-
-    // Style the dialog buttons (Ok green, Cancel red)
+    // Minimal input styling handled by theme.qss; set object names for dialog buttons
     QPushButton* okBtn = m_buttons->button(QDialogButtonBox::Ok);
     QPushButton* cancelBtn = m_buttons->button(QDialogButtonBox::Cancel);
     if (okBtn) {
-        okBtn->setStyleSheet("background: #2a77fc; color: white; padding:6px 12px; border-radius:6px;");
+        okBtn->setObjectName("primaryButton");
     }
     if (cancelBtn) {
-        cancelBtn->setStyleSheet("background: #fc4949; color: white; padding:6px 12px; border-radius:6px;");
+        cancelBtn->setObjectName("dangerButton");
     }
 }
 

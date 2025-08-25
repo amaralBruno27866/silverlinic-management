@@ -1,0 +1,118 @@
+/* Theme QSS - central theme for SilverClinic GUI
+   Place in src/gui/resources/theme.qss and loaded by main.cpp at startup
+*/
+
+/* Palette */
+* { box-sizing: border-box; }
+QWidget { background: #f6f7f9; color: #222222; font-family: "Segoe UI", Roboto, Arial, sans-serif; }
+QFrame#sideBar { background: #203040; }
+
+/* Buttons - standard */
+QPushButton {
+  background: #3a4a57;
+  color: #ffffff;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+QPushButton:hover { background: #2f3b45; }
+QPushButton:disabled { background: #bfc9d1; color: #eeeeee; }
+
+/* Semantic buttons by object name (single consolidated block)
+  These selectors style buttons by their objectName. The Assessor view
+  buttons "Add", "Edit", "Delete", "Import CSV" are given object
+  names in code (see assessor_view.cpp) and will match these rules
+  when their objectName is primaryButton/secondaryButton/dangerButton.
+  Example: m_add->setObjectName("primaryButton");
+*/
+QPushButton#primaryButton {
+  background: #2a77fc; /* primary blue */
+  color: #ffffff;
+}
+QPushButton#primaryButton:hover { background: #1760e6; }
+
+QPushButton#secondaryButton {
+  background: #6c7a89; /* default secondary tone */
+  color: #ffffff;
+}
+QPushButton#secondaryButton:hover { background: #55636f; }
+
+QPushButton#dangerButton {
+  background: #d64545; /* danger red */
+  color: #ffffff;
+}
+QPushButton#dangerButton:hover { background: #b23232; }
+
+/* Smooth transition for hover changes where supported */
+QPushButton { transition: background 120ms ease-in-out; }
+
+/* Specific toolbar button styling inside assessor view */
+/* Toolbar buttons inside assessor view: target by toolbar AND button objectName
+   so these rules reliably override the general semantic button styles above.
+*/
+QWidget#assessorToolbar QPushButton,
+QWidget#assessorToolbar QPushButton#primaryButton,
+QWidget#assessorToolbar QPushButton#secondaryButton,
+QWidget#assessorToolbar QPushButton#dangerButton {
+  background: #ffffff; /* white */
+  color: #222222;
+  border: 1px solid #e6e6e6;
+}
+
+/* Use 6-digit hex for compatibility and ensure hover is visibly different.
+   Text switches to white on dark hover for contrast. */
+QWidget#assessorToolbar QPushButton:hover,
+QWidget#assessorToolbar QPushButton#primaryButton:hover,
+QWidget#assessorToolbar QPushButton#secondaryButton:hover,
+QWidget#assessorToolbar QPushButton#dangerButton:hover {
+  background: #5a5a5a; /* requested hover color (6-digit) */
+  color: #ffffff;
+  outline: none;
+}
+
+QLineEdit#searchField {
+  border: 1px solid #d0d0d0;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+/* Dialogs and inputs */
+QDialog { background: #ffffff; }
+QLabel { color: #222222; }
+QLineEdit, QComboBox, QTextEdit { background: #ffffff; color: #222222; border: 1px solid #d0d3d6; padding: 6px; border-radius: 4px; }
+QLineEdit:disabled, QComboBox:disabled { color: #777777; }
+
+/* Table styling */
+QTableView { background: #ffffff; gridline-color: #a8a7a7ff; font-size: 13px; }
+QHeaderView::section { background: #f5f5f5; color: #333333; font-weight: 600; }
+QTableView::item { padding: 6px; }
+QTableView::item:selected { background: rgba(79,109,134,0.18); color: #000000; }
+QTableView::item:hover { background: rgba(0,0,0,0.04); }
+
+/* Small helpers */
+QLabel[header="true"] { font-size: 18px; font-weight: 600; color: #ffffff; padding-left: 12px; }
+
+/* Content header and dialog header styles (use Dashboard accent color) */
+QFrame#contentHeader, QFrame#dialogHeader {
+  background: #4f6d86; /* colorAccent used in Dashboard */
+  color: #ffffff;
+  min-height: 56px;
+}
+
+QFrame#contentHeader QLabel, QFrame#dialogHeader QLabel {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  padding-left: 12px;
+}
+
+/* Ensure dialog buttons look consistent when using QDialogButtonBox */
+QDialogButtonBox QPushButton { min-height: 36px; padding: 6px 12px; border-radius: 6px; }
+QDialogButtonBox QPushButton#primaryButton { min-height: 36px; }
+QDialogButtonBox QPushButton#dangerButton { }
+
+/* Scrollbars (subtle) */
+QScrollBar:vertical { width: 10px; background: transparent; }
+QScrollBar::handle:vertical { background: #c4c4c4; border-radius: 5px; }
+QScrollBar::add-line, QScrollBar::sub-line { height: 0; }

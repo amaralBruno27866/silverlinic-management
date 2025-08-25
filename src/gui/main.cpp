@@ -1,6 +1,7 @@
 
 #include <QApplication>
 #include <QMainWindow>
+#include <QFile>
 #include <sqlite3.h>
 #include "dashboard.h"
 #include "core/DatabaseConfig.h"
@@ -8,15 +9,21 @@
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
-
-  // Global styling: ensure dialogs and inputs use a readable dark-gray font
-  app.setStyleSheet(
-    "QDialog { color: #333333; }"
-    "QLabel { color: #333333; }"
-    "QLineEdit { color: #333333; }"
-    "QComboBox { color: #333333; }"
-    "QPushButton { color: #333333; }"
-  );
+  // Load centralized QSS theme if present, otherwise fallback to minimal styling
+  QFile qssFile("./src/gui/resources/theme.qss");
+  if (qssFile.open(QFile::ReadOnly)) {
+    QString qss = QString::fromUtf8(qssFile.readAll());
+    app.setStyleSheet(qss);
+    qssFile.close();
+  } else {
+    app.setStyleSheet(
+      "QDialog { color: #333333; }"
+      "QLabel { color: #333333; }"
+      "QLineEdit { color: #333333; }"
+      "QComboBox { color: #333333; }"
+      "QPushButton { color: #333333; }"
+    );
+  }
 
   // Open the main database and apply pragmas
   sqlite3* db = nullptr;

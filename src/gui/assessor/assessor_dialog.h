@@ -11,6 +11,7 @@ class QLineEdit;
 class QComboBox;
 class QDialogButtonBox;
 class QPushButton;
+class QLabel;
 
 class AssessorDialog : public QDialog {
     Q_OBJECT
@@ -35,6 +36,8 @@ private:
     QDialogButtonBox* m_buttons;
     QPushButton* m_okBtn;
     QPushButton* m_cancelBtn;
+    // dialog header
+    QLabel* m_dialogTitle;
 };
 
 #endif // ASSESSOR_DIALOG_H
