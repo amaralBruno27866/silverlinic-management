@@ -61,6 +61,14 @@ namespace SilverClinic {
      * @return true if all PRAGMAs executed (foreign_keys verified ON), false otherwise
      */
     static bool applyStandardPragmas(sqlite3* db);
+
+    /**
+     * @brief Return the main database path computed at runtime.
+     *
+     * Use this when callers need the project-root-resolved path after
+     * any working-directory corrections performed at program startup.
+     */
+    static std::string getMainDatabasePath();
         
     private:
         DatabaseConfig() = delete; // Static-only class

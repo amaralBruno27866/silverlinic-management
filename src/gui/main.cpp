@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
 
   // Open the main database and apply pragmas
   sqlite3* db = nullptr;
-  int rc = sqlite3_open(DatabaseConfig::MAIN_DATABASE_PATH.c_str(), &db);
+  std::string dbPath = DatabaseConfig::getMainDatabasePath();
+  int rc = sqlite3_open(dbPath.c_str(), &db);
   if (rc != SQLITE_OK || !DatabaseConfig::applyStandardPragmas(db)) {
       // If DB can't be opened, log to stderr and still launch app in degraded mode
       fprintf(stderr, "Failed to open or configure database: %s\n", sqlite3_errmsg(db));
