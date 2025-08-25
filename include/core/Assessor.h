@@ -66,7 +66,7 @@ namespace SilverClinic {
     // Static methods for ID management
     static int getNextAssessorId();
     static void resetIdCounter();
-    static const int ID_PREFIX = 100000; // Assessor IDs start at 100001
+  static constexpr int ID_PREFIX = 100000; // Assessor IDs start at 100001
     
     // Stream operators
     friend ostream& operator<<(ostream& os, const Assessor& assessor);

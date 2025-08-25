@@ -560,28 +560,72 @@ int AssessorManager::importFromCSV(const string& filePath) {
                 string createdAtNorm = csv::normalizeTimestampForDateTime(createdAtRaw);
                 DateTime createdAt = createdAtRaw.empty() ? DateTime::now() : DateTime::fromString(createdAtNorm);
                 DateTime modifiedAt = createdAt;
+                // Insert assessor row without providing id so SQLite assigns AUTOINCREMENT id
+                const string insertAssessorSql = R"(
+                    INSERT INTO assessor (firstname, lastname, phone, email, created_at, modified_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                )";
+                sqlite3_stmt* assStmt = nullptr;
+                if (sqlite3_prepare_v2(m_db, insertAssessorSql.c_str(), -1, &assStmt, nullptr) != SQLITE_OK) {
+                    logDatabaseError("prepare insert assessor");
+                    failed++;
+                    if (assStmt) sqlite3_finalize(assStmt);
+                    continue;
+                }
+                sqlite3_bind_text(assStmt, 1, firstName.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_text(assStmt, 2, lastName.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_text(assStmt, 3, phone.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_text(assStmt, 4, email.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_text(assStmt, 5, createdAt.toString().c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_text(assStmt, 6, modifiedAt.toString().c_str(), -1, SQLITE_TRANSIENT);
 
-                Address address;
+                int stepRes = sqlite3_step(assStmt);
+                sqlite3_finalize(assStmt);
+                if (stepRes != SQLITE_DONE) {
+                    logDatabaseError("execute insert assessor");
+                    failed++;
+                    continue;
+                }
+
+                // Get the auto-generated assessor id
+                int assessorId = static_cast<int>(sqlite3_last_insert_rowid(m_db));
+
+                // If there's address data, insert into address table referencing assessorId
                 string street = csv::safeGet(row, "street");
                 if (!street.empty()) {
-                    address.setStreet(street);
-                    address.setCity(csv::safeGet(row, "city"));
-                    address.setProvince(csv::safeGet(row, "province"));
-                    address.setPostalCode(csv::safeGet(row, "postal_code"));
+                    string city = csv::safeGet(row, "city");
+                    string province = csv::safeGet(row, "province");
+                    string postal = csv::safeGet(row, "postal_code");
                     string addrCreatedRaw = csv::safeGet(row, "address_created_at");
                     string addrCreatedNorm = csv::normalizeTimestampForDateTime(addrCreatedRaw);
                     DateTime addrCreated = addrCreatedRaw.empty() ? createdAt : DateTime::fromString(addrCreatedNorm);
-                    address.setCreatedAt(addrCreated);
-                    address.setUpdatedAt(addrCreated);
+
+                    const string insertAddrSql = R"(
+                        INSERT INTO address (user_key, street, city, province, postal_code, created_at, modified_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    )";
+                    sqlite3_stmt* addrStmt = nullptr;
+                    if (sqlite3_prepare_v2(m_db, insertAddrSql.c_str(), -1, &addrStmt, nullptr) != SQLITE_OK) {
+                        logDatabaseError("prepare insert address");
+                        // Address failure shouldn't cancel assessor insert; log and continue
+                        if (addrStmt) sqlite3_finalize(addrStmt);
+                    } else {
+                        sqlite3_bind_int(addrStmt, 1, assessorId);
+                        sqlite3_bind_text(addrStmt, 2, street.c_str(), -1, SQLITE_TRANSIENT);
+                        sqlite3_bind_text(addrStmt, 3, city.c_str(), -1, SQLITE_TRANSIENT);
+                        sqlite3_bind_text(addrStmt, 4, province.c_str(), -1, SQLITE_TRANSIENT);
+                        sqlite3_bind_text(addrStmt, 5, postal.c_str(), -1, SQLITE_TRANSIENT);
+                        sqlite3_bind_text(addrStmt, 6, addrCreated.toString().c_str(), -1, SQLITE_TRANSIENT);
+                        sqlite3_bind_text(addrStmt, 7, addrCreated.toString().c_str(), -1, SQLITE_TRANSIENT);
+
+                        int addrStep = sqlite3_step(addrStmt);
+                        if (addrStep != SQLITE_DONE) {
+                            utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_insert_fail","Assessor", std::to_string(assessorId), {}}, "Failed to insert associated address");
+                        }
+                        sqlite3_finalize(addrStmt);
+                    }
                 }
 
-                int id = Assessor::getNextAssessorId();
-                Assessor assessor(id, firstName, lastName, email, phone, address, createdAt, modifiedAt);
-                if (!create(assessor)) {
-                    failed++;
-                    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_insert_fail","Assessor","",""}, "Failed to insert assessor row (email: "+email+")");
-                    continue;
-                }
                 success++;
             } catch (const exception &e) {
                 failed++;
