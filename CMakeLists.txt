@@ -257,9 +257,9 @@ install(FILES
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 # GUI executable target
-add_executable(silverclinic_gui src/gui/main.cpp src/gui/dashboard.cpp
-    src/gui/assessor/assessor_model.cpp
-    src/gui/assessor/assessor_view.cpp
-    src/gui/assessor/assessor_dialog.cpp
-)
-target_link_libraries(silverclinic_gui PRIVATE SilverClinic_lib Qt6::Widgets)
+# add_executable(silverclinic_gui src/gui/main.cpp src/gui/dashboard.cpp
+#     src/gui/assessor/assessor_model.cpp
+#     src/gui/assessor/assessor_view.cpp
+#     src/gui/assessor/assessor_dialog.cpp
+# )
+# target_link_libraries(silverclinic_gui PRIVATE SilverClinic_lib Qt6::Widgets)
