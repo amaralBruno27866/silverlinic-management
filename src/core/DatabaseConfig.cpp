@@ -51,6 +51,10 @@ namespace SilverClinic {
     const std::string DatabaseConfig::CLIENT_MANAGER_TEST_DB = getProjectRootPath() + "/data/test/test_client_manager.db";
     const std::string DatabaseConfig::INTEGRATION_TEST_DB = getProjectRootPath() + "/data/test/test_integration.db";
     const std::string DatabaseConfig::DEMO_DATABASE_PATH = getProjectRootPath() + "/data/demo.db";
+
+    std::string DatabaseConfig::getMainDatabasePath() {
+        return getProjectRootPath() + "/data/clinic.db";
+    }
     
     std::string DatabaseConfig::getTestDatabasePath(const std::string& testName) {
         return getProjectRootPath() + "/data/test/" + testName + ".db";

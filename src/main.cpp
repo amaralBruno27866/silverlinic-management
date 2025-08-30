@@ -75,9 +75,9 @@ bool ensureCorrectWorkingDirectory() {
 // Function to validate database integrity
 bool validateDatabaseIntegrity(sqlite3* db) {
     // Check if database file is not empty (size > 0)
-    string dbPath = DatabaseConfig::MAIN_DATABASE_PATH;
-    if (filesystem::file_size(dbPath) == 0) {
-    utils::logStructured(utils::LogLevel::WARN, {"APP","db_empty","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database file empty - initializing tables");
+    string dbPath = DatabaseConfig::getMainDatabasePath();
+    if (filesystem::exists(dbPath) && filesystem::file_size(dbPath) == 0) {
+        utils::logStructured(utils::LogLevel::WARN, {"APP","db_empty","Database", DatabaseConfig::getMainDatabasePath(), {}}, "Database file empty - initializing tables");
         return true; // Empty DB is OK, we'll create tables
     }
     
@@ -92,7 +92,7 @@ bool validateDatabaseIntegrity(sqlite3* db) {
         return false;
     }
     
-    utils::logStructured(utils::LogLevel::INFO, {"APP","db_integrity","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database integrity validated successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_integrity","Database", DatabaseConfig::getMainDatabasePath(), {}}, "Database integrity validated successfully");
     return true;
 }
 
@@ -113,7 +113,7 @@ bool executeSQLCommand(sqlite3* db, const string& sql, const string& description
 
 // Function to create database tables
 bool createDatabaseTables(sqlite3* db) {
-    utils::logStructured(utils::LogLevel::INFO, {"APP","db_create_tables","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Creating database tables...");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_create_tables","Database", DatabaseConfig::getMainDatabasePath(), {}}, "Creating database tables...");
     
     // Enable foreign keys in SQLite
     if (!executeSQLCommand(db, "PRAGMA foreign_keys = ON;", "Foreign keys activation")) {
@@ -543,13 +543,13 @@ bool createDatabaseTables(sqlite3* db) {
         return false;
     }
     
-    utils::logStructured(utils::LogLevel::INFO, {"APP","db_tables_created","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "All database tables created successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_tables_created","Database", DatabaseConfig::getMainDatabasePath(), {}}, "All database tables created successfully");
     return true;
 }
 
 // Function to insert sample data
 bool insertSampleData(sqlite3* db) {
-    utils::logStructured(utils::LogLevel::INFO, {"APP","sample_data_insert","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Inserting sample data...");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","sample_data_insert","Database", DatabaseConfig::getMainDatabasePath(), {}}, "Inserting sample data...");
     
     string currentTime = getCurrentTimestamp();
     
@@ -610,7 +610,7 @@ bool insertSampleData(sqlite3* db) {
         return false;
     }
     
-    utils::logStructured(utils::LogLevel::INFO, {"APP","sample_data_done","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Sample data inserted successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","sample_data_done","Database", DatabaseConfig::getMainDatabasePath(), {}}, "Sample data inserted successfully");
     return true;
 }
 
@@ -631,16 +631,17 @@ int main() {
         // Ensure data directories exist
         DatabaseConfig::ensureDirectoriesExist();
         
-        // Setup and open SQLite database
-        sqlite3* db;
-        int result = sqlite3_open(DatabaseConfig::MAIN_DATABASE_PATH.c_str(), &db);
+    // Setup and open SQLite database (compute path at runtime)
+    sqlite3* db;
+    std::string dbPath = DatabaseConfig::getMainDatabasePath();
+    int result = sqlite3_open(dbPath.c_str(), &db);
         
         if (result != SQLITE_OK) {
             cerr << "❌ Error opening database: " << sqlite3_errmsg(db) << endl;
             return 1;
         }
         
-    utils::logStructured(utils::LogLevel::INFO, {"APP","db_open","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Database opened successfully");
+    utils::logStructured(utils::LogLevel::INFO, {"APP","db_open","Database", dbPath, {}}, "Database opened successfully");
 
     // Apply standardized PRAGMAs (centralized)
     if (!DatabaseConfig::applyStandardPragmas(db)) {
@@ -648,10 +649,10 @@ int main() {
         sqlite3_close(db);
         return 1;
     }
-    utils::logStructured(utils::LogLevel::DEBUG, {"APP","pragmas_applied","Database", DatabaseConfig::MAIN_DATABASE_PATH, {}}, "Standard SQLite PRAGMAs applied successfully");
+    utils::logStructured(utils::LogLevel::DEBUG, {"APP","pragmas_applied","Database", dbPath, {}}, "Standard SQLite PRAGMAs applied successfully");
         
         // Validate database integrity
-        if (!validateDatabaseIntegrity(db)) {
+    if (!validateDatabaseIntegrity(db)) {
             cerr << "❌ Database integrity validation failed!" << endl;
             sqlite3_close(db);
             return 1;

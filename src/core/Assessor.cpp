@@ -5,7 +5,6 @@
 
 using namespace std;
 namespace SilverClinic {
-    
     // Static variable for ID counter
     static int assessor_id_counter = 0;
     

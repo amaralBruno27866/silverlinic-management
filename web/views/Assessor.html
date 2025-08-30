@@ -291,18 +291,17 @@
       
       <div style="background: #e8f4fd; padding: 1rem; border-radius: 0.35rem; border-left: 4px solid var(--info-color); margin-top: 1rem;">
         <p style="margin: 0; color: var(--info-color);"><strong><i class="bi bi-info-circle"></i> Completion & Export Instructions</strong></p>
-        <p style="margin: 0.6rem 0 0 0;">This form registers a new <strong>Assessor</strong> and generates two CSV files aligned with the database schema.</p>
+        <p style="margin: 0.6rem 0 0 0;">This form registers a new <strong>Assessor</strong> and generates a single CSV file aligned with the database schema for both assessor and address records.</p>
         <ul style="margin:0.6rem 0 0 1.1rem; padding:0; font-size:0.92rem; line-height:1.25rem;">
-          <li><strong>Required fields</strong>: First Name, Last Name, Email, Phone, Address, City, Province, Postal Code, Country.</li>
-          <li><strong>created_at</strong> is generated automatically; <code>id</code> and <code>modified_at</code> are assigned by the backend.</li>
-          <li>Clicking "Save Assessor Data" generates: <code>assessor_*.csv</code> and <code>address_assessor_*.csv</li>
-          <li>The assessor file columns: firstname, lastname, phone, email, created_at.</li>
-          <li>The address file columns: street, city, province, postal_code, created_at (linked later via generated ID).</li>
+          <li><strong>Required fields</strong>: First Name, Last Name, Email, Phone, created_at. Address fields are optional but supported: Street, City, Province, Postal Code.</li>
+          <li><strong>created_at</strong> is generated automatically; <code>id</code> and <code>modified_at</code> are assigned by the backend at import time.</li>
+          <li>Clicking "Save Assessor Data" generates a single CSV named <code>assessor_{firstname}_{lastname}.csv</code> containing both assessor and address columns.</li>
+          <li>CSV columns (combined): <code>firstname, lastname, phone, email, created_at, street, city, province, postal_code, address_created_at</code>.</li>
           <li>Email is normalized to lowercase; names and city are capitalized.</li>
           <li>Phone is formatted if 10 digits (pattern: (XXX) XXX-XXXX).</li>
           <li>Validate the postal code in Canadian format (A1A 1A1).</li>
           <li>Re‑export overwrites existing files (same name). Keep in a dedicated import staging folder.</li>
-          <li>Do not edit CSV headers to avoid import failure.</li>
+          <li>Do not edit CSV headers to avoid import failure; the backend expects the combined header set above.</li>
         </ul>
       </div>
     </fieldset>
@@ -571,13 +570,29 @@
       return allValid;
     }
 
-    // Save form data: generate two CSV files (assessor table + address table)
+    // Save form data: generate a single combined CSV (assessor + optional address)
     function saveFormData() {
-  const { assessorRecord, addressRecord } = collectFormData();
-  const assessorCSV = generateAssessorCSV(assessorRecord);
-  const addressCSV = generateAddressCSV(addressRecord);
-  downloadCSV(assessorCSV, `assessor_${assessorRecord.firstname}_${assessorRecord.lastname}.csv`);
-  downloadCSV(addressCSV, `address_assessor_${assessorRecord.firstname}_${assessorRecord.lastname}.csv`);
+      const { assessorRecord, addressRecord } = collectFormData();
+      const combinedCSV = generateCombinedCSV(assessorRecord, addressRecord);
+      downloadCSV(combinedCSV, `assessor_${assessorRecord.firstname}_${assessorRecord.lastname}.csv`);
+    }
+
+    // Generate a combined CSV with assessor and address columns
+    function generateCombinedCSV(ass, addr) {
+      const headers = ['firstname','lastname','phone','email','created_at','street','city','province','postal_code','address_created_at'];
+      const values = [
+        ass.firstname || '',
+        ass.lastname || '',
+        ass.phone || '',
+        ass.email || '',
+        ass.created_at || '',
+        addr.street || '',
+        addr.city || '',
+        addr.province || '',
+        addr.postal_code || '',
+        addr.created_at || ''
+      ];
+      return headers.join(',') + '\n' + values.map(csvEscape).join(',');
     }
 
     // Collect all form data
