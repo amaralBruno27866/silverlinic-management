@@ -127,6 +127,21 @@ namespace SilverClinic {
      */
     int importFromCSV(const string& filePath);
         
+        /**
+         * @brief Detailed import result used by CSV import reporting
+         */
+        struct ImportResult {
+            int success = 0;
+            int failed = 0;
+            std::vector<std::string> errors; // free-form error messages
+            std::vector<std::pair<int,std::string>> duplicates; // existing id + reason
+        };
+
+        /**
+         * @brief Import CSV and return detailed result (does not break existing int-return API)
+         */
+        ImportResult importFromCSVReport(const string& filePath);
+        
         // Validation methods
         
         /**
@@ -142,6 +157,14 @@ namespace SilverClinic {
          * @return true if safe to delete, false if has associated cases
          */
         bool canDelete(int assessorId) const;
+
+        /**
+         * @brief Detect an existing assessor that matches the provided assessor
+         *        by unique fields (email) or by combination of firstname+lastname+phone.
+         * @param assessor The assessor to check for duplicates
+         * @return Optional containing existing assessor id if found, empty otherwise
+         */
+        optional<int> findExistingAssessorId(const Assessor& assessor) const;
         
     private:
         // Internal helper methods

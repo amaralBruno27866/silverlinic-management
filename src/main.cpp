@@ -128,12 +128,38 @@ bool createDatabaseTables(sqlite3* db) {
             lastname TEXT NOT NULL,
             phone TEXT,
             email TEXT,
+            normalized_email TEXT,
             created_at TEXT NOT NULL,
             modified_at TEXT NOT NULL
         )
     )";
     
     if (!executeSQLCommand(db, createAssessorTable, "Assessor table creation")) {
+        return false;
+    }
+
+    // Create unique indexes to enforce uniqueness at DB level
+    // Unique email (if email present)
+    string createAssessorEmailIndex = R"(
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_assessor_normalized_email_unique ON assessor(normalized_email) WHERE normalized_email IS NOT NULL AND normalized_email <> ''
+    )";
+    if (!executeSQLCommand(db, createAssessorEmailIndex, "Assessor unique normalized_email index")) {
+        return false;
+    }
+
+    // Populate normalized_email for existing rows (safe idempotent migration)
+    string populateNormalizedEmail = R"(
+        UPDATE assessor SET normalized_email = lower(trim(email)) WHERE email IS NOT NULL AND trim(email) <> '';
+    )";
+    if (!executeSQLCommand(db, populateNormalizedEmail, "Populate normalized_email column")) {
+        return false;
+    }
+
+    // Composite unique index on firstname+lastname+phone to catch duplicates without email
+    string createAssessorNamePhoneIndex = R"(
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_assessor_name_phone_unique ON assessor(firstname, lastname, phone)
+    )";
+    if (!executeSQLCommand(db, createAssessorNamePhoneIndex, "Assessor unique name+phone index")) {
         return false;
     }
     

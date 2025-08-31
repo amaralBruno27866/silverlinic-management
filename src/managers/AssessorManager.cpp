@@ -15,6 +15,47 @@ AssessorManager::AssessorManager(sqlite3* database) : m_db(database) {
     }
 }
 
+// Helper: find existing assessor by email or by firstname+lastname+phone
+optional<int> AssessorManager::findExistingAssessorId(const Assessor& assessor) const {
+    // Prefer email match if provided
+    if (!assessor.getEmail().empty()) {
+        const string sqlEmail = "SELECT id FROM assessor WHERE email = ? LIMIT 1";
+        sqlite3_stmt* stmt = nullptr;
+        if (sqlite3_prepare_v2(m_db, sqlEmail.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+            sqlite3_bind_text(stmt, 1, assessor.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                int foundId = sqlite3_column_int(stmt, 0);
+                sqlite3_finalize(stmt);
+                return optional<int>(foundId);
+            }
+            sqlite3_finalize(stmt);
+        } else {
+            logDatabaseError("prepare find by email");
+        }
+    }
+
+    // Fallback: match by firstname + lastname + phone (normalized)
+    const string sqlNamePhone = R"(
+        SELECT id FROM assessor WHERE firstname = ? AND lastname = ? AND phone = ? LIMIT 1
+    )";
+    sqlite3_stmt* stmt = nullptr;
+    if (sqlite3_prepare_v2(m_db, sqlNamePhone.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, assessor.getFirstName().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, assessor.getLastName().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, assessor.getPhone().c_str(), -1, SQLITE_TRANSIENT);
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int foundId = sqlite3_column_int(stmt, 0);
+            sqlite3_finalize(stmt);
+            return optional<int>(foundId);
+        }
+        sqlite3_finalize(stmt);
+    } else {
+        logDatabaseError("prepare find by name+phone");
+    }
+
+    return nullopt;
+}
+
 // CRUD Operations Implementation
 
 bool AssessorManager::create(const Assessor& assessor) {
@@ -22,7 +63,22 @@ bool AssessorManager::create(const Assessor& assessor) {
         utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor data");
         return false;
     }
-    
+
+    // Duplicate check
+    optional<int> existing = findExistingAssessorId(assessor);
+    if (existing.has_value()) {
+        // Log and return error - duplicate found
+        string msg = "Duplicate assessor detected. Existing id=" + to_string(existing.value());
+        utils::LogEventContext ctx;
+        ctx.category = "MANAGER";
+        ctx.action = "duplicate_detected";
+        ctx.entityType = std::optional<std::string>("Assessor");
+        ctx.entityId = std::optional<std::string>(std::to_string(assessor.getAssessorId()));
+        ctx.correlationId = std::optional<std::string>(std::to_string(existing.value()));
+        utils::logStructured(utils::LogLevel::ERROR, ctx, msg);
+        return false;
+    }
+
     const string sql = R"(
         INSERT INTO assessor (id, firstname, lastname, phone, email, created_at, modified_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -531,120 +587,70 @@ void AssessorManager::logDatabaseError(const string& operation) const {
 }
 
 int AssessorManager::importFromCSV(const string& filePath) {
-    int success = 0;
-    int failed  = 0;
+    // Delegate to detailed report method for easier testing and richer information
+    ImportResult res = importFromCSVReport(filePath);
+    return res.success;
+}
+
+AssessorManager::ImportResult AssessorManager::importFromCSVReport(const string& filePath) {
+    ImportResult result;
     bool inTransaction = false;
     try {
-        auto table = csv::CSVReader::readFile(filePath);
-        const vector<string> required = {"firstname","lastname","phone","email","created_at"};
-        for (const auto &h : required) {
-            if (find(table.headers.begin(), table.headers.end(), h) == table.headers.end()) {
-                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_missing_header","Assessor","",""}, "Missing header: "+h);
-                return 0; // structural error, nothing inserted yet
-            }
-        }
-        // Begin best-effort transaction
-        if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr) == SQLITE_OK) {
+        csv::CSVTable table = csv::CSVReader::readFile(filePath);
+
+        // Begin transaction for performance
+        char* errMsg = nullptr;
+        if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, &errMsg) == SQLITE_OK) {
             inTransaction = true;
-        } else {
-            utils::logStructured(utils::LogLevel::WARN, {"MANAGER","csv_begin_fail","Assessor","",""}, "Failed to BEGIN TRANSACTION (continuing non-atomic)");
         }
 
         for (const auto &row : table.rows) {
-            try {
-                string firstName = utils::normalizeName(csv::safeGet(row, "firstname"));
-                string lastName  = utils::normalizeName(csv::safeGet(row, "lastname"));
-                string phone     = utils::normalizePhoneNumber(csv::safeGet(row, "phone"));
-                string email     = utils::normalizeForDatabase(csv::safeGet(row, "email"));
-                string createdAtRaw = csv::safeGet(row, "created_at");
-                string createdAtNorm = csv::normalizeTimestampForDateTime(createdAtRaw);
-                DateTime createdAt = createdAtRaw.empty() ? DateTime::now() : DateTime::fromString(createdAtNorm);
-                DateTime modifiedAt = createdAt;
-                // Insert assessor row without providing id so SQLite assigns AUTOINCREMENT id
-                const string insertAssessorSql = R"(
-                    INSERT INTO assessor (firstname, lastname, phone, email, created_at, modified_at)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                )";
-                sqlite3_stmt* assStmt = nullptr;
-                if (sqlite3_prepare_v2(m_db, insertAssessorSql.c_str(), -1, &assStmt, nullptr) != SQLITE_OK) {
-                    logDatabaseError("prepare insert assessor");
-                    failed++;
-                    if (assStmt) sqlite3_finalize(assStmt);
-                    continue;
-                }
-                sqlite3_bind_text(assStmt, 1, firstName.c_str(), -1, SQLITE_TRANSIENT);
-                sqlite3_bind_text(assStmt, 2, lastName.c_str(), -1, SQLITE_TRANSIENT);
-                sqlite3_bind_text(assStmt, 3, phone.c_str(), -1, SQLITE_TRANSIENT);
-                sqlite3_bind_text(assStmt, 4, email.c_str(), -1, SQLITE_TRANSIENT);
-                sqlite3_bind_text(assStmt, 5, createdAt.toString().c_str(), -1, SQLITE_TRANSIENT);
-                sqlite3_bind_text(assStmt, 6, modifiedAt.toString().c_str(), -1, SQLITE_TRANSIENT);
+            Assessor a;
+            a.setFirstName(csv::safeGet(row, "firstname"));
+            a.setLastName(csv::safeGet(row, "lastname"));
+            a.setPhone(csv::safeGet(row, "phone"));
+            a.setEmail(csv::safeGet(row, "email"));
+            string createdStr = csv::normalizeTimestampForDateTime(csv::safeGet(row, "created_at"));
+            if (!createdStr.empty()) {
+                a.setCreatedAt(DateTime::fromString(createdStr));
+                a.setUpdatedAt(DateTime::fromString(createdStr));
+            }
 
-                int stepRes = sqlite3_step(assStmt);
-                sqlite3_finalize(assStmt);
-                if (stepRes != SQLITE_DONE) {
-                    logDatabaseError("execute insert assessor");
-                    failed++;
-                    continue;
-                }
+            // Validate
+            if (!validateAssessor(a)) {
+                result.failed++;
+                result.errors.push_back("Validation failed for row with email=" + a.getEmail());
+                continue;
+            }
 
-                // Get the auto-generated assessor id
-                int assessorId = static_cast<int>(sqlite3_last_insert_rowid(m_db));
+            // Duplicate detection
+            optional<int> existing = findExistingAssessorId(a);
+            if (existing.has_value()) {
+                // Log duplicate and record
+                result.failed++;
+                result.duplicates.emplace_back(existing.value(), "duplicate by email/name+phone");
+                continue;
+            }
 
-                // If there's address data, insert into address table referencing assessorId
-                string street = csv::safeGet(row, "street");
-                if (!street.empty()) {
-                    string city = csv::safeGet(row, "city");
-                    string province = csv::safeGet(row, "province");
-                    string postal = csv::safeGet(row, "postal_code");
-                    string addrCreatedRaw = csv::safeGet(row, "address_created_at");
-                    string addrCreatedNorm = csv::normalizeTimestampForDateTime(addrCreatedRaw);
-                    DateTime addrCreated = addrCreatedRaw.empty() ? createdAt : DateTime::fromString(addrCreatedNorm);
-
-                    const string insertAddrSql = R"(
-                        INSERT INTO address (user_key, street, city, province, postal_code, created_at, modified_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                    )";
-                    sqlite3_stmt* addrStmt = nullptr;
-                    if (sqlite3_prepare_v2(m_db, insertAddrSql.c_str(), -1, &addrStmt, nullptr) != SQLITE_OK) {
-                        logDatabaseError("prepare insert address");
-                        // Address failure shouldn't cancel assessor insert; log and continue
-                        if (addrStmt) sqlite3_finalize(addrStmt);
-                    } else {
-                        sqlite3_bind_int(addrStmt, 1, assessorId);
-                        sqlite3_bind_text(addrStmt, 2, street.c_str(), -1, SQLITE_TRANSIENT);
-                        sqlite3_bind_text(addrStmt, 3, city.c_str(), -1, SQLITE_TRANSIENT);
-                        sqlite3_bind_text(addrStmt, 4, province.c_str(), -1, SQLITE_TRANSIENT);
-                        sqlite3_bind_text(addrStmt, 5, postal.c_str(), -1, SQLITE_TRANSIENT);
-                        sqlite3_bind_text(addrStmt, 6, addrCreated.toString().c_str(), -1, SQLITE_TRANSIENT);
-                        sqlite3_bind_text(addrStmt, 7, addrCreated.toString().c_str(), -1, SQLITE_TRANSIENT);
-
-                        int addrStep = sqlite3_step(addrStmt);
-                        if (addrStep != SQLITE_DONE) {
-                            utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_insert_fail","Assessor", std::to_string(assessorId), {}}, "Failed to insert associated address");
-                        }
-                        sqlite3_finalize(addrStmt);
-                    }
-                }
-
-                success++;
-            } catch (const exception &e) {
-                failed++;
-                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_row_error","Assessor","",""}, e.what());
+            // Create in DB
+            if (create(a)) {
+                result.success++;
+            } else {
+                result.failed++;
+                result.errors.push_back("DB insert failed for email=" + a.getEmail());
             }
         }
 
         if (inTransaction) {
-            if (sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK) {
-                utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_commit_fail","Assessor","",""}, "COMMIT failed, attempting ROLLBACK");
-                sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
-            }
+            sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, &errMsg);
         }
     } catch (const exception &e) {
         if (inTransaction) {
-            sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+            char* errMsg = nullptr;
+            sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, &errMsg);
         }
-    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_file_error","Assessor","",""}, e.what());
+        result.errors.push_back(string("CSV import exception: ") + e.what());
     }
-    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","csv_import_summary","Assessor","",""}, "imported success=" + to_string(success) + ", failed=" + to_string(failed));
-    return success;
+
+    return result;
 }
