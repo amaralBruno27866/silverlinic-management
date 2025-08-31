@@ -41,6 +41,7 @@ void setupTestDatabase() {
             lastname TEXT NOT NULL,
             phone TEXT,
             email TEXT,
+            normalized_email TEXT GENERATED ALWAYS AS (lower(trim(email))) VIRTUAL,
             created_at TEXT NOT NULL,
             modified_at TEXT NOT NULL
         )

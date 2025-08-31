@@ -16,10 +16,16 @@ ClientManager::ClientManager(sqlite3* database) : m_db(database) {
 
 // CRUD Operations Implementation
 
-bool ClientManager::create(const Client& client) {
+int ClientManager::create(const Client& client) {
     if (!validateClient(client)) {
     utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Client","",{}}, "Invalid client data");
-        return false;
+        return -1;
+    }
+    // Check for existing client (email preferred, then name+phone)
+    if (auto existing = findExistingClientIdByEmailOrNamePhone(client)) {
+        utils::LogEventContext ctx{"MANAGER","duplicate","Client", std::to_string(*existing), std::nullopt};
+        utils::logStructured(utils::LogLevel::WARN, ctx, "Attempt to create duplicate client - returning existing id");
+        return *existing; // return existing id
     }
     
     const string sql = R"(
@@ -48,11 +54,33 @@ bool ClientManager::create(const Client& client) {
     
     if (result != SQLITE_DONE) {
         logDatabaseError("execute create statement");
-        return false;
+        return -1;
     }
-    
+
     utils::logStructured(utils::LogLevel::INFO, {"MANAGER","create","Client", utils::toString(client.getClientId()), {}}, "Client created successfully");
-    return true;
+    return client.getClientId();
+}
+
+std::optional<int> ClientManager::findExistingClientIdByEmailOrNamePhone(const Client& client) const {
+    // Prefer email match (case-insensitive, trimmed)
+    if (!client.getEmail().empty()) {
+        const string sqlEmail = R"(SELECT id FROM client WHERE lower(trim(email)) = lower(trim(?)) LIMIT 1)";
+        sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db, sqlEmail.c_str(), -1, &stmt, nullptr)!=SQLITE_OK){ return std::nullopt; }
+        sqlite3_bind_text(stmt,1,client.getEmail().c_str(),-1,SQLITE_TRANSIENT);
+        int rc = sqlite3_step(stmt);
+        if(rc==SQLITE_ROW){ int id=sqlite3_column_int(stmt,0); sqlite3_finalize(stmt); return id; }
+        sqlite3_finalize(stmt);
+    }
+    // Fallback: firstname+lastname+phone normalized
+    const string sqlNamePhone = R"(SELECT id FROM client WHERE lower(trim(firstname))=lower(trim(?)) AND lower(trim(lastname))=lower(trim(?)) AND replace(replace(phone,' ',''),'-','')=replace(replace(?,' ',''),'-','') LIMIT 1)";
+    sqlite3_stmt* stmt=nullptr; if(sqlite3_prepare_v2(m_db, sqlNamePhone.c_str(), -1, &stmt, nullptr)!=SQLITE_OK){ return std::nullopt; }
+    sqlite3_bind_text(stmt,1,client.getFirstName().c_str(),-1,SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt,2,client.getLastName().c_str(),-1,SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt,3,client.getPhone().c_str(),-1,SQLITE_TRANSIENT);
+    int rc = sqlite3_step(stmt);
+    if(rc==SQLITE_ROW){ int id=sqlite3_column_int(stmt,0); sqlite3_finalize(stmt); return id; }
+    sqlite3_finalize(stmt);
+    return std::nullopt;
 }
 
 vector<Client> ClientManager::readAll() const {
@@ -589,7 +617,8 @@ int ClientManager::importFromCSV(const string& filePath) {
 
                 int id = Client::getNextClientId();
                 Client client(id, firstName, lastName, email, phone, dob, address, createdAt, modifiedAt);
-                if (!create(client)) {
+                int createdId = create(client);
+                if (createdId <= 0) {
                     failed++;
                     utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","csv_insert_fail","Client","",""}, "Failed to insert client row (email: "+email+")");
                     continue;

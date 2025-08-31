@@ -28,6 +28,8 @@ namespace SilverClinic {
         bool executeStatement(const string& sql, const string& operation) const;
         Client createClientFromRow(sqlite3_stmt* stmt) const;
         Address createAddressFromRow(sqlite3_stmt* stmt, int startColumn = 0) const;
+    // Return existing client id when a duplicate is found (email or name+phone)
+    std::optional<int> findExistingClientIdByEmailOrNamePhone(const Client& client) const;
         
     public:
         // Constructor and Destructor
@@ -45,7 +47,8 @@ namespace SilverClinic {
          * @param client The client object to create
          * @return true if creation was successful, false otherwise
          */
-        bool create(const Client& client);
+    // Returns id of created client (>0) or existing client id if duplicate (>0). Returns <=0 on error
+    int create(const Client& client);
         
         /**
          * @brief Retrieve all clients from the database

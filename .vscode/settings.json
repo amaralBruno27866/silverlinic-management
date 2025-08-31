@@ -78,7 +78,11 @@
     "span": "cpp",
     "stop_token": "cpp",
     "thread": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "condition_variable": "cpp",
+    "list": "cpp",
+    "future": "cpp",
+    "mutex": "cpp"
   },
   "terminal.integrated.defaultProfile.linux": "pwsh",
   "terminal.integrated.profiles.linux": {

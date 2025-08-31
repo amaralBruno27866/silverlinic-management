@@ -36,7 +36,7 @@ bool test_form_generation_and_placeholder_substitution() {
     sqlite3* db = nullptr;
     TEST_ASSERT(sqlite3_open(":memory:", &db) == SQLITE_OK, "Open in-memory DB");
     const char* ddl = R"SQL(
-        CREATE TABLE assessor(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT, created_at TEXT, modified_at TEXT);
+        CREATE TABLE assessor(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT, normalized_email TEXT GENERATED ALWAYS AS (lower(trim(email))) VIRTUAL, created_at TEXT, modified_at TEXT);
         CREATE TABLE client(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT, date_of_birth TEXT, created_at TEXT, modified_at TEXT);
         CREATE TABLE case_profile(id INTEGER PRIMARY KEY, client_id INTEGER NOT NULL, assessor_id INTEGER NOT NULL, status TEXT, notes TEXT, created_at TEXT, closed_at TEXT, modified_at TEXT);
     )SQL";
@@ -83,7 +83,7 @@ bool test_missing_context_generation_failure() {
     sqlite3* db = nullptr;
     TEST_ASSERT(sqlite3_open(":memory:", &db) == SQLITE_OK, "Open DB (no data) for negative test");
     const char* ddl = R"SQL(
-        CREATE TABLE assessor(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT, created_at TEXT, modified_at TEXT);
+        CREATE TABLE assessor(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT, normalized_email TEXT GENERATED ALWAYS AS (lower(trim(email))) VIRTUAL, created_at TEXT, modified_at TEXT);
         CREATE TABLE client(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT, date_of_birth TEXT, created_at TEXT, modified_at TEXT);
         CREATE TABLE case_profile(id INTEGER PRIMARY KEY, client_id INTEGER NOT NULL, assessor_id INTEGER NOT NULL, status TEXT, notes TEXT, created_at TEXT, closed_at TEXT, modified_at TEXT);
     )SQL";

@@ -19,7 +19,8 @@ AssessorManager::AssessorManager(sqlite3* database) : m_db(database) {
 optional<int> AssessorManager::findExistingAssessorId(const Assessor& assessor) const {
     // Prefer email match if provided
     if (!assessor.getEmail().empty()) {
-        const string sqlEmail = "SELECT id FROM assessor WHERE email = ? LIMIT 1";
+        // Use case-insensitive, trimmed comparison to match normalized_email behavior
+        const string sqlEmail = "SELECT id FROM assessor WHERE lower(trim(email)) = lower(trim(?)) LIMIT 1";
         sqlite3_stmt* stmt = nullptr;
         if (sqlite3_prepare_v2(m_db, sqlEmail.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
             sqlite3_bind_text(stmt, 1, assessor.getEmail().c_str(), -1, SQLITE_TRANSIENT);
@@ -36,7 +37,7 @@ optional<int> AssessorManager::findExistingAssessorId(const Assessor& assessor) 
 
     // Fallback: match by firstname + lastname + phone (normalized)
     const string sqlNamePhone = R"(
-        SELECT id FROM assessor WHERE firstname = ? AND lastname = ? AND phone = ? LIMIT 1
+        SELECT id FROM assessor WHERE lower(trim(firstname)) = lower(trim(?)) AND lower(trim(lastname)) = lower(trim(?)) AND phone = ? LIMIT 1
     )";
     sqlite3_stmt* stmt = nullptr;
     if (sqlite3_prepare_v2(m_db, sqlNamePhone.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
@@ -70,11 +71,11 @@ bool AssessorManager::create(const Assessor& assessor) {
         // Log and return error - duplicate found
         string msg = "Duplicate assessor detected. Existing id=" + to_string(existing.value());
         utils::LogEventContext ctx;
-        ctx.category = "MANAGER";
-        ctx.action = "duplicate_detected";
-        ctx.entityType = std::optional<std::string>("Assessor");
-        ctx.entityId = std::optional<std::string>(std::to_string(assessor.getAssessorId()));
-        ctx.correlationId = std::optional<std::string>(std::to_string(existing.value()));
+    ctx.category = "MANAGER";
+    ctx.action = "duplicate_detected";
+    ctx.entityType = std::make_optional<std::string>("Assessor");
+    ctx.entityId = std::make_optional<std::string>(std::to_string(assessor.getAssessorId()));
+    ctx.correlationId = std::make_optional<std::string>(std::to_string(existing.value()));
         utils::logStructured(utils::LogLevel::ERROR, ctx, msg);
         return false;
     }
@@ -106,6 +107,15 @@ bool AssessorManager::create(const Assessor& assessor) {
         logDatabaseError("execute create statement");
         return false;
     }
+    // Try to populate normalized_email column if it exists; non-fatal
+    string populateSql = "UPDATE assessor SET normalized_email = lower(trim(email)) WHERE id = " + to_string(assessor.getAssessorId());
+    char* errMsg = nullptr;
+    if (sqlite3_exec(m_db, populateSql.c_str(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        // Log as warning but do not fail creation (column may be virtual or absent in some test DBs)
+        string em = errMsg ? errMsg : "";
+        sqlite3_free(errMsg);
+        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","normalized_email_populate_warn","Assessor", std::to_string(assessor.getAssessorId()), {}}, string("Could not populate normalized_email: ") + em);
+    }
     // If assessor has address data, persist it
     try {
         const Address &addr = assessor.getAddress();
@@ -115,7 +125,8 @@ bool AssessorManager::create(const Assessor& assessor) {
             AddressManager addrMgr(m_db);
             Address toInsert = addr;
             toInsert.setUserKey(assessor.getAssessorId());
-            if (!addrMgr.create(toInsert)) {
+            int addrId = addrMgr.create(toInsert);
+            if (addrId <= 0) {
                 utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to persist associated address");
             }
         }
@@ -218,6 +229,15 @@ bool AssessorManager::update(const Assessor& assessor) {
         logDatabaseError("execute update statement");
         return false;
     }
+
+    // Update normalized_email non-fatally
+    string populateSql = "UPDATE assessor SET normalized_email = lower(trim(email)) WHERE id = " + to_string(assessor.getAssessorId());
+    char* errMsg = nullptr;
+    if (sqlite3_exec(m_db, populateSql.c_str(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        string em = errMsg ? errMsg : "";
+        sqlite3_free(errMsg);
+        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","normalized_email_update_warn","Assessor", std::to_string(assessor.getAssessorId()), {}}, string("Could not update normalized_email: ") + em);
+    }
     
     utils::logStructured(utils::LogLevel::INFO, {"MANAGER","update","Assessor", to_string(assessor.getAssessorId()), {}}, "Assessor updated successfully");
     // Persist address changes if present
@@ -231,14 +251,16 @@ bool AssessorManager::update(const Assessor& assessor) {
                 if (!addrMgr.update(addr)) {
                     Address toInsert = addr;
                     toInsert.setUserKey(assessor.getAssessorId());
-                    if (!addrMgr.create(toInsert)) {
+                    int addrId = addrMgr.create(toInsert);
+                    if (addrId <= 0) {
                         utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_update_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to update/create associated address");
                     }
                 }
             } else {
                 Address toInsert = addr;
                 toInsert.setUserKey(assessor.getAssessorId());
-                if (!addrMgr.create(toInsert)) {
+                int addrId = addrMgr.create(toInsert);
+                if (addrId <= 0) {
                     utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to persist associated address");
                 }
             }

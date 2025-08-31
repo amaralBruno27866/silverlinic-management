@@ -15,7 +15,7 @@ static void setup(){
     if(sqlite3_open("test_aai_manager_negative.db", &db)!=SQLITE_OK){ std::exit(1);}    
     sqlite3_exec(db,"PRAGMA foreign_keys=ON;",nullptr,nullptr,nullptr);
     const char* schema = R"SQL(
-CREATE TABLE assessor(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT);
+CREATE TABLE assessor(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, normalized_email TEXT GENERATED ALWAYS AS (lower(trim(email))) VIRTUAL);
 CREATE TABLE client(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT);
 CREATE TABLE automobile_anxiety_inventory(
     id INTEGER PRIMARY KEY,
