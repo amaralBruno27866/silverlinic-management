@@ -149,7 +149,7 @@ namespace SilverClinic {
             
         public:
             // Static constants
-            static const int ID_PREFIX = 1200000; // SCL-90-R IDs start at 1200001
+            // Sequential IDs starting from 1
             static const string FORM_TYPE;
             
             // Constructors

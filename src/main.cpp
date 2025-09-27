@@ -602,11 +602,11 @@ bool insertSampleData(sqlite3* db) {
     
     string currentTime = getCurrentTimestamp();
     
-    // Generate IDs with correct prefixes
-    int assessorId = Assessor::ID_PREFIX + 1; // 100001
-    int clientId = Client::ID_PREFIX + 1;     // 300001
-    int addressId1 = Address::ID_PREFIX + 1;  // 200001
-    int addressId2 = Address::ID_PREFIX + 2;  // 200002
+    // Generate sequential IDs starting from 1
+    int assessorId = 1;  // Sequential ID
+    int clientId = 1;    // Sequential ID  
+    int addressId1 = 1;  // Sequential ID
+    int addressId2 = 2;  // Sequential ID
     
     // Insert sample assessor
     string insertAssessor = R"(
@@ -629,7 +629,7 @@ bool insertSampleData(sqlite3* db) {
     }
     
     // Insert sample case profile
-    int caseProfileId = CaseProfile::ID_PREFIX + 1;
+    int caseProfileId = 1; // Sequential ID
     string insertCaseProfile = R"(
         INSERT OR IGNORE INTO case_profile (id, client_id, assessor_id, status, notes, created_at, modified_at)
         VALUES ()" + to_string(caseProfileId) + ", " + to_string(clientId) + ", " + to_string(assessorId) + R"(, 'Pending', 'Initial case profile for mental health assessment', ')" + currentTime + "', '" + currentTime + R"(')

@@ -13,7 +13,7 @@ namespace SilverClinic {
 
         // Static member initialization
         const string PainBodyMap::FORM_TYPE = "PBM";
-        int PainBodyMap::pbm_id_counter = ID_PREFIX;
+        int PainBodyMap::pbm_id_counter = 1; // Sequential IDs starting from 1
 
         // Standard body parts list based on the HTML form
         const vector<string> PainBodyMap::STANDARD_BODY_PARTS = {
@@ -274,7 +274,7 @@ namespace SilverClinic {
 
         // Validation methods
         bool PainBodyMap::isValidCaseProfileId(int case_profile_id) const {
-            return case_profile_id > 0 && case_profile_id >= CaseProfile::ID_PREFIX;
+            return case_profile_id > 0; // Sequential IDs start from 1
         }
 
         bool PainBodyMap::isValidPainLevel(int level) const {
@@ -474,7 +474,7 @@ namespace SilverClinic {
 
         // Static methods
         void PainBodyMap::resetIdCounter() {
-            pbm_id_counter = ID_PREFIX;
+            pbm_id_counter = 1; // Sequential IDs starting from 1
         }
 
         int PainBodyMap::getNextId() {

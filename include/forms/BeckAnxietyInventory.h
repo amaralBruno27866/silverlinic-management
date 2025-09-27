@@ -155,7 +155,7 @@ namespace SilverClinic {
             // Static methods for ID management
             static void resetIdCounter();
             static int getNextId();
-            static const int ID_PREFIX = 900000; // BAI IDs start at 900001
+            // Sequential IDs starting from 1
             
             // Static clinical interpretation methods
             static string interpretScore(int total_score);

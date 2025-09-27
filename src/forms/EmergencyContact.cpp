@@ -8,7 +8,7 @@ using namespace std;
 namespace SilverClinic {
 namespace Forms {
 
-    // Static variable initialization
+    // Sta        return emergency_contact_id_counter + 1; // Sequential IDs starting from 1ic variable initialization
     int EmergencyContact::emergency_contact_id_counter = 0;
     const string EmergencyContact::FORM_TYPE = "ECT";
 
@@ -169,7 +169,7 @@ namespace Forms {
     }
 
     int EmergencyContact::getNextEmergencyContactId() {
-        return ID_PREFIX + (++emergency_contact_id_counter);
+        return ++emergency_contact_id_counter; // Sequential IDs starting from 1
     }
 
     // === STATIC METHODS ===
@@ -179,7 +179,7 @@ namespace Forms {
     }
 
     int EmergencyContact::getNextId() {
-        return ID_PREFIX + emergency_contact_id_counter + 1;
+        return emergency_contact_id_counter + 1; // Sequential IDs starting from 1
     }
 
     // === STREAM OPERATORS ===

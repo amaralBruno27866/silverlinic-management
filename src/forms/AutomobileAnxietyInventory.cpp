@@ -91,7 +91,7 @@ namespace SilverClinic {
         }
 
         int AutomobileAnxietyInventory::getNextAAIId() {
-            return ID_PREFIX + (++aai_id_counter);
+            return ++aai_id_counter; // Sequential IDs starting from 1
         }
 
         // Question 14 special methods
@@ -301,7 +301,7 @@ namespace SilverClinic {
         }
 
         int AutomobileAnxietyInventory::getNextId() {
-            return ID_PREFIX + (aai_id_counter + 1);
+            return aai_id_counter + 1; // Sequential IDs starting from 1
         }
 
         // Stream operators

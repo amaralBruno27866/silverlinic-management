@@ -207,7 +207,7 @@ namespace SilverClinic {
             // Static methods for ID management
             static void resetIdCounter();
             static int getNextId();
-            static const int ID_PREFIX = 700000; // AAI IDs start at 700001
+            // Sequential IDs starting from 1
             
             // Stream operators for serialization and debugging
             friend std::ostream& operator<<(std::ostream& os, const AutomobileAnxietyInventory& aai);

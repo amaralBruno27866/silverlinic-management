@@ -144,7 +144,7 @@ namespace SilverClinic {
             // Static methods for ID management
             static void resetIdCounter();
             static int getNextId();
-            static const int ID_PREFIX = 1000000; // PBM IDs start at 1000001
+            // Sequential IDs starting from 1
             
             // Static validation methods
             static bool isValidBodyPartName(const string& bodyPart);

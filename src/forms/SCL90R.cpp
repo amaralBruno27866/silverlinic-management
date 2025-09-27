@@ -12,7 +12,7 @@ namespace SilverClinic {
 
         // Static member initialization
         const string SCL90R::FORM_TYPE = "SCL90R";
-        int SCL90R::scl_id_counter = ID_PREFIX;
+        int SCL90R::scl_id_counter = 1; // Sequential IDs starting from 1
 
         // Question texts for reference
         static const map<int, string> QUESTION_TEXTS = {
@@ -298,7 +298,7 @@ namespace SilverClinic {
 
         // Validation methods
         bool SCL90R::isValidCaseProfileId(int case_profile_id) const {
-            return case_profile_id > 0 && case_profile_id >= CaseProfile::ID_PREFIX;
+            return case_profile_id > 0; // Sequential IDs start from 1
         }
 
         bool SCL90R::isValidQuestionValue(int value) const {
@@ -538,7 +538,7 @@ namespace SilverClinic {
 
         // Static utility methods
         void SCL90R::resetIdCounter() {
-            scl_id_counter = ID_PREFIX;
+            scl_id_counter = 1; // Sequential IDs starting from 1
         }
 
         int SCL90R::getNextId() {

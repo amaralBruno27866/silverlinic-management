@@ -10,7 +10,7 @@ namespace SilverClinic {
 
         // Static members initialization
         const string LegalRepresentative::FORM_TYPE = "LRT";
-        int LegalRepresentative::legal_representative_id_counter = ID_PREFIX;
+        int LegalRepresentative::legal_representative_id_counter = 1; // Sequential IDs starting from 1
 
         // Private helper methods
         void LegalRepresentative::setTimestamps() {
@@ -152,7 +152,7 @@ namespace SilverClinic {
 
         // Static methods for ID management
         void LegalRepresentative::resetIdCounter() {
-            legal_representative_id_counter = ID_PREFIX;
+            legal_representative_id_counter = 1; // Sequential IDs starting from 1
         }
 
         int LegalRepresentative::getNextId() {

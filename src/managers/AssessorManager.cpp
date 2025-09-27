@@ -246,7 +246,7 @@ bool AssessorManager::update(const Assessor& assessor) {
         if (!addr.getStreet().empty()) {
             AddressManager addrMgr(m_db);
             // If address has an id and exists, attempt update; otherwise create
-            if (addr.getAddressId() >= Address::ID_PREFIX) {
+            if (addr.getAddressId() > 0) { // Sequential IDs start from 1
                 // try update, if fails, attempt create
                 if (!addrMgr.update(addr)) {
                     Address toInsert = addr;
@@ -504,9 +504,9 @@ bool AssessorManager::validateAssessor(const Assessor& assessor) const {
         return false;
     }
     
-    // Check ID range
-    if (assessor.getAssessorId() < Assessor::ID_PREFIX) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id_range","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor ID range");
+    // Check ID is positive (sequential IDs start from 1)
+    if (assessor.getAssessorId() <= 0) {
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor ID - must be positive");
         return false;
     }
     

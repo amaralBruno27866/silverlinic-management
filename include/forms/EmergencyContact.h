@@ -80,7 +80,7 @@ namespace SilverClinic {
             // Static methods for ID management
             static void resetIdCounter();
             static int getNextId();
-            static const int ID_PREFIX = 600000; // Emergency Contact IDs start at 600001
+            // Sequential IDs starting from 1
             
             // Stream operators for serialization and debugging
             friend std::ostream& operator<<(std::ostream& os, const EmergencyContact& ec);

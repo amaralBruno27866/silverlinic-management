@@ -455,9 +455,9 @@ bool ClientManager::validateClient(const Client& client) const {
         return false;
     }
     
-    // Check ID range
-    if (client.getClientId() < Client::ID_PREFIX) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id_range","Client", utils::toString(client.getClientId()), {}}, "Invalid client ID range");
+    // Check ID is positive (sequential IDs start from 1)
+    if (client.getClientId() <= 0) {
+    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id","Client", utils::toString(client.getClientId()), {}}, "Invalid client ID - must be positive");
         return false;
     }
     

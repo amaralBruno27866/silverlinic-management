@@ -10,7 +10,7 @@ namespace SilverClinic {
 
         // Static members initialization
         const string InsuranceCompany::FORM_TYPE = "ICO";
-        int InsuranceCompany::insurance_company_id_counter = ID_PREFIX;
+        int InsuranceCompany::insurance_company_id_counter = 1; // Sequential IDs starting from 1
 
         // Private helper methods
         void InsuranceCompany::setTimestamps() {
@@ -23,7 +23,7 @@ namespace SilverClinic {
         }
 
         int InsuranceCompany::getNextInsuranceCompanyId() {
-            return ++insurance_company_id_counter;
+                        return insurance_company_id_counter + 1; // Sequential IDs starting from 1
         }
 
         // Constructors
@@ -216,7 +216,7 @@ namespace SilverClinic {
 
         // Static methods for ID management
         void InsuranceCompany::resetIdCounter() {
-            insurance_company_id_counter = ID_PREFIX;
+            insurance_company_id_counter = 1; // Sequential IDs starting from 1
         }
 
         int InsuranceCompany::getNextId() {

@@ -11,7 +11,7 @@ namespace SilverClinic {
 
         // Static member initialization
         const string ActivitiesOfDailyLiving::FORM_TYPE = "ADL";
-        int ActivitiesOfDailyLiving::adl_id_counter = ID_PREFIX;
+        int ActivitiesOfDailyLiving::adl_id_counter = 1; // Sequential IDs starting from 1
 
         // Standard categories based on the HTML form
         const vector<string> ActivitiesOfDailyLiving::STANDARD_CATEGORIES = {
@@ -362,7 +362,7 @@ namespace SilverClinic {
 
         // Validation methods
         bool ActivitiesOfDailyLiving::isValidCaseProfileId(int case_profile_id) const {
-            return case_profile_id > 0 && case_profile_id >= CaseProfile::ID_PREFIX;
+            return case_profile_id > 0; // Sequential IDs start from 1
         }
 
         bool ActivitiesOfDailyLiving::isValidCategory(const string& category) const {
@@ -592,7 +592,7 @@ namespace SilverClinic {
 
         // Static methods
         void ActivitiesOfDailyLiving::resetIdCounter() {
-            adl_id_counter = ID_PREFIX;
+            adl_id_counter = 1; // Sequential IDs starting from 1
         }
 
         int ActivitiesOfDailyLiving::getNextId() {

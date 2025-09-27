@@ -151,7 +151,7 @@ namespace SilverClinic {
             // Static methods for ID management
             static void resetIdCounter();
             static int getNextId();
-            static const int ID_PREFIX = 1100000; // ADL IDs start at 1100001
+            // Sequential IDs starting from 1
             
             // Static validation methods
             static bool isValidCategoryName(const string& category);

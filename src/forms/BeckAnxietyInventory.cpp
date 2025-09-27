@@ -64,7 +64,7 @@ namespace SilverClinic {
         }
 
         int BeckAnxietyInventory::getNextBAIId() {
-            return ID_PREFIX + (++bai_id_counter);
+            return ++bai_id_counter; // Sequential IDs starting from 1
         }
 
         // Setters with validation
@@ -414,7 +414,7 @@ namespace SilverClinic {
         }
 
         int BeckAnxietyInventory::getNextId() {
-            return ID_PREFIX + (bai_id_counter + 1);
+            return bai_id_counter + 1; // Sequential IDs starting from 1
         }
 
         string BeckAnxietyInventory::interpretScore(int total_score) {
