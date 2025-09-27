@@ -67,83 +67,134 @@ namespace SilverClinic {
     int DateTime::getYear() const {
         if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
-        return timeStruct->tm_year + 1900;
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
+        return timeStruct.tm_year + 1900;
     }
 
     int DateTime::getMonth() const {
         if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
-        return timeStruct->tm_mon + 1;
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
+        return timeStruct.tm_mon + 1;
     }
 
     int DateTime::getDay() const {
         if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
-        return timeStruct->tm_mday;
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
+        return timeStruct.tm_mday;
     }
 
     int DateTime::getHour() const {
         if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
-        return timeStruct->tm_hour;
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
+        return timeStruct.tm_hour;
     }
 
     int DateTime::getMinute() const {
         if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
-        return timeStruct->tm_min;
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
+        return timeStruct.tm_min;
     }
 
     int DateTime::getSecond() const {
         if (!isValid()) return 0;
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
-        return timeStruct->tm_sec;
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
+        return timeStruct.tm_sec;
     }
 
     // Formatters
     string DateTime::toString() const {
         if (!isValid()) return "Invalid DateTime";
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
         
         ostringstream oss;
-        oss << put_time(timeStruct, "%Y-%m-%d %H:%M:%S");
+        oss << put_time(&timeStruct, "%Y-%m-%d %H:%M:%S");
         return oss.str();
     }
 
     string DateTime::toDateString() const {
         if (!isValid()) return "Invalid Date";
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
         
         ostringstream oss;
-        oss << put_time(timeStruct, "%Y-%m-%d");
+        oss << put_time(&timeStruct, "%Y-%m-%d");
         return oss.str();
     }
 
     string DateTime::toTimeString() const {
         if (!isValid()) return "Invalid Time";
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            timeStruct = *localtime(&time);
+        #endif
         
         ostringstream oss;
-        oss << put_time(timeStruct, "%H:%M:%S");
+        oss << put_time(&timeStruct, "%H:%M:%S");
         return oss.str();
     }
 
     string DateTime::toCanadianFormat() const {
         if (!isValid()) return "Invalid Date";
         time_t time = system_clock::to_time_t(m_time_point);
-        tm* timeStruct = localtime(&time);
+        std::tm timeStruct{};
+        #ifdef _WIN32
+            localtime_s(&timeStruct, &time);
+        #else
+            tm* tempStruct = localtime(&time);
+            timeStruct = *tempStruct;
+        #endif
         
         ostringstream oss;
-        oss << put_time(timeStruct, "%d/%m/%Y");
+        oss << put_time(&timeStruct, "%d/%m/%Y");
         return oss.str();
     }
 
