@@ -1,5 +1,6 @@
 #include "core/Client.h"
 #include "core/Utils.h"
+#include "utils/IdAllocator.h"
 #include <iostream>
 #include <iomanip>
 
@@ -7,12 +8,9 @@ using namespace utils;
 
 namespace SilverClinic {
 
-    // Static variable for ID management
-    static int client_id_counter = 1;
-
     // Constructors
     Client::Client() {
-        m_client_id = getNextClientId();
+        m_client_id = 0; // ID will be assigned when saving to database
         m_first_name = "";
         m_last_name = "";
         m_email = "";
@@ -114,13 +112,16 @@ namespace SilverClinic {
         cout << string(50, '=') << endl;
     }
 
-    // Static methods for ID management
+    // Static methods for ID management - now uses database-based sequential IDs
     int Client::getNextClientId() {
-        return ID_PREFIX + client_id_counter++;
+        // This method is deprecated - use IdAllocator::next(db, "clients") instead
+        // Returning 0 to indicate database allocation should be used
+        return 0;
     }
 
     void Client::resetIdCounter() {
-        client_id_counter = 1;
+        // This method is deprecated - ID allocation is now database-driven
+        // No action needed
     }
 
     // Stream operators

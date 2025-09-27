@@ -71,7 +71,6 @@ namespace SilverClinic {
     // Static methods for ID management
     static int getNextClientId();
     static void resetIdCounter();
-    static const int ID_PREFIX = 300000; // Client IDs start at 300001
     
     // Stream operators
     friend ostream& operator<<(ostream& os, const Client& client);

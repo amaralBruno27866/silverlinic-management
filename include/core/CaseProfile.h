@@ -102,7 +102,6 @@ namespace SilverClinic {
     // Static methods for ID management
     static int getNextCaseProfileId();
     static void resetIdCounter();
-    static const int ID_PREFIX = 400000; // CaseProfile IDs start at 400001
     static const int MAX_NOTES_LENGTH = 1500; // Maximum characters for notes
     
     private:

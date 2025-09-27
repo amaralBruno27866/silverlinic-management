@@ -72,7 +72,6 @@ namespace SilverClinic {
     // Static methods for ID management
     static int getNextAddressId();
     static void resetIdCounter();
-    static const int ID_PREFIX = 200000; // Address IDs start at 200001
   };
 
   ostream& operator<<(ostream& os, const Address& addr);

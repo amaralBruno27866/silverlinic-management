@@ -1,4 +1,5 @@
 #include "core/Address.h"
+#include "utils/IdAllocator.h"
 #include <iostream>
 #include <algorithm>
 #include <regex>
@@ -7,11 +8,9 @@
 using namespace std;
 
 namespace SilverClinic {
-    // Static variable for ID counter
-    static int address_id_counter = 0;
     
     // Default constructor
-    Address::Address() : m_address_id(getNextAddressId()), m_user_key(0), m_street(""), m_city(""), 
+    Address::Address() : m_address_id(0), m_user_key(0), m_street(""), m_city(""), 
                          m_province(""), m_postal_code(""), m_created_at(DateTime::now()), m_updated_at(DateTime::now()) {}
 
     // Parameterized constructor
@@ -202,11 +201,14 @@ namespace SilverClinic {
     
     // Static methods for ID management
     int Address::getNextAddressId() {
-        return ID_PREFIX + (++address_id_counter);
+        // This method is deprecated - use IdAllocator::next(db, "addresses") instead
+        // Returning 0 to indicate database allocation should be used
+        return 0;
     }
     
     void Address::resetIdCounter() {
-        address_id_counter = 0;
+        // This method is deprecated - ID allocation is now database-driven
+        // No action needed
     }
 
 } // namespace SilverClinic

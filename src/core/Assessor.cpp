@@ -1,16 +1,15 @@
 #include "core/Assessor.h"
+#include "utils/IdAllocator.h"
 #include <iostream>
 #include <regex>
 #include <sstream>
 
 using namespace std;
 namespace SilverClinic {
-    // Static variable for ID counter
-    static int assessor_id_counter = 0;
     
     // Constructors
-    Assessor::Assessor() 
-        : m_assessor_id(getNextAssessorId()), m_first_name(""), m_last_name(""), 
+    Assessor::Assessor()
+        : m_assessor_id(0), m_first_name(""), m_last_name(""), 
           m_email(""), m_phone(""), m_address(), m_created_at(DateTime::now()), 
           m_updated_at(DateTime::now()) {
     }
@@ -89,14 +88,15 @@ namespace SilverClinic {
     
     // Static methods for ID management
     int Assessor::getNextAssessorId() {
-        return ID_PREFIX + (++assessor_id_counter);
+        // This method is deprecated - use IdAllocator::next(db, "assessors") instead
+        // Returning 0 to indicate database allocation should be used
+        return 0;
     }
-    
+
     void Assessor::resetIdCounter() {
-        assessor_id_counter = 0;
-    }
-    
-    // Stream operators
+        // This method is deprecated - ID allocation is now database-driven
+        // No action needed
+    }    // Stream operators
     ostream& operator<<(ostream& os, const Assessor& assessor) {
         os << "Assessor ID: " << assessor.m_assessor_id << endl;
         os << "Name: " << assessor.getFullName() << endl;

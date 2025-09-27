@@ -7,12 +7,9 @@ using namespace utils;
 
 namespace SilverClinic {
 
-    // Static variable for ID management
-    static int case_profile_id_counter = 1;
-
     // Constructors
     CaseProfile::CaseProfile() {
-        m_case_profile_id = getNextCaseProfileId();
+        m_case_profile_id = 0; // ID will be assigned when saving to database
         m_client_id = 0;
         m_assessor_id = 0;
         m_status = STATUS_PENDING;
@@ -22,7 +19,7 @@ namespace SilverClinic {
     }
 
     CaseProfile::CaseProfile(int client_id, int assessor_id, const string& notes) {
-        m_case_profile_id = getNextCaseProfileId();
+        m_case_profile_id = 0; // ID will be assigned when saving to database
         m_client_id = client_id;
         m_assessor_id = assessor_id;
         m_status = STATUS_PENDING; // Always starts as Pending
@@ -163,12 +160,15 @@ namespace SilverClinic {
 
     // Static methods for ID management
     int CaseProfile::getNextCaseProfileId() {
-        return ID_PREFIX + case_profile_id_counter++;
+        // This method is deprecated - use IdAllocator::next(db, "case_profiles") instead
+        // Returning 0 to indicate database allocation should be used
+        return 0;
     }
 
     void CaseProfile::resetIdCounter() {
-        case_profile_id_counter = 1;
-        utils::logStructured(utils::LogLevel::INFO, {"MODEL","reset_counter","CaseProfile","",""}, "CaseProfile ID counter reset");
+        // This method is deprecated - ID allocation is now database-driven
+        // No action needed
+        utils::logStructured(utils::LogLevel::INFO, {"MODEL","reset_counter","CaseProfile","",""}, "CaseProfile ID counter reset (deprecated)");
     }
 
     // Status conversion helper methods

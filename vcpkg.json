@@ -1,0 +1,11 @@
+{
+  "name": "silverlinic-management",
+  "version": "1.0.0",
+  "dependencies": [
+    "sqlite3",
+    {
+      "name": "libharu",
+      "default-features": true
+    }
+  ]
+}

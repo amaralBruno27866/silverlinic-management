@@ -116,10 +116,10 @@ bool insertSampleData(sqlite3* db) {
 
     string currentTime = getCurrentTimestamp();
 
-    int assessorId = Assessor::ID_PREFIX + 1; // 100001
-    int clientId = Client::ID_PREFIX + 1;     // 300001
-    int addressId1 = Address::ID_PREFIX + 1;  // 200001
-    int addressId2 = Address::ID_PREFIX + 2;  // 200002
+    int assessorId = 1; // Sequential ID starting from 1
+    int clientId = 1;   // Sequential ID starting from 1
+    int addressId1 = 1; // Sequential ID starting from 1
+    int addressId2 = 2; // Sequential ID starting from 2
 
     // Insert sample assessor with normalized_email
     string insertAssessor = R"(
