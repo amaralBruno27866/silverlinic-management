@@ -1021,10 +1021,10 @@
     // Validate required fields
     function validateForm() {
       // Check if form information is populated (should be handled by FormManager)
-      const bdiId = document.getElementById('bdi-id').value.trim();
+      const formGuid = document.getElementById('form_guid').value.trim();
       const caseProfileId = document.getElementById('case-profile-id').value.trim();
       
-      if (!bdiId || !caseProfileId) {
+      if (!formGuid || !caseProfileId) {
         alert('Form information is incomplete. Please ensure this form was properly generated.');
         return false;
       }
@@ -1043,7 +1043,7 @@
     // Collect all form data
     function collectFormData() {
       const data = {
-        id: document.getElementById('bdi-id').value.trim(),
+        form_guid: document.getElementById('form_guid').value.trim(),
         case_profile_id: document.getElementById('case-profile-id').value.trim(),
         type: 'BDI',
         created_at: document.getElementById('created-at').value.trim(),

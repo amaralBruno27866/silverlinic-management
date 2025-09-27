@@ -1040,10 +1040,10 @@
     // Validate required fields
     function validateForm() {
       // Check if form information is populated (should be handled by FormManager)
-      const adlId = document.getElementById('adl-id').value.trim();
+      const formGuid = document.getElementById('form_guid').value.trim();
       const caseProfileId = document.getElementById('case-profile-id').value.trim();
       
-      if (!adlId || !caseProfileId) {
+      if (!formGuid || !caseProfileId) {
         alert('Form information is incomplete. Please ensure this form was properly generated.');
         return false;
       }
@@ -1072,7 +1072,7 @@
     // Collect all form data
     function collectFormData() {
       const data = {
-        adlId: document.getElementById('adl-id').value,
+        formGuid: document.getElementById('form_guid').value,
         caseProfileId: document.getElementById('case-profile-id').value,
         createdAt: document.getElementById('created-at').value, // full timestamp ensured earlier
         modifiedAt: document.getElementById('created-at').value, // initial export mirrors createdAt
@@ -1126,7 +1126,7 @@
       });
 
       const headers = [
-        'id',
+        'form_guid',
         'case_profile_id',
         'type',
         'activities_data_json',
@@ -1135,7 +1135,7 @@
       ];
 
       const values = [
-        data.adlId,
+        data.formGuid,
         data.caseProfileId,
         '"ADL"',
         `"${JSON.stringify(activitiesJson).replace(/"/g, '""')}"`,

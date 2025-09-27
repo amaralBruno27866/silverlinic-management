@@ -1374,10 +1374,10 @@
     // Validate form has meaningful content
     function validateForm() {
       // Check if form information is populated (should be handled by FormManager)
-      const pbmId = document.getElementById('pbm-id').value.trim();
+      const formGuid = document.getElementById('form_guid').value.trim();
       const caseProfileId = document.getElementById('case-profile-id').value.trim();
       
-      if (!pbmId || !caseProfileId) {
+      if (!formGuid || !caseProfileId) {
         return false;
       }
 
@@ -1475,7 +1475,7 @@
     // Collect form data for schema export
     function collectFormData() {
       return {
-        id: document.getElementById('pbm-id').value.trim(),
+        form_guid: document.getElementById('form_guid').value.trim(),
         case_profile_id: document.getElementById('case-profile-id').value.trim(),
         type: 'PBM',
         pain_data_json: buildPainDataJson(),
@@ -1485,12 +1485,12 @@
       };
     }
 
-    // Generate minimal schema CSV (id, case_profile_id, type, pain_data_json, additional_comments, created_at, modified_at)
+    // Generate minimal schema CSV (form_guid, case_profile_id, type, pain_data_json, additional_comments, created_at, modified_at)
     function generateSchemaCSV(data) {
-      const headers = ['id','case_profile_id','type','pain_data_json','additional_comments','created_at','modified_at'];
+      const headers = ['form_guid','case_profile_id','type','pain_data_json','additional_comments','created_at','modified_at'];
       function esc(val) { return '"'+(val||'').replace(/"/g,'""')+'"'; }
       const row = [
-        data.id,
+        data.form_guid,
         data.case_profile_id,
         data.type,
         esc(data.pain_data_json),

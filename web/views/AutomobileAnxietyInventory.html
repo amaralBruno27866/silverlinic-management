@@ -956,10 +956,10 @@
     // Validate required fields
     function validateForm() {
       // Check if form information is populated (should be handled by FormManager)
-      const aaiId = document.getElementById('aai-id').value.trim();
+      const formGuid = document.getElementById('form_guid').value.trim();
       const caseProfileId = document.getElementById('case-profile-id').value.trim();
       
-      if (!aaiId || !caseProfileId) {
+      if (!formGuid || !caseProfileId) {
         alert('Form information is incomplete. Please ensure this form was properly generated.');
         return false;
       }
@@ -979,7 +979,7 @@
     // Collect all form data
     function collectFormData() {
       const data = {
-        aaiId: document.getElementById('aai-id').value,
+        formGuid: document.getElementById('form_guid').value,
         caseProfileId: document.getElementById('case-profile-id').value,
         createdAt: document.getElementById('created-at').value,
         // modified_at espelha created_at na captura inicial; backend pode atualizar.
@@ -1036,7 +1036,7 @@
     // CSV: somente colunas do schema do banco
   function generateCSV(data) {
       const headers = [
-        'id','case_profile_id','type',
+        'form_guid','case_profile_id','type',
         'question_1','question_2','question_3','question_4','question_5','question_6','question_7','question_8','question_9','question_10',
         'question_11','question_12','question_13',
         'question_14_driver','question_14_passenger','question_14_no_difference',
@@ -1047,7 +1047,7 @@
         'created_at','modified_at'
       ];
       const values = [
-        data.aaiId,
+        data.formGuid,
         data.caseProfileId,
         '"AAI"',
         data.answers.question_1,

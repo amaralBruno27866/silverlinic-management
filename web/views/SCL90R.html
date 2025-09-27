@@ -2402,10 +2402,10 @@
     // Validate required fields
     function validateForm() {
       // Check if form information is populated (should be handled by FormManager)
-      const sclId = document.getElementById('scl-id').value.trim();
+      const formGuid = document.getElementById('form_guid').value.trim();
       const caseProfileId = document.getElementById('case-profile-id').value.trim();
       
-      if (!sclId || !caseProfileId) {
+      if (!formGuid || !caseProfileId) {
         alert('Form information is incomplete. Please ensure all form fields are properly populated.');
         return false;
       }
@@ -2424,7 +2424,7 @@
     // Collect all form data
     function collectFormData() {
       const data = {
-        id: document.getElementById('scl-id').value,
+        form_guid: document.getElementById('form_guid').value,
         case_profile_id: document.getElementById('case-profile-id').value,
         type: 'SCL90R',
         created_at: normalizeTimestamp(document.getElementById('created-at').value),
@@ -2443,10 +2443,10 @@
 
     // Generate CSV content
     function generateSchemaCSV(data) {
-      const headers = ['id','case_profile_id','type'];
+      const headers = ['form_guid','case_profile_id','type'];
       for (let i=1;i<=90;i++) headers.push(`question_${i}`);
       headers.push('gsi','pst','psdi','severity_level','created_at','modified_at');
-      const values = [data.id,data.case_profile_id,data.type];
+      const values = [data.form_guid,data.case_profile_id,data.type];
       for (let i=1;i<=90;i++) values.push(data[`question_${i}`]);
       values.push(data.gsi,data.pst,data.psdi,data.severity_level,data.created_at,data.modified_at);
       return headers.join(',') + '\n' + values.join(',');

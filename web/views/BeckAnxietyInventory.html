@@ -984,10 +984,10 @@
     // Validate required fields
     function validateForm() {
       // Check if form information is populated (should be handled by FormManager)
-      const baiId = document.getElementById('bai-id').value.trim();
+      const formGuid = document.getElementById('form_guid').value.trim();
       const caseProfileId = document.getElementById('case-profile-id').value.trim();
       
-      if (!baiId || !caseProfileId) {
+      if (!formGuid || !caseProfileId) {
         alert('Form information is incomplete. Please ensure this form was properly generated.');
         return false;
       }
@@ -1000,13 +1000,13 @@
     function saveFormData() {
       const formData = collectFormData();
       const csvContent = generateCSV(formData);
-      downloadCSV(csvContent, `BAI_${formData.caseProfileId}_${new Date().toISOString().split('T')[0]}.csv`);
+      downloadCSV(csvContent, `BAI_${formData.caseProfileId}_${formData.formGuid.substring(0,8)}_${new Date().toISOString().split('T')[0]}.csv`);
     }
 
     // Collect all form data
     function collectFormData() {
       const data = {
-        baiId: document.getElementById('bai-id').value,
+        formGuid: document.getElementById('form_guid').value,
         caseProfileId: document.getElementById('case-profile-id').value,
         createdAt: document.getElementById('created-at').value,
         assessorName: document.getElementById('assessor-name').value,
@@ -1026,7 +1026,7 @@
     // Generate CSV content (including total score and severity)
     function generateCSV(data) {
       const headers = [
-        'BAI_ID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
+        'Form_GUID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
         'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
         'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21',
         'Total_Score', 'Severity_Level'
@@ -1046,7 +1046,7 @@
       else severity = 'Severe';
 
       const values = [
-        data.baiId,
+        data.formGuid,
         data.caseProfileId,
         data.createdAt,
         `"${data.assessorName.replace(/"/g, '""')}"`,
