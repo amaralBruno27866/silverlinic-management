@@ -15,7 +15,9 @@
 #include <sqlite3.h>
 #include <string>
 #include <filesystem>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 using namespace std;
 using namespace SilverClinic;

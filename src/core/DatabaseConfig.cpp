@@ -12,7 +12,7 @@ namespace SilverClinic {
     
     // Helper function to get the project root directory
     std::string getProjectRootPath() {
-        std::string currentPath = std::filesystem::current_path();
+        std::string currentPath = std::filesystem::current_path().string();
         
         // Convert backslashes to forward slashes on Windows
         #ifdef _WIN32
@@ -24,7 +24,7 @@ namespace SilverClinic {
             currentPath.find("/build_test") != std::string::npos ||
             currentPath.find("/Debug") != std::string::npos ||
             currentPath.find("/Release") != std::string::npos) {
-            currentPath = std::filesystem::current_path().parent_path();
+            currentPath = std::filesystem::current_path().parent_path().string();
             #ifdef _WIN32
             std::replace(currentPath.begin(), currentPath.end(), '\\', '/');
             #endif
@@ -35,7 +35,7 @@ namespace SilverClinic {
                !std::filesystem::exists(currentPath + "/PROJECT_CONVENTIONS.md")) {
             std::filesystem::path parent = std::filesystem::path(currentPath).parent_path();
             if (parent == currentPath) break; // Reached filesystem root
-            currentPath = parent;
+            currentPath = parent.string();
             #ifdef _WIN32
             std::replace(currentPath.begin(), currentPath.end(), '\\', '/');
             #endif

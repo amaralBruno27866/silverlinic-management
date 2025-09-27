@@ -15,7 +15,12 @@ std::string StructuredLogger::formatTimestamp() const {
     auto now = system_clock::now();
     auto t = system_clock::to_time_t(now);
     auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
-    std::tm tm{}; localtime_r(&t, &tm);
+    std::tm tm{};
+    #ifdef _WIN32
+        localtime_s(&tm, &t);
+    #else
+        localtime_r(&t, &tm);
+    #endif
     std::ostringstream oss; oss<< std::put_time(&tm, "%Y-%m-%dT%H:%M:%S") << '.' << std::setw(3) << std::setfill('0') << ms.count();
     return oss.str();
 }

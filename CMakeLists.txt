@@ -52,48 +52,60 @@ if(WIN32)
     add_compile_definitions(NOMINMAX)
     
     # Find SQLite3 (Windows priority: vcpkg, then manual)
-    find_package(SQLite3 QUIET)
-    if(SQLite3_FOUND)
-        set(SQLITE3_LIBRARY SQLite::SQLite3)
-        message(STATUS "Found SQLite3 via vcpkg: ${SQLite3_VERSION}")
+    find_package(unofficial-sqlite3 CONFIG QUIET)
+    if(unofficial-sqlite3_FOUND)
+        set(SQLITE3_LIBRARY unofficial::sqlite3::sqlite3)
+        message(STATUS "Found SQLite3 via vcpkg")
     else()
-        # Try manual installation in libs/
-        find_library(SQLITE3_LIBRARY 
-            NAMES sqlite3 sqlite3_static
-            PATHS ${CMAKE_SOURCE_DIR}/libs
-            NO_DEFAULT_PATH)
-        find_path(SQLITE3_INCLUDE_DIR sqlite3.h
-            PATHS ${CMAKE_SOURCE_DIR}/libs
-            NO_DEFAULT_PATH)
-        
-        if(SQLITE3_LIBRARY AND SQLITE3_INCLUDE_DIR)
-            include_directories(${SQLITE3_INCLUDE_DIR})
-            message(STATUS "Found SQLite3 manually: ${SQLITE3_LIBRARY}")
+        find_package(SQLite3 QUIET)
+        if(SQLite3_FOUND)
+            set(SQLITE3_LIBRARY SQLite::SQLite3)
+            message(STATUS "Found SQLite3 via vcpkg: ${SQLite3_VERSION}")
         else()
-            message(FATAL_ERROR "SQLite3 not found. Please install via vcpkg or place sqlite3.lib/sqlite3.dll in libs/")
+            # Try manual installation in libs/
+            find_library(SQLITE3_LIBRARY 
+                NAMES sqlite3 sqlite3_static
+                PATHS ${CMAKE_SOURCE_DIR}/libs
+                NO_DEFAULT_PATH)
+            find_path(SQLITE3_INCLUDE_DIR sqlite3.h
+                PATHS ${CMAKE_SOURCE_DIR}/libs
+                NO_DEFAULT_PATH)
+            
+            if(SQLITE3_LIBRARY AND SQLITE3_INCLUDE_DIR)
+                include_directories(${SQLITE3_INCLUDE_DIR})
+                message(STATUS "Found SQLite3 manually: ${SQLITE3_LIBRARY}")
+            else()
+                message(FATAL_ERROR "SQLite3 not found. Please install via vcpkg or place sqlite3.lib/sqlite3.dll in libs/")
+            endif()
         endif()
     endif()
     
     # Find libharu (Windows priority: vcpkg, then manual)
-    find_package(PkgConfig QUIET)
-    if(PkgConfig_FOUND)
-        pkg_check_modules(HPDF QUIET libhpdf)
-    endif()
-    
-    if(NOT HPDF_FOUND)
-        find_library(HPDF_LIBRARY 
-            NAMES hpdf libhpdf hpdfs
-            PATHS ${CMAKE_SOURCE_DIR}/libs
-            NO_DEFAULT_PATH)
-        find_path(HPDF_INCLUDE_DIR hpdf.h
-            PATHS ${CMAKE_SOURCE_DIR}/libs
-            NO_DEFAULT_PATH)
+    find_package(unofficial-libharu CONFIG QUIET)
+    if(unofficial-libharu_FOUND)
+        set(HPDF_LIBRARY unofficial::libharu::hpdf)
+        message(STATUS "Found libharu via vcpkg")
+    else()
+        find_package(PkgConfig QUIET)
+        if(PkgConfig_FOUND)
+            pkg_check_modules(HPDF QUIET libhpdf)
+        endif()
         
-        if(HPDF_LIBRARY AND HPDF_INCLUDE_DIR)
-            include_directories(${HPDF_INCLUDE_DIR})
-            message(STATUS "Found libharu manually: ${HPDF_LIBRARY}")
-        else()
-            message(FATAL_ERROR "libharu not found. Please install via vcpkg or place libhpdf.lib in libs/")
+        if(NOT HPDF_FOUND)
+            find_library(HPDF_LIBRARY 
+                NAMES hpdf libhpdf hpdfs
+                PATHS ${CMAKE_SOURCE_DIR}/libs
+                NO_DEFAULT_PATH)
+            find_path(HPDF_INCLUDE_DIR hpdf.h
+                PATHS ${CMAKE_SOURCE_DIR}/libs
+                NO_DEFAULT_PATH)
+            
+            if(HPDF_LIBRARY AND HPDF_INCLUDE_DIR)
+                include_directories(${HPDF_INCLUDE_DIR})
+                message(STATUS "Found libharu manually: ${HPDF_LIBRARY}")
+            else()
+                message(FATAL_ERROR "libharu not found. Please install via vcpkg or place libhpdf.lib in libs/")
+            endif()
         endif()
     endif()
     
@@ -253,8 +265,8 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/SilverClinicConfigVersion.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SilverClinic)
 
-# ---- Qt6 GUI Integration ----
-find_package(Qt6 COMPONENTS Widgets REQUIRED)
+# ---- Qt6 GUI Integration ---- (Optional)
+find_package(Qt6 COMPONENTS Widgets QUIET)
 
 # GUI executable target
 # add_executable(silverclinic_gui src/gui/main.cpp src/gui/dashboard.cpp
