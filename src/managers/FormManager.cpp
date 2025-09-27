@@ -5,6 +5,9 @@
 #include <sstream>
 #include <regex>
 #include <cstring> // for strlen
+#include <random>
+#include <iomanip>
+#include <chrono>
 
 using namespace std;
 using namespace SilverClinic;
@@ -37,6 +40,90 @@ bool FormManager::formRequiresContext(const string& key) const {
     return it->second.needsContext;
 }
 
+// GUID Management Methods
+string FormManager::generateFormGuid() const {
+    // Generate a simple UUID-like string: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+    static thread_local random_device rd;
+    static thread_local mt19937 gen(rd());
+    static thread_local uniform_int_distribution<> dis(0, 15);
+    
+    stringstream ss;
+    const char* hex = "0123456789ABCDEF";
+    
+    // 8-4-4-4-12 format
+    for (int i = 0; i < 32; ++i) {
+        if (i == 8 || i == 12 || i == 16 || i == 20) ss << '-';
+        ss << hex[dis(gen)];
+    }
+    
+    return ss.str();
+}
+
+bool FormManager::ensureFormGuidsTable() const {
+    const char* sql = R"(
+        CREATE TABLE IF NOT EXISTS form_guids (
+            guid TEXT PRIMARY KEY,
+            case_profile_id INTEGER NOT NULL,
+            form_key TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (case_profile_id) REFERENCES case_profile(id)
+        )
+    )";
+    
+    char* errMsg = nullptr;
+    int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);
+    if (rc != SQLITE_OK) {
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","table_create_fail","FormGuids","",{}}, errMsg ? errMsg : "Unknown error");
+        if (errMsg) sqlite3_free(errMsg);
+        return false;
+    }
+    return true;
+}
+
+bool FormManager::storeFormGuid(const string& guid, int caseProfileId, const string& formKey) const {
+    const char* sql = "INSERT INTO form_guids (guid, case_profile_id, form_key) VALUES (?, ?, ?)";
+    sqlite3_stmt* stmt = nullptr;
+    
+    if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","prepare_fail","FormGuidStore","",{}}, sqlite3_errmsg(m_db));
+        return false;
+    }
+    
+    sqlite3_bind_text(stmt, 1, guid.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, caseProfileId);
+    sqlite3_bind_text(stmt, 3, formKey.c_str(), -1, SQLITE_STATIC);
+    
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    if (rc != SQLITE_DONE) {
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","insert_fail","FormGuidStore",guid,{}}, sqlite3_errmsg(m_db));
+        return false;
+    }
+    
+    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","guid_stored","FormManager",guid,{}}, "Form GUID stored for case " + to_string(caseProfileId));
+    return true;
+}
+
+optional<int> FormManager::getCaseProfileByGuid(const string& guid) const {
+    const char* sql = "SELECT case_profile_id FROM form_guids WHERE guid = ? LIMIT 1";
+    sqlite3_stmt* stmt = nullptr;
+    
+    if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","prepare_fail","FormGuidLookup","",{}}, sqlite3_errmsg(m_db));
+        return nullopt;
+    }
+    
+    sqlite3_bind_text(stmt, 1, guid.c_str(), -1, SQLITE_STATIC);
+    
+    optional<int> result = nullopt;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        result = sqlite3_column_int(stmt, 0);
+    }
+    
+    sqlite3_finalize(stmt);
+    return result;
+}
 
 optional<FormManager::Context> FormManager::loadContext(int caseProfileId) const {
     Context ctx{}; ctx.caseProfileId = caseProfileId;
@@ -73,6 +160,7 @@ optional<FormManager::Context> FormManager::loadContext(int caseProfileId) const
         ctx.clientEmail = cEmail ? cEmail : "";
         ctx.assessorFullName = aFirst + (aLast.empty()?"":" ") + aLast;
         ctx.assessorEmail = aEmail ? aEmail : "";
+        ctx.formGuid = generateFormGuid(); // Generate unique GUID for this form
         result = ctx;
     }
     sqlite3_finalize(stmt);
@@ -132,15 +220,19 @@ string FormManager::injectContext(const string& html, const Context& ctx, const 
         setValue("client_full_name", ctx.clientFullName);
         setValue("client_email", ctx.clientEmail);
         setValue("created_at", ctx.caseCreatedAt);
+        setValue("form_guid", ctx.formGuid);
         lines.push_back(line);
         if (insideFormInfo && !insertedBlock && (line.find("</fieldset>") != string::npos || line.find("</legend>") != string::npos)) {
             string block;
             block += "<!-- Injected dynamic context -->\n";
             block += "<div class=\"sc-generated-context\">\n";
             block += "  <p><strong>Case ID:</strong> " + to_string(ctx.caseProfileId) + "</p>\n";
+            block += "  <p><strong>Form GUID:</strong> <span class=\"form-guid\">" + ctx.formGuid + "</span></p>\n";
             block += "  <p><strong>Assessor:</strong> " + ctx.assessorFullName + " (" + ctx.assessorEmail + ")</p>\n";
             block += "  <p><strong>Client:</strong> " + ctx.clientFullName + " (" + ctx.clientEmail + ")</p>\n";
             block += "  <p><strong>Case Created At:</strong> " + ctx.caseCreatedAt + "</p>\n";
+            block += "  <!-- Hidden field for form GUID -->\n";
+            block += "  <input type=\"hidden\" name=\"form_guid\" id=\"form_guid\" value=\"" + ctx.formGuid + "\"/>\n";
             block += "</div>\n";
             lines.push_back(block);
             insertedBlock = true;
@@ -150,9 +242,12 @@ string FormManager::injectContext(const string& html, const Context& ctx, const 
         lines.push_back("<!-- Injected dynamic context (fallback) -->\n");
         lines.push_back("<div class=\"sc-generated-context\">\n");
         lines.push_back("  <p><strong>Case ID:</strong> " + to_string(ctx.caseProfileId) + "</p>\n");
+        lines.push_back("  <p><strong>Form GUID:</strong> <span class=\"form-guid\">" + ctx.formGuid + "</span></p>\n");
         lines.push_back("  <p><strong>Assessor:</strong> " + ctx.assessorFullName + " (" + ctx.assessorEmail + ")</p>\n");
         lines.push_back("  <p><strong>Client:</strong> " + ctx.clientFullName + " (" + ctx.clientEmail + ")</p>\n");
         lines.push_back("  <p><strong>Case Created At:</strong> " + ctx.caseCreatedAt + "</p>\n");
+        lines.push_back("  <!-- Hidden field for form GUID -->\n");
+        lines.push_back("  <input type=\"hidden\" name=\"form_guid\" id=\"form_guid\" value=\"" + ctx.formGuid + "\"/>\n");
         lines.push_back("</div>\n");
     }
     string joined; joined.reserve(html.size()+512);
@@ -166,6 +261,7 @@ void FormManager::replaceAllPlaceholders(string &buffer, const Context& ctx) con
     const string caseId = to_string(ctx.caseProfileId);
     vector<PH> ph = {
         {"{{case_profile_id}}", caseId},
+        {"{{form_guid}}", ctx.formGuid},
         {"{{assessor_full_name}}", ctx.assessorFullName},
         {"{{assessor_email}}", ctx.assessorEmail},
         {"{{client_full_name}}", ctx.clientFullName},
@@ -198,7 +294,7 @@ vector<FormGenerationResult> FormManager::generateForms(int caseProfileId,
     }
     error_code ec; fs::create_directories(outputDir, ec);
     if (ec) {
-        for (auto &k : formKeys) results.push_back({k, "", "", string("Cannot create output directory: ")+ ec.message(), false});
+        for (auto &k : formKeys) results.push_back({k, "", "", string("Cannot create output directory: ")+ ec.message(), "", false});
         return results;
     }
     for (auto &key : formKeys) {
@@ -213,11 +309,17 @@ vector<FormGenerationResult> FormManager::generateForms(int caseProfileId,
     if (requiresContext) {
             if (!ctxOpt) { r.message = "Missing case context"; results.push_back(r); continue; }
             processed = injectContext(raw, *ctxOpt, key);
+            r.formGuid = ctxOpt->formGuid; // Store GUID in result
+            
+            // Store GUID in database for tracking
+            if (!storeFormGuid(ctxOpt->formGuid, caseProfileId, key)) {
+                utils::logStructured(utils::LogLevel::WARN, {"MANAGER","guid_store_fail","FormManager",ctxOpt->formGuid,{}}, "Failed to store GUID in database");
+            }
         }
         int idForName = (caseProfileId > 0) ? caseProfileId : 0; // for base forms allow 0 in filename? keep 0 or omit
         r.outputPath = (fs::path(outputDir) / buildOutputFileName(key, idForName)).string();
         if (!writeFile(r.outputPath, processed)) { r.message = "Failed to write output"; results.push_back(r); continue; }
-    r.success = true; r.message = requiresContext ? "Generated (with context)" : "Generated";
+    r.success = true; r.message = requiresContext ? ("Generated with GUID: " + r.formGuid) : "Generated";
         results.push_back(r);
     }
     return results;
