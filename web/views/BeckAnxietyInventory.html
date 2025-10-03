@@ -305,6 +305,9 @@
       <legend>Form Information</legend>
   <!-- Removed BAI ID field: generated only after persistence -->
       
+      <label for="form_guid">Form GUID:</label>
+  <input type="text" id="form_guid" name="form_guid" value="{{form_guid}}" readonly>
+      
       <label for="case-profile-id">Case Profile ID:</label>
   <input type="text" id="case-profile-id" name="case-profile-id" value="{{case_profile_id}}" readonly>
       
@@ -1026,10 +1029,10 @@
     // Generate CSV content (including total score and severity)
     function generateCSV(data) {
       const headers = [
-        'Form_GUID', 'Case_Profile_ID', 'Created_At', 'Assessor_Name', 'Client_Name',
-        'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10',
-        'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21',
-        'Total_Score', 'Severity_Level'
+        'form_guid', 'case_profile_id', 'created_at', 'assessor_name', 'client_name',
+        'question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7', 'question_8', 'question_9', 'question_10',
+        'question_11', 'question_12', 'question_13', 'question_14', 'question_15', 'question_16', 'question_17', 'question_18', 'question_19', 'question_20', 'question_21',
+        'total_score', 'severity_level'
       ];
 
       // Compute total
