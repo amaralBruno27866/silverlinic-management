@@ -7,6 +7,7 @@
 #include <sqlite3.h>
 #include "core/Assessor.h"
 #include "core/CaseProfile.h"
+#include "utils/CSVImporter.h"
 
 using namespace std;
 using namespace SilverClinic;

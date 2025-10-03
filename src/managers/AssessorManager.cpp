@@ -1,6 +1,7 @@
 #include "managers/AssessorManager.h"
 #include "core/Utils.h"
 #include "utils/CSVUtils.h"
+#include "utils/StructuredLogger.h"
 #include "managers/AddressManager.h"
 #include <iostream>
 #include <sstream>
@@ -61,7 +62,7 @@ optional<int> AssessorManager::findExistingAssessorId(const Assessor& assessor) 
 
 bool AssessorManager::create(const Assessor& assessor) {
     if (!validateAssessor(assessor)) {
-        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor data");
+        ::utils::logStructured(::utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Invalid assessor data");
         return false;
     }
 
@@ -70,13 +71,13 @@ bool AssessorManager::create(const Assessor& assessor) {
     if (existing.has_value()) {
         // Log and return error - duplicate found
         string msg = "Duplicate assessor detected. Existing id=" + to_string(existing.value());
-        utils::LogEventContext ctx;
+        ::utils::LogEventContext ctx;
     ctx.category = "MANAGER";
     ctx.action = "duplicate_detected";
     ctx.entityType = std::make_optional<std::string>("Assessor");
     ctx.entityId = std::make_optional<std::string>(std::to_string(assessor.getAssessorId()));
     ctx.correlationId = std::make_optional<std::string>(std::to_string(existing.value()));
-        utils::logStructured(utils::LogLevel::ERROR, ctx, msg);
+        ::utils::logStructured(::utils::LogLevel::ERROR, ctx, msg);
         return false;
     }
 
@@ -114,7 +115,7 @@ bool AssessorManager::create(const Assessor& assessor) {
         // Log as warning but do not fail creation (column may be virtual or absent in some test DBs)
         string em = errMsg ? errMsg : "";
         sqlite3_free(errMsg);
-        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","normalized_email_populate_warn","Assessor", std::to_string(assessor.getAssessorId()), {}}, string("Could not populate normalized_email: ") + em);
+        ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","normalized_email_populate_warn","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, string("Could not populate normalized_email: ") + em);
     }
     // If assessor has address data, persist it
     try {
@@ -127,15 +128,15 @@ bool AssessorManager::create(const Assessor& assessor) {
             toInsert.setUserKey(assessor.getAssessorId());
             int addrId = addrMgr.create(toInsert);
             if (addrId <= 0) {
-                utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to persist associated address");
+                ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Failed to persist associated address");
             }
         }
     } catch (...) {
         // Non-fatal: address persistence should not break assessor creation
-        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_persist_exception","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Exception while persisting address");
+        ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","address_persist_exception","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Exception while persisting address");
     }
 
-    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","create","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Assessor created successfully");
+    ::utils::logStructured(::utils::LogLevel::INFO, {"MANAGER","create","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Assessor created successfully");
     return true;
 }
 
@@ -194,11 +195,11 @@ optional<Assessor> AssessorManager::readById(int assessorId) const {
 
 bool AssessorManager::update(const Assessor& assessor) {
     if (!validateAssessor(assessor)) {
-        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor data");
+        ::utils::logStructured(::utils::LogLevel::ERROR, {"MANAGER","validate_fail","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Invalid assessor data");
         return false;
     }
     if (!exists(assessor.getAssessorId())) {
-        utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","not_found","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Assessor not found");
+        ::utils::logStructured(::utils::LogLevel::ERROR, {"MANAGER","not_found","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Assessor not found");
         return false;
     }
     
@@ -236,10 +237,10 @@ bool AssessorManager::update(const Assessor& assessor) {
     if (sqlite3_exec(m_db, populateSql.c_str(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
         string em = errMsg ? errMsg : "";
         sqlite3_free(errMsg);
-        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","normalized_email_update_warn","Assessor", std::to_string(assessor.getAssessorId()), {}}, string("Could not update normalized_email: ") + em);
+        ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","normalized_email_update_warn","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, string("Could not update normalized_email: ") + em);
     }
     
-    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","update","Assessor", to_string(assessor.getAssessorId()), {}}, "Assessor updated successfully");
+    ::utils::logStructured(::utils::LogLevel::INFO, {"MANAGER","update","Assessor", to_string(assessor.getAssessorId()), std::nullopt}, "Assessor updated successfully");
     // Persist address changes if present
     try {
         const Address &addr = assessor.getAddress();
@@ -253,7 +254,7 @@ bool AssessorManager::update(const Assessor& assessor) {
                     toInsert.setUserKey(assessor.getAssessorId());
                     int addrId = addrMgr.create(toInsert);
                     if (addrId <= 0) {
-                        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_update_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to update/create associated address");
+                        ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","address_update_fail","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Failed to update/create associated address");
                     }
                 }
             } else {
@@ -261,12 +262,12 @@ bool AssessorManager::update(const Assessor& assessor) {
                 toInsert.setUserKey(assessor.getAssessorId());
                 int addrId = addrMgr.create(toInsert);
                 if (addrId <= 0) {
-                    utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Failed to persist associated address");
+                    ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","address_create_fail","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Failed to persist associated address");
                 }
             }
         }
     } catch (...) {
-        utils::logStructured(utils::LogLevel::WARN, {"MANAGER","address_persist_exception","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Exception while persisting address on update");
+        ::utils::logStructured(::utils::LogLevel::WARN, {"MANAGER","address_persist_exception","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Exception while persisting address on update");
     }
 
     return true;
@@ -274,12 +275,12 @@ bool AssessorManager::update(const Assessor& assessor) {
 
 bool AssessorManager::deleteById(int assessorId) {
     if (!exists(assessorId)) {
-    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","delete_not_found","Assessor", to_string(assessorId), {}}, "Assessor not found");
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"MANAGER","delete_not_found","Assessor", to_string(assessorId), std::nullopt}, "Assessor not found");
         return false;
     }
     
     if (!canDelete(assessorId)) {
-    utils::logStructured(utils::LogLevel::ERROR, {"MANAGER","delete_conflict_cases","Assessor", to_string(assessorId), {}}, "Cannot delete assessor with associated cases");
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"MANAGER","delete_conflict_cases","Assessor", to_string(assessorId), std::nullopt}, "Cannot delete assessor with associated cases");
         return false;
     }
     
@@ -301,7 +302,7 @@ bool AssessorManager::deleteById(int assessorId) {
         return false;
     }
     
-    utils::logStructured(utils::LogLevel::INFO, {"MANAGER","delete","Assessor", to_string(assessorId), {}}, "Assessor deleted successfully");
+    ::utils::logStructured(::utils::LogLevel::INFO, {"MANAGER","delete","Assessor", to_string(assessorId), std::nullopt}, "Assessor deleted successfully");
     return true;
 }
 
@@ -484,35 +485,35 @@ vector<Assessor> AssessorManager::readWithPagination(int limit, int offset) cons
 bool AssessorManager::validateAssessor(const Assessor& assessor) const {
     // Check required fields
     if (assessor.getFirstName().empty()) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","missing_firstname","Assessor", std::to_string(assessor.getAssessorId()), {}}, "First name is required");
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"VALIDATION","missing_firstname","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "First name is required");
         return false;
     }
     
     if (assessor.getLastName().empty()) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","missing_lastname","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Last name is required");
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"VALIDATION","missing_lastname","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Last name is required");
         return false;
     }
     
     // Use Utils functions for validation
-    if (!utils::isValidEmail(assessor.getEmail())) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_email","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid email: "+assessor.getEmail());
+    if (!::utils::isValidEmail(assessor.getEmail())) {
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"VALIDATION","invalid_email","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Invalid email: "+assessor.getEmail());
         return false;
     }
     
-    if (!utils::isValidCanadianPhoneNumber(assessor.getPhone())) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_phone","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid phone: "+assessor.getPhone());
+    if (!::utils::isValidCanadianPhoneNumber(assessor.getPhone())) {
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"VALIDATION","invalid_phone","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Invalid phone: "+assessor.getPhone());
         return false;
     }
     
     // Check ID is positive (sequential IDs start from 1)
     if (assessor.getAssessorId() <= 0) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","invalid_id","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Invalid assessor ID - must be positive");
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"VALIDATION","invalid_id","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Invalid assessor ID - must be positive");
         return false;
     }
     
     // Check names are not just numeric or contain invalid characters
-    if (utils::isNumeric(assessor.getFirstName()) || utils::isNumeric(assessor.getLastName())) {
-    utils::logStructured(utils::LogLevel::ERROR, {"VALIDATION","numeric_name","Assessor", std::to_string(assessor.getAssessorId()), {}}, "Names cannot be purely numeric");
+    if (::utils::isNumeric(assessor.getFirstName()) || ::utils::isNumeric(assessor.getLastName())) {
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"VALIDATION","numeric_name","Assessor", std::to_string(assessor.getAssessorId()), std::nullopt}, "Names cannot be purely numeric");
         return false;
     }
     
@@ -605,7 +606,7 @@ Address AssessorManager::createAddressFromRow(sqlite3_stmt* stmt, int startColum
 
 void AssessorManager::logDatabaseError(const string& operation) const {
     string errorMsg = "Database error in " + operation + ": " + sqlite3_errmsg(m_db);
-    utils::logStructured(utils::LogLevel::ERROR, {"DB","exec_error","Assessor","",""}, errorMsg);
+    ::utils::logStructured(::utils::LogLevel::ERROR, {"DB","exec_error","Assessor","",""}, errorMsg);
 }
 
 int AssessorManager::importFromCSV(const string& filePath) {
@@ -615,64 +616,57 @@ int AssessorManager::importFromCSV(const string& filePath) {
 }
 
 AssessorManager::ImportResult AssessorManager::importFromCSVReport(const string& filePath) {
-    ImportResult result;
-    bool inTransaction = false;
-    try {
-        csv::CSVTable table = csv::CSVReader::readFile(filePath);
-
-        // Begin transaction for performance
-        char* errMsg = nullptr;
-        if (sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, &errMsg) == SQLITE_OK) {
-            inTransaction = true;
-        }
-
-        for (const auto &row : table.rows) {
+    // Use centralized CSV importer for consistency and reduced duplication
+    utils::CSVImporter<Assessor> importer(m_db, "Assessor");
+    
+    // Define required headers for assessor CSV
+    vector<string> requiredHeaders = {"firstname", "lastname", "phone", "email", "created_at"};
+    
+    // Parser function: Convert CSV row to Assessor object
+    auto parser = [](const std::unordered_map<std::string, std::string>& row) -> std::optional<Assessor> {
+        try {
             Assessor a;
             a.setFirstName(csv::safeGet(row, "firstname"));
             a.setLastName(csv::safeGet(row, "lastname"));
             a.setPhone(csv::safeGet(row, "phone"));
             a.setEmail(csv::safeGet(row, "email"));
+            
             string createdStr = csv::normalizeTimestampForDateTime(csv::safeGet(row, "created_at"));
             if (!createdStr.empty()) {
                 a.setCreatedAt(DateTime::fromString(createdStr));
                 a.setUpdatedAt(DateTime::fromString(createdStr));
             }
-
-            // Validate
-            if (!validateAssessor(a)) {
-                result.failed++;
-                result.errors.push_back("Validation failed for row with email=" + a.getEmail());
-                continue;
-            }
-
-            // Duplicate detection
-            optional<int> existing = findExistingAssessorId(a);
-            if (existing.has_value()) {
-                // Log duplicate and record
-                result.failed++;
-                result.duplicates.emplace_back(existing.value(), "duplicate by email/name+phone");
-                continue;
-            }
-
-            // Create in DB
-            if (create(a)) {
-                result.success++;
-            } else {
-                result.failed++;
-                result.errors.push_back("DB insert failed for email=" + a.getEmail());
-            }
+            
+            return a;
+        } catch (const std::exception&) {
+            return std::nullopt; // Parsing failed
         }
-
-        if (inTransaction) {
-            sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, &errMsg);
-        }
-    } catch (const exception &e) {
-        if (inTransaction) {
-            char* errMsg = nullptr;
-            sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, &errMsg);
-        }
-        result.errors.push_back(string("CSV import exception: ") + e.what());
-    }
-
+    };
+    
+    // Validator function: Use existing validation logic
+    auto validator = [this](const Assessor& a) -> bool {
+        return validateAssessor(a);
+    };
+    
+    // Creator function: Use existing create method
+    auto creator = [this](const Assessor& a) -> bool {
+        return create(a);
+    };
+    
+    // Duplicate checker: Use existing duplicate detection
+    auto duplicateChecker = [this](const Assessor& a) -> std::optional<int> {
+        return findExistingAssessorId(a);
+    };
+    
+    // Execute import using centralized importer
+    auto importResult = importer.importFromCSV(filePath, requiredHeaders, parser, validator, creator, duplicateChecker);
+    
+    // Convert centralized result to AssessorManager format for backward compatibility
+    ImportResult result;
+    result.success = importResult.success;
+    result.failed = importResult.failed;
+    result.errors = importResult.errors;
+    result.duplicates = importResult.duplicates;
+    
     return result;
 }
