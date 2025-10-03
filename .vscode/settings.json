@@ -123,11 +123,10 @@
     "Debug"
   ],
   "cmake.parallelJobs": 4,
-  "cmake.generator": "Unix Makefiles",
+  "cmake.generator": "Visual Studio 17 2022",
   "cmake.sourceDirectory": "${workspaceFolder}",
   "cmake.preferredGenerators": [
-    "Unix Makefiles",
-    "Ninja"
+    "Visual Studio 17 2022"
   ],
   "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
   "cmake.buildOnOpen": false,
@@ -149,5 +148,9 @@
   "cmakeExplorer.ctestCommand": "ctest",
   "cmakeExplorer.suiteDelimiter": ".",
   "cmakeExplorer.testNameRegex": ".*",
-  "cmakeExplorer.parallelJobs": 4
+  "cmakeExplorer.parallelJobs": 4,
+  "cmake.defaultVariants": {
+    "buildType": "Debug",
+    "toolchain": "Visual Studio Community 2022 Release - amd64"
+  }
 }
