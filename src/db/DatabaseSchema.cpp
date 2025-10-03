@@ -139,6 +139,7 @@ std::string DatabaseSchema::getAutomobileAnxietyInventoryTableSQL() {
     return R"(
         CREATE TABLE IF NOT EXISTS automobile_anxiety_inventory(
             id INTEGER PRIMARY KEY,
+            form_guid TEXT UNIQUE NOT NULL,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'AAI',
             question_1 BOOLEAN DEFAULT 0,
@@ -181,6 +182,7 @@ std::string DatabaseSchema::getBeckDepressionInventoryTableSQL() {
     return R"(
         CREATE TABLE IF NOT EXISTS beck_depression_inventory(
             id INTEGER PRIMARY KEY,
+            form_guid TEXT UNIQUE NOT NULL,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'BDI',
             question_1 INTEGER DEFAULT 0 CHECK(question_1 >= 0 AND question_1 <= 3),
@@ -217,6 +219,7 @@ std::string DatabaseSchema::getBeckAnxietyInventoryTableSQL() {
     return R"(
         CREATE TABLE IF NOT EXISTS beck_anxiety_inventory(
             id INTEGER PRIMARY KEY,
+            form_guid TEXT UNIQUE NOT NULL,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'BAI',
             question_1 INTEGER DEFAULT 0 CHECK(question_1 >= 0 AND question_1 <= 3),
@@ -253,6 +256,7 @@ std::string DatabaseSchema::getPainBodyMapTableSQL() {
     return R"(
         CREATE TABLE IF NOT EXISTS pain_body_map(
             id INTEGER PRIMARY KEY,
+            form_guid TEXT UNIQUE NOT NULL,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'PBM',
             pain_data_json TEXT NOT NULL DEFAULT '{}',
@@ -268,6 +272,7 @@ std::string DatabaseSchema::getActivitiesOfDailyLivingTableSQL() {
     return R"(
         CREATE TABLE IF NOT EXISTS activities_of_daily_living(
             id INTEGER PRIMARY KEY,
+            form_guid TEXT UNIQUE NOT NULL,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'ADL',
             activities_data_json TEXT NOT NULL DEFAULT '{}',
@@ -282,6 +287,7 @@ std::string DatabaseSchema::getSCL90RTableSQL() {
     return R"(
         CREATE TABLE IF NOT EXISTS scl90r(
             id INTEGER PRIMARY KEY,
+            form_guid TEXT UNIQUE NOT NULL,
             case_profile_id INTEGER NOT NULL,
             type TEXT NOT NULL DEFAULT 'SCL90R',
             question_1 INTEGER DEFAULT 0 CHECK(question_1 >= 0 AND question_1 <= 3),

@@ -16,6 +16,7 @@ namespace SilverClinic {
             
             // Primary attributes
             int m_bai_id;                      // BAI ID (900000+)
+            string m_form_guid;                // Unique form identifier from HTML
             int m_case_profile_id;             // Foreign key to case_profile
             string m_type;                     // Form type (default: "BAI")
             
@@ -56,7 +57,7 @@ namespace SilverClinic {
             // Constructors
             BeckAnxietyInventory();
             BeckAnxietyInventory(int case_profile_id);
-            BeckAnxietyInventory(int bai_id, int case_profile_id, 
+            BeckAnxietyInventory(int bai_id, const string& form_guid, int case_profile_id, 
                                int q1, int q2, int q3, int q4, int q5,
                                int q6, int q7, int q8, int q9, int q10,
                                int q11, int q12, int q13, int q14, int q15,
@@ -68,6 +69,7 @@ namespace SilverClinic {
             
             // Getters - Basic Info
             int getBAIId() const { return m_bai_id; }
+            string getFormGuid() const { return m_form_guid; }
             int getCaseProfileId() const { return m_case_profile_id; }
             string getType() const { return m_type; }
             DateTime getBAICreatedAt() const { return m_bai_createdAt; }
@@ -98,6 +100,7 @@ namespace SilverClinic {
             
             // Setters with validation - Basic Info
             void setCaseProfileId(int case_profile_id) { m_case_profile_id = case_profile_id; updateTimestamp(); }
+            void setFormGuid(const string& form_guid) { m_form_guid = form_guid; updateTimestamp(); }
             void setBAICreatedAt(const DateTime& createdAt) { m_bai_createdAt = createdAt; }
             void setBAIUpdatedAt(const DateTime& updatedAt) { m_bai_updatedAt = updatedAt; }
             
